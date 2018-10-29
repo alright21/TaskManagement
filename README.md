@@ -8,7 +8,11 @@ Ci sarà la possibilità di attivare un sistema di peer review per la correzione
 ### Nome Gruppo
 Solo Numeri 0
 ### Componenti del gruppo
-Alberto Giust
-Amanda Asia Salvaterra
-...
+
+*Alberto Giust
+
+*Amanda Asia Salvaterra
+
+*Vanes Carrer
+
 
