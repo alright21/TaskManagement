@@ -1,0 +1,23 @@
+{
+  "name": "taskmanagement",
+  "version": "1.0.0",
+  "description": "progetto ingegneria del software anno 2018-2019",
+  "main": "api.js",
+  "scripts": {
+    "start": "node api.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ainter21/TaskManagement.git"
+  },
+  "author": "Alberto, Asia, Vanes, Francesco, Michele",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ainter21/TaskManagement/issues"
+  },
+  "homepage": "https://github.com/ainter21/TaskManagement#readme",
+  "dependencies": {
+    "express": "^4.16.4"
+  }
+}

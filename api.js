@@ -10,5 +10,5 @@ app.get('/courses', (req, res) => {
    res.json(courses_offered)
 });
  
-app.listen(PORT, () => console.log('Example app listening on port'+ PORT)):
+app.listen(PORT, () => console.log('Example app listening on port'+ PORT));
 
