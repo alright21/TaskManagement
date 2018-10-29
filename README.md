@@ -9,5 +9,6 @@ Ci sarà la possibilità di attivare un sistema di peer review per la correzione
 Solo Numeri 0
 ### Componenti del gruppo
 Alberto Giust
+Amanda Asia Salvaterra
 ...
 
