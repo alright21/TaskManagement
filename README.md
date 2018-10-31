@@ -9,12 +9,12 @@ Ci sarà la possibilità di attivare un sistema di peer review per la correzione
 Solo Numeri 0
 ### Componenti del gruppo
 
-* Alberto Giust
+* Alberto Giust: ainter21
 
-* Amanda Asia Salvaterra
+* Amanda Asia Salvaterra: asiasalva
 
-* Vanes Carrer
+* Vanes Carrer: Vanes996
 
-* Michele Agnello
+* Michele Agnello: l4mby
 
-* Francesco Da Dalt
+* Francesco Da Dalt: Alastyr
