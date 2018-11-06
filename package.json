@@ -5,7 +5,7 @@
   "main": "api.js",
   "scripts": {
     "start": "node api.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -19,5 +19,12 @@
   "homepage": "https://github.com/ainter21/TaskManagement#readme",
   "dependencies": {
     "express": "^4.16.4"
+  },
+  "jest": {
+    "verbose": true,
+    "collectCoverage": true
+  },
+  "devDependencies": {
+    "jest": "^23.6.0"
   }
 }
