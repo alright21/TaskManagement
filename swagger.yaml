@@ -1,0 +1,29 @@
+swagger: '2.0'
+info:
+  version: '1.0'
+  title: "TaskManagement"
+  description: Task Management è un servizio che permette la gestione e 
+l'assegnamento di esami (ovvero gruppi di esercizi) a studenti. Questi 
+unltimi dovranno completare gli esercizi. Dopo una deadline definita dal 
+T.A. che ha creato l'esame, gli stuenti riceveranno esercizi svolti da 
+altri studenti che dovranno correggere. Infine il T.A. darà un voto per 
+ogni esercizio e per l'esame ad ogni studente
+
+host: task-management-solo-numeri-0.herokuapp.com 
+basePath: /v1
+schemes: 
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /users:
+    get:
+      summary: Returns a list of users.
+      description: Optional extended description in Markdown.
+      produces:
+        - application/json
+      responses:
+        200:
+          description: OK
