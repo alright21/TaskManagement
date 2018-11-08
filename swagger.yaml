@@ -32,6 +32,10 @@ paths:
     post:
       summary: Create a new user.
       description: Optional extended description in Markdown.
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
       responses:
         200:
 	  description: Elaboration without creation.
@@ -45,6 +49,10 @@ paths:
     post:
       summary: Create a new exam.
       description: Optional extended description in Markdown.
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
       responses: 
         200:
           description: OK
@@ -54,3 +62,30 @@ paths:
           description: No content.
         400:
           description: Bad request.
+  /exams/{id}:
+    get:
+      summary: "Get information about a specific exam"
+      description: "Return the exam {id}"
+      produces:
+      - "application/json"
+      responses: 
+        200:
+          description: "ID Found"
+        400:
+          description: "Invalid ID"
+    put:
+      summary: "Update exam informations"
+      description: "Update exam informations: title and tasks list"
+      responses:
+        200:
+          description: "ID found. Exam updated"
+        400:
+          description: "Invalid exam ID"
+    delete:
+      summary: "Delete exam"
+      description: "Delete specified exam"
+      responses:
+        200:
+          description: "ID found. Exam deleted"
+        400:
+          description: "Invalid exam ID"
