@@ -27,3 +27,16 @@ paths:
       responses:
         200:
           description: OK
+    post:
+      summary: Create a new user.
+      description: Optional extended description in Markdown.
+      responses:
+        200:
+	  description: OK
+  /exams:
+    post:
+      summary: Create a new exam.
+      description: Optional extended description in Markdown.
+      responses: 
+        200:
+          description: OK
