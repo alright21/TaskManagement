@@ -45,6 +45,32 @@ paths:
           description: No content.
         400:
           description: Bad Request.
+  /users/{id}/tasks:
+    post:
+      summary: "Create user's task list."
+			description: "Creates a list of tasks assigned to the specific user."
+			consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+			responses:
+				201:
+					description: "ID found. List created."
+        400:
+          description: "Invalid user ID. Bad Request."
+	/users/{id}/submission:
+    post:
+      summary: "Create user's submission."
+			description: "Creates the user's submission and uploads it to the service."
+			consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+			responses:
+				201:
+					description: "ID found. Submission created."
+        400:
+          description: "Invalid user ID. Bad Request."
   /exams:
     post:
       summary: Create a new exam.
