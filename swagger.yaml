@@ -83,7 +83,7 @@ paths:
           description: "ID found. List created."
         400:
           description: "Invalid user ID. Bad Request."
-	/users/{id}/submission:
+  /users/{id}/submission:
     post:
       summary: "Create user's submission."
       description: "Creates the user's submission and uploads it to the service."
