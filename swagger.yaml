@@ -99,6 +99,46 @@ paths:
        400:
          description: Invalid user ID. Bad request.
          
+ /users/{id}/tasks/created:
+   get:
+    parameters: 
+       - in: path
+         name: id
+         required: true
+         type: integer
+         minimum: 1
+         description: The user ID. 
+    summary: "Return list of created tasks"
+    description: "Return a Json with all the created tasks of User{id}"
+    responses:
+      200:
+        description: List found.
+      400:
+        description: Bad Request.
+      404:
+        description: List not found.
+        
+ /users/{id}/tasks/assigned:
+   get:
+     parameters: 
+       - in: path
+         name: id
+         required: true
+         type: integer
+         minimum: 1
+         description: The user ID. 
+     summary: "Return list of assigned tasks"
+     description: "Return a Json with all the assigned tasks to User{id}."
+     responses:
+       200:
+         description: List found.
+       400:
+         description: Bad Request.
+       404:
+         description: List not found.
+       
+   
+      
  /users/{id}/submissions:
    post:
      parameters: 
