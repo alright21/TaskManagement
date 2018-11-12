@@ -38,7 +38,7 @@ paths:
       - "application/json"
       responses:
         200:
-	        description: Elaboration without creation.
+	  description: Elaboration without creation.
         201:
           description: Resource created.
         204:
