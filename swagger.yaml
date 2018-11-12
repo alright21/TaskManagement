@@ -38,7 +38,7 @@ paths:
       - "application/json"
       responses:
         200:
-	  description: Elaboration without creation.
+	        description: Elaboration without creation.
         201:
           description: Resource created.
         204:
@@ -73,27 +73,27 @@ paths:
   /users/{id}/tasks:
     post:
       summary: "Create user's task list."
-			description: "Creates a list of tasks assigned to the specific user."
-			consumes:
+      description: "Creates a list of tasks assigned to the specific user."
+      consumes:
       - "application/json"
       produces:
       - "application/json"
-			responses:
-				201:
-					description: "ID found. List created."
+      responses:
+        201:
+          description: "ID found. List created."
         400:
           description: "Invalid user ID. Bad Request."
 	/users/{id}/submission:
     post:
       summary: "Create user's submission."
-			description: "Creates the user's submission and uploads it to the service."
-			consumes:
+      description: "Creates the user's submission and uploads it to the service."
+      consumes:
       - "application/json"
       produces:
       - "application/json"
-			responses:
-				201:
-					description: "ID found. Submission created."
+      responses:
+        201:
+          description: "ID found. Submission created."
         400:
           description: "Invalid user ID. Bad Request."
   /exams:
