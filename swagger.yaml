@@ -1,24 +1,228 @@
 swagger: '2.0'
 info:
   version: '1.0'
-  title: "TaskManagement"
-  description: Task Management è un servizio che permette la gestione e l'assegnamento di esami (ovvero gruppi di esercizi) a studenti. Questi unltimi dovranno completare gli esercizi. Dopo una deadline definita dal T.A. che ha creato l'esame, gli stuenti riceveranno esercizi svolti da altri studenti che dovranno correggere. Infine il T.A. darà un voto per ogni esercizio e per l'esame ad ogni studente
+  title: 'TaskManagement'
+  description: "Task Management è un servizio che permette la gestione e 
+l'assegnamento di esami (ovvero gruppi di esercizi) a studenti. Questi 
+unltimi dovranno completare gli esercizi. Dopo una deadline definita dal 
+T.A. che ha creato l'esame, gli stuenti riceveranno esercizi svolti da 
+altri studenti che dovranno correggere. Infine il T.A. darà un voto per 
+ogni esercizio e per l'esame ad ogni studente."
 
-host: task-management-solo-numeri-0.herokuapp.com 
+host: task-management-solo-numeri-0.herokuapp.com
+
 basePath: /v1
 schemes: 
-  - https
-consumes:
-  - application/json
-produces:
-  - application/json
+ - https
+consumes: 
+ - application/json
+produces: 
+ - application/json
 paths:
-  /users:
-    get:
-      summary: Returns a list of users.
-      description: Optional extended description in Markdown.
-      produces:
-        - application/json
+ /users:
+   get:
+     summary: "Return a list of users"
+     description: "Return a JSON with the list of all the users." 
+     responses:
+       200:
+         description: OK
+       400:
+         description: Not found.
+   post:
+      summary: "Create new user."
+      description: "Creation of a new user."
       responses:
         200:
-          description: OK
+          description: Elaboration without creation.
+        201:
+          description: Resource created.
+        204:
+          description: No content.
+        400:
+          description: Bad request.
+          
+ /users/{id}:
+   get:
+     parameters: 
+       - in: path
+         name: id
+         required: true
+         type: integer
+         minimum: 1
+         description: The user ID.
+     summary: "Get the information of a specific user by id."
+     description: "It returns a JSON with all the properties of the user."
+     responses:
+       200:
+         description: User found.
+       400:
+         description: User not found.
+   put:
+     parameters: 
+       - in: path
+         name: id
+         required: true
+         type: integer
+         minimum: 1
+         description: The user ID.
+     summary: "Update an user by id."
+     description: "It updates the properties of the user."
+     responses:
+       204:
+         description: User updated successfully.
+   delete:
+     parameters: 
+       - in: path
+         name: id
+         required: true
+         type: integer
+         minimum: 1
+         description: The user ID.
+     summary: "Delete an user." 
+     description: "It deletes an user by id."
+     responses:
+       204:
+         description: User successfully deleted.
+         
+ /users/{id}/tasks:
+   post:
+     parameters: 
+       - in: path
+         name: id
+         required: true
+         type: integer
+         minimum: 1
+         description: The user ID.
+     summary: "Create user's submission." 
+     description: "Creates a list of tasks assigned to the specific user."
+     responses:
+       400:
+         description: Invalid user ID. Bad request.
+         
+ /users/{id}/tasks/created:
+   get:
+    parameters: 
+       - in: path
+         name: id
+         required: true
+         type: integer
+         minimum: 1
+         description: The user ID. 
+    summary: "Return list of created tasks"
+    description: "Return a Json with all the created tasks of User{id}"
+    responses:
+      200:
+        description: List found.
+      400:
+        description: Bad Request.
+      404:
+        description: List not found.
+        
+ /users/{id}/tasks/assigned:
+   get:
+     parameters: 
+       - in: path
+         name: id
+         required: true
+         type: integer
+         minimum: 1
+         description: The user ID. 
+     summary: "Return list of assigned tasks"
+     description: "Return a Json with all the assigned tasks to User{id}."
+     responses:
+       200:
+         description: List found.
+       400:
+         description: Bad Request.
+       404:
+         description: List not found.
+       
+   
+      
+ /users/{id}/submissions:
+   post:
+     parameters: 
+       - in: path
+         name: id
+         required: true
+         type: integer
+         minimum: 1
+         description: The user ID.
+     summary: "Create user's submission." 
+     description: "Creates user's submission and uploads it to the service." 
+     responses:
+       400:
+         description: Invalid user ID. Bad request.
+ 
+ /exams:
+   post:
+     summary: "Create a new exam"
+     description: "Create a new exam as a group of tasks."
+     responses:
+       200:
+         description: OK
+       201:
+         description: Resource created.
+       204:
+         description: No content.
+       400:
+         description: Bad request.
+         
+ /exams/{id}:
+   get:
+     parameters: 
+       - in: path
+         name: id
+         required: true
+         type: integer
+         minimum: 1
+         description: The exam ID.
+     summary: "Get infos about a specific exam"
+     description: "Returns the exam {id}"
+     responses:
+       200:
+         description: ID found.
+       404:
+         description: ID not found.
+   put:
+     parameters: 
+       - in: path
+         name: id
+         required: true
+         type: integer
+         minimum: 1
+         description: The exam ID.
+     summary: "Update exam infos"
+     description: "Update exam informations: title and tasks list." 
+     responses:
+       200:
+         description: ID found, exam updated.
+       400:
+         description: Invalid exam ID.
+   delete:
+     parameters: 
+       - in: path
+         name: id
+         required: true
+         type: integer
+         minimum: 1
+         description: The user ID.
+     summary: "Delete exam"
+     description: "Delete specidied exam"
+     responses:
+       200:
+         description: ID found, exam deleted.
+       404:
+         description: ID not found.
+
+definitions:
+  users:
+    type: "object"
+    properties:
+      id:
+       type: "integer"
+  exam:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
