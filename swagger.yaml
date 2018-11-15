@@ -96,6 +96,8 @@ paths:
      summary: "Create user's submission." 
      description: "Creates a list of tasks assigned to the specific user."
      responses:
+       201:
+         description: ID found. List created.
        400:
          description: Invalid user ID. Bad request.
          
@@ -151,6 +153,8 @@ paths:
      summary: "Create user's submission." 
      description: "Creates user's submission and uploads it to the service." 
      responses:
+       201:
+         description: ID found. Submission created.
        400:
          description: Invalid user ID. Bad request.
  
