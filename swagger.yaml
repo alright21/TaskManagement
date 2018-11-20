@@ -19,18 +19,26 @@ consumes:
 produces: 
  - application/json
 paths:
- /users:
-   get:
-     summary: "Return a list of users"
-     description: "Return a JSON with the list of all the users." 
-     responses:
-       200:
-         description: OK
-       400:
-         description: Not found.
-   post:
+  /users:
+    get:
+      summary: "Return a list of users"
+      description: "Return a JSON with the list of all the users." 
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: "#/definitions/userList"
+        404:
+          description: Not found.
+    post:
       summary: "Create new user."
       description: "Creation of a new user."
+      parameters:
+        - in: body
+          name: user
+          description: The user to create.
+          schema:
+            $ref: "#/definitions/user"
       responses:
         200:
           description: Elaboration without creation.
@@ -40,189 +48,321 @@ paths:
           description: No content.
         400:
           description: Bad request.
-          
- /users/{id}:
-   get:
-     parameters: 
-       - in: path
-         name: id
-         required: true
-         type: integer
-         minimum: 1
-         description: The user ID.
-     summary: "Get the information of a specific user by id."
-     description: "It returns a JSON with all the properties of the user."
-     responses:
-       200:
-         description: User found.
-       400:
-         description: User not found.
-   put:
-     parameters: 
-       - in: path
-         name: id
-         required: true
-         type: integer
-         minimum: 1
-         description: The user ID.
-     summary: "Update an user by id."
-     description: "It updates the properties of the user."
-     responses:
-       204:
-         description: User updated successfully.
-   delete:
-     parameters: 
-       - in: path
-         name: id
-         required: true
-         type: integer
-         minimum: 1
-         description: The user ID.
-     summary: "Delete an user." 
-     description: "It deletes an user by id."
-     responses:
-       204:
-         description: User successfully deleted.
-         
- /users/{id}/tasks:
-   post:
-     parameters: 
-       - in: path
-         name: id
-         required: true
-         type: integer
-         minimum: 1
-         description: The user ID.
-     summary: "Create user's submission." 
-     description: "Creates a list of tasks assigned to the specific user."
-     responses:
-       400:
-         description: Invalid user ID. Bad request.
-         
- /users/{id}/tasks/created:
-   get:
-    parameters: 
-       - in: path
-         name: id
-         required: true
-         type: integer
-         minimum: 1
-         description: The user ID. 
-    summary: "Return list of created tasks"
-    description: "Return a Json with all the created tasks of User{id}"
-    responses:
-      200:
-        description: List found.
-      400:
-        description: Bad Request.
-      404:
-        description: List not found.
+
+  /users/login:
+    post:
+      parameters:
+        - in: body
+          name: login
+          required: true
+          description: user's credentials
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+              password:
+                type: string
+      summary: login an user with email and password
+      description: login an user with email and password
+      responses:
+        200:
+          description: user logged in
+        400:
+          description: bad request
+  /users/{id}:
+    get:
+      parameters: 
+        - in: path
+          name: id
+          required: true
+          type: integer
+          minimum: 1
+          description: The user ID.
+      summary: "Get the information of a specific user by id."
+      description: "It returns a JSON with all the properties of the user."
+      responses:
+        200:
+          description: User found.
+          schema:
+            $ref: "#/definitions/user"
+        400:
+          description: User not found.
+    put:
+      parameters: 
+        - in: path
+          name: id
+          required: true
+          type: integer
+          description: the user ID
+        - in: body
+          name: user
+          required: true
+          description: The user to be modified.
+          schema:
+            $ref: "#/definitions/user"
+      summary: "Update an user by id."
+      description: "It updates the properties of the user."
+      responses:
+        204:
+          description: User updated successfully.
+        409: 
+          description: Conflict. Can't update.
         
- /users/{id}/tasks/assigned:
-   get:
-     parameters: 
-       - in: path
-         name: id
-         required: true
-         type: integer
-         minimum: 1
-         description: The user ID. 
-     summary: "Return list of assigned tasks"
-     description: "Return a Json with all the assigned tasks to User{id}."
-     responses:
-       200:
-         description: List found.
-       400:
-         description: Bad Request.
-       404:
-         description: List not found.
-       
-   
-      
- /users/{id}/submissions:
-   post:
-     parameters: 
-       - in: path
-         name: id
-         required: true
-         type: integer
-         minimum: 1
-         description: The user ID.
-     summary: "Create user's submission." 
-     description: "Creates user's submission and uploads it to the service." 
-     responses:
-       400:
-         description: Invalid user ID. Bad request.
- 
- /exams:
-   post:
-     summary: "Create a new exam"
-     description: "Create a new exam as a group of tasks."
-     responses:
-       200:
-         description: OK
-       201:
-         description: Resource created.
-       204:
-         description: No content.
-       400:
-         description: Bad request.
-         
- /exams/{id}:
-   get:
-     parameters: 
-       - in: path
-         name: id
-         required: true
-         type: integer
-         minimum: 1
-         description: The exam ID.
-     summary: "Get infos about a specific exam"
-     description: "Returns the exam {id}"
-     responses:
-       200:
-         description: ID found.
-       404:
-         description: ID not found.
-   put:
-     parameters: 
-       - in: path
-         name: id
-         required: true
-         type: integer
-         minimum: 1
-         description: The exam ID.
-     summary: "Update exam infos"
-     description: "Update exam informations: title and tasks list." 
-     responses:
-       200:
-         description: ID found, exam updated.
-       400:
-         description: Invalid exam ID.
-   delete:
-     parameters: 
-       - in: path
-         name: id
-         required: true
-         type: integer
-         minimum: 1
-         description: The user ID.
-     summary: "Delete exam"
-     description: "Delete specidied exam"
-     responses:
-       200:
-         description: ID found, exam deleted.
-       404:
-         description: ID not found.
+    delete:
+      parameters: 
+        - in: path
+          name: id
+          required: true
+          type: integer
+          minimum: 1
+          description: The user ID.
+      summary: "Delete an user." 
+      description: "It deletes an user by id."
+      responses:
+        204:
+          description: User successfully deleted.
+        404:
+          description: Not found.
+          
+  /users/{id}/tasks:
+    get:
+      parameters: 
+        - in: path
+          name: id
+          required: true
+          type: integer
+          minimum: 1
+          description: "The user ID."
+      summary: "The list of the tasks created by the user" 
+      description: "It returns the list of the tasks created by a specific user"
+      responses:
+        200:
+          description: "Returning the list of all tasks created by the user"
+          schema:
+            $ref: "#/definitions/tasksList"
+        400:
+          description: "Invalid user ID. Bad request."
+          
+  /users/{id}/exams:
+    get:
+      parameters:
+        - in: path
+          name: id
+          required: true
+          type: integer
+          description: "The user ID."
+      summary: "It retuns the list of the exams created and assigned"
+      description: "It retuns the list of the exams created and assigned"
+      responses:
+        200:
+          description: "List found"
+          schema:
+            $ref: "#/definitions/examsList"
+        404:
+          description: list not found.
+
+  /users/{id}/submissions:
+    get:
+      parameters: 
+        - in: path
+          name: id
+          required: true
+          type: integer
+          minimum: 1
+          description: The user ID.
+      summary: "Create user's submission." 
+      description: "Creates user's submission and uploads it to the service." 
+      responses:
+        400:
+          description: Invalid user ID. Bad request.
+
+  /exams:
+    post:
+      summary: "Create a new exam"
+      description: "Create a new exam as a group of tasks."
+      parameters:
+        - in: body
+          name: exam
+          schema:
+            $ref: "#/definitions/exam"
+
+      responses:
+        200:
+          description: OK
+        201:
+          description: Resource created.
+        204:
+          description: No content.
+        400:
+          description: Bad request.
+          
+  /exams/{id}:
+    get:
+      parameters: 
+        - in: path
+          name: id
+          required: true
+          type: integer
+          description: "The exam ID."
+      summary: "Get infos about a specific exam"
+      description: "Returns the exam {id}"
+      responses:
+        200:
+          description: "ID found."
+          schema:
+            $ref: "#/definitions/exam"
+        404:
+          description: "ID not found."
+    put:
+      parameters: 
+        - in: path
+          name: id
+          required: true
+          type: integer
+          description: "The exam's ID."
+        - in: body
+          name: exam
+          required: true
+          description: the user to be modified
+          schema:
+            $ref: "#/definitions/exam"
+      summary: "Update exam infos"
+      description: "Update exam informations: title and tasks list." 
+      responses:
+        200:
+          description: "ID found, exam updated."
+        400:
+          description: "Invalid exam ID."
+    delete:
+      parameters: 
+        - in: path
+          name: id
+          required: true
+          type: integer
+          minimum: 1
+          description: The user ID.
+      summary: "Delete exam"
+      description: "Delete specidied exam"
+      responses:
+        204:
+          description: ID found, exam deleted.
+        404:
+          description: ID not found.
 
 definitions:
-  users:
-    type: "object"
+  user:
+    type: object
     properties:
       id:
-       type: "integer"
+        type: integer
+      name:
+        type: string
+      surname:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+  
+  task:
+    type: object
+    properties:
+      id:
+        type: integer
+      creator:
+        type: integer
+      task-type:
+        type: integer
+      question:
+        type: string
+      answer-example:
+        type: string
+      mark:
+        type: integer
+      
   exam:
-    type: "object"
+    type: object
     properties:
       id:
-        type: "integer"
+        type: integer
+      creator:
+        type: integer
+      deadline:
+        type: integer
+      exam-mark:
+        type: integer
+      task-list:
+        type: array
+        items:
+          $ref: "#/definitions/task"
+
+  class:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      prof:
+        type: integer
+      description:
+        type: string
+      assistants:
+        type: array
+        items: 
+          $ref: "#/definitions/user"
+      students:
+        type: array
+        items:
+          $ref: "#/definitions/user"
+
+
+
+  review:
+    type: object
+    properties:
+      id:
+        type: integer
+      reviewer:
+        type: integer
+      submission:
+        type: integer
+      review-answer:
+        type: string
+      deadline:
+        type: integer
+
+  submission:
+    type: object
+    properties:
+      id:
+        type: integer
+      user:
+        type: integer
+      task:
+        type: integer
+      exam:
+        type: integer
+      answer:
+        type: string
+      final-mark:
+        type: integer
+      
+  
+  userList:
+    type: array
+    items:
+      $ref: "#/definitions/user"
+
+  tasksList:
+    type: array
+    items:
+      $ref: "#/definitions/task"
+
+  examsList:
+    type: array
+    items:
+      $ref: "#/definitions/exam"
+
+
