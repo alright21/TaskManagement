@@ -142,7 +142,7 @@ paths:
           description: "Returning the list of all tasks created by the user"
           schema:
             $ref: "#/definitions/tasksList"
-        400:
+        404:
           description: "Invalid user ID. Bad request."
           
   /users/{id}/exams:
@@ -172,10 +172,14 @@ paths:
           type: integer
           minimum: 1
           description: The user ID.
-      summary: "Create user's submission." 
-      description: "Creates user's submission and uploads it to the service." 
+      summary: "Returns user's submission." 
+      description: "Returns the submissions made by the specified user." 
       responses:
-        400:
+        200:
+          description: "List found"
+          schema:
+            $ref: "#/definitions/submissionsList"
+        404:
           description: Invalid user ID. Bad request.
           
   /users/{id}/reviews:
@@ -261,14 +265,32 @@ paths:
           minimum: 1
           description: The user ID.
       summary: "Delete exam"
-      description: "Delete specidied exam"
+      description: "Delete specified exam"
       responses:
         204:
           description: ID found, exam deleted.
         404:
           description: ID not found.
           
-  /task:
+  /exams/{id}/tasks:
+    get:
+      parameters:
+        - in: path
+          name: id
+          required: true
+          type: integer
+          description: "The exam's ID."
+      summary: "Returns all the tasks of the exam."
+      description: "Gets all the tasks that are in the exam specified by the ID."
+      responses:
+        200:
+          description: "List found."
+          schema:
+            $ref: "#/definitions/tasksList"
+        404:
+          description: "ID not found."
+
+  /tasks:
     post:
       summary: "Create a new task"
       description: "Create a new task"
@@ -324,7 +346,7 @@ paths:
             $ref: "#/definitions/class"
         404:
           description: "ID not found."
-     /reviews/{id}:
+  /reviews/{id}:
     put:
       parameters: 
         - in: path
@@ -461,4 +483,8 @@ definitions:
     items:
       $ref: "#/definitions/exam"
 
+  submissionsList:
+    type: array
+    items:
+      $ref: "#/definitions/submission"
 
