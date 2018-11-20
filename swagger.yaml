@@ -346,6 +346,26 @@ paths:
             $ref: "#/definitions/class"
         404:
           description: "ID not found."
+    put:
+      parameters:
+        - in: path
+          name: id
+          required: true
+          type: integer
+          description: "The class ID."
+        - in: body
+          name: classes
+          required: true
+          schema:
+            $ref: "#/definitions/class"
+          description: "The class to be modified."
+      summary: "Update class information"
+      description: "Update the classes/{id} parameters"
+      responses:
+        200:
+          description: "ID found, class updated."
+        400:
+          description: "Invalid class ID."
   /reviews/{id}:
     put:
       parameters: 
