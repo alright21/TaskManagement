@@ -367,7 +367,8 @@ paths:
           description: "ID found, review created."
         400:
           description: "Invalid review ID."
-  /submission:
+          
+  /submissions:
     post:
       parameters:
         - in: body
