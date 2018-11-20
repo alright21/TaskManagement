@@ -268,7 +268,26 @@ paths:
         404:
           description: ID not found.
           
-  /class:
+  /task:
+    post:
+      summary: "Create a new task"
+      description: "Create a new task"
+      parameters:
+        - in: body
+          name: task
+          schema:
+            $ref: "#/definitions/task"
+      responses:
+        200:
+          description: OK
+        201:
+          description: Resource created.
+        204:
+          description: No content.
+        400:
+          description: Bad request.
+          
+  /classes:
     post:
       summary: "Create a new class"
       description: "Create a new class as a group of users."
@@ -305,6 +324,27 @@ paths:
             $ref: "#/definitions/class"
         404:
           description: "ID not found."
+     /reviews/{id}:
+    put:
+      parameters: 
+        - in: path
+          name: id
+          required: true
+          type: integer
+          description: "The review's ID."
+        - in: body
+          name: review
+          required: true
+          description: the review to be modified (created)
+          schema:
+            $ref: "#/definitions/review"
+      summary: "Update (create) reviews information"
+      description: "Reviews are created by the system. User updates an empty review to reply to a submission."
+      responses:
+        200:
+          description: "ID found, review created."
+        400:
+          description: "Invalid review ID."
   
 definitions:
   user:
