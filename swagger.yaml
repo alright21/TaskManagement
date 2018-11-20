@@ -1,4 +1,4 @@
-swagger: '2.0'
+﻿swagger: '2.0'
 info:
   version: '1.0'
   title: 'TaskManagement'
@@ -19,6 +19,7 @@ consumes:
 produces: 
  - application/json
 paths:
+
   /users:
     get:
       summary: "Return a list of users"
@@ -70,6 +71,7 @@ paths:
           description: user logged in
         400:
           description: bad request
+          
   /users/{id}:
     get:
       parameters: 
@@ -108,7 +110,6 @@ paths:
           description: User updated successfully.
         409: 
           description: Conflict. Can't update.
-        
     delete:
       parameters: 
         - in: path
@@ -176,7 +177,24 @@ paths:
       responses:
         400:
           description: Invalid user ID. Bad request.
-
+          
+  /users/{id}/reviews:
+    get:
+      parameters: 
+        - in: path
+          name: id
+          required: true
+          type: integer
+          minimum: 1
+          description: The user ID.
+      summary: "Return all user's reviews" 
+      description: "Return all user's reviews." 
+      responses:
+        200:
+          description: Ok
+        400:
+          description: Invalid user ID. Bad request.
+    
   /exams:
     post:
       summary: "Create a new exam"
@@ -249,7 +267,45 @@ paths:
           description: ID found, exam deleted.
         404:
           description: ID not found.
+          
+  /class:
+    post:
+      summary: "Create a new class"
+      description: "Create a new class as a group of users."
+      parameters:
+        - in: body
+          name: exam
+          schema:
+            $ref: "#/definitions/class"
 
+      responses:
+        200:
+          description: OK
+        201:
+          description: Resource created.
+        204:
+          description: No content.
+        400:
+          description: Bad request.
+    
+  /classes/{id}:
+    get:
+      parameters: 
+        - in: path
+          name: id
+          required: true
+          type: integer
+          description: "The class ID."
+      summary: "Get infos about a specific class"
+      description: "Returns the class {id}"
+      responses:
+        200:
+          description: "ID found."
+          schema:
+            $ref: "#/definitions/class"
+        404:
+          description: "ID not found."
+  
 definitions:
   user:
     type: object
