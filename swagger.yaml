@@ -43,6 +43,8 @@ paths:
       responses:
         201:
           description: Resource created.
+          schema:
+            $ref: "#/definitions/userBody"
         400:
           description: Bad request.
         503:
@@ -210,6 +212,8 @@ paths:
       responses:
         201:
           description: Resource created.
+          schema:
+            $ref: "#/definitions/examBody"
         400:
           description: Bad request.
         503:
@@ -298,6 +302,8 @@ paths:
       responses:
         201:
           description: Resource created.
+          schema:
+            $ref: "#/definitions/taskBody"
         400:
           description: Bad request.
         503:
@@ -316,6 +322,8 @@ paths:
       responses:
         201:
           description: Resource created.
+          schema:
+            $ref: "#/definitions/classBody"
         400:
           description: Bad request.
         503:
@@ -390,6 +398,8 @@ paths:
       responses:
         201:
           description: new submission created.
+          schema:
+            $ref: "#/definitions/submissionBody"
         400:
           description: Bad request.
         503:
