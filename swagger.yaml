@@ -41,14 +41,12 @@ paths:
           schema:
             $ref: "#/definitions/user"
       responses:
-        200:
-          description: Elaboration without creation.
         201:
           description: Resource created.
-        204:
-          description: No content.
         400:
           description: Bad request.
+        503:
+          description: Service unavailable.
 
   /users/login:
     post:
@@ -210,14 +208,12 @@ paths:
             $ref: "#/definitions/exam"
 
       responses:
-        200:
-          description: OK
         201:
           description: Resource created.
-        204:
-          description: No content.
         400:
           description: Bad request.
+        503:
+          description: Service unavailable.
           
   /exams/{id}:
     get:
@@ -300,14 +296,12 @@ paths:
           schema:
             $ref: "#/definitions/task"
       responses:
-        200:
-          description: OK
         201:
           description: Resource created.
-        204:
-          description: No content.
         400:
           description: Bad request.
+        503:
+          description: Service unavailable.
           
   /classes:
     post:
@@ -320,14 +314,12 @@ paths:
             $ref: "#/definitions/class"
 
       responses:
-        200:
-          description: OK
         201:
           description: Resource created.
-        204:
-          description: No content.
         400:
           description: Bad request.
+        503:
+          description: Service unavailable.
     
   /classes/{id}:
     get:
@@ -396,14 +388,12 @@ paths:
           schema:
             $ref: "#/definitions/submission"
       responses:
-        200:
-          description: OK
         201:
           description: new submission created.
-        204:
-          description: No content.
         400:
           description: Bad request.
+        503:
+          description: Service unavailable.
   
 definitions:
   user:
@@ -411,98 +401,49 @@ definitions:
     properties:
       id:
         type: integer
-      name:
-        type: string
-      surname:
-        type: string
-      email:
-        type: string
-      password:
-        type: string
+      body:
+        $ref: "#/definitions/userBody"
+
   
   task:
     type: object
     properties:
       id:
         type: integer
-      creator:
-        type: integer
-      task-type:
-        type: integer
-      question:
-        type: string
-      answer-example:
-        type: string
-      mark:
-        type: integer
+      body:
+        $ref: "#/definitions/taskBody"
       
   exam:
     type: object
     properties:
       id:
         type: integer
-      creator:
-        type: integer
-      deadline:
-        type: integer
-      exam-mark:
-        type: integer
-      task-list:
-        type: array
-        items:
-          $ref: "#/definitions/task"
+      body:
+        $ref: "#/definitions/examBody"
 
   class:
     type: object
     properties:
       id:
         type: integer
-      name:
-        type: string
-      prof:
-        type: integer
-      description:
-        type: string
-      assistants:
-        type: array
-        items: 
-          $ref: "#/definitions/user"
-      students:
-        type: array
-        items:
-          $ref: "#/definitions/user"
-
-
+      body:
+        $ref: "#/definitions/classBody"
 
   review:
     type: object
     properties:
       id:
         type: integer
-      reviewer:
-        type: integer
-      submission:
-        type: integer
-      review-answer:
-        type: string
-      deadline:
-        type: integer
+      body:
+        $ref: "#/definitions/reviewBody"
 
   submission:
     type: object
     properties:
       id:
         type: integer
-      user:
-        type: integer
-      task:
-        type: integer
-      exam:
-        type: integer
-      answer:
-        type: string
-      final-mark:
-        type: integer
+      body:
+        $ref: "#/definitions/submissionBody"
       
   
   userList:
@@ -524,3 +465,87 @@ definitions:
     type: array
     items:
       $ref: "#/definitions/submission"
+
+  userBody:
+    type: object
+    properties:
+      name:
+        type: string
+      surname:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+
+  taskBody:
+    type: object
+    properties:
+      creator:
+        type: integer
+      task-type:
+        type: integer
+      question:
+        type: string
+      answer-example:
+        type: string
+      mark:
+        type: integer
+
+  examBody:
+    type: object
+    properties:
+      creator:
+        type: integer
+      deadline:
+        type: integer
+      exam-mark:
+        type: integer
+      task-list:
+        type: array
+        items:
+          $ref: "#/definitions/task"
+
+  classBody:
+    type: object
+    properties:
+      name:
+        type: string
+      prof:
+        type: integer
+      description:
+        type: string
+      assistants:
+        type: array
+        items: 
+          $ref: "#/definitions/user"
+      students:
+        type: array
+        items:
+          $ref: "#/definitions/user"
+
+  reviewBody:
+  type: object
+  properties:
+    reviewer:
+      type: integer
+    submission:
+      type: integer
+    review-answer:
+      type: string
+    deadline:
+      type: integer
+
+  submissionBody:
+    type: object
+    properties:
+      user:
+        type: integer
+      task:
+        type: integer
+      exam:
+        type: integer
+      answer:
+        type: string
+      final-mark:
+        type: integer
