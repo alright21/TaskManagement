@@ -525,16 +525,16 @@ definitions:
           $ref: "#/definitions/user"
 
   reviewBody:
-  type: object
-  properties:
-    reviewer:
-      type: integer
-    submission:
-      type: integer
-    review-answer:
-      type: string
-    deadline:
-      type: integer
+    type: object
+    properties:
+      reviewer:
+        type: integer
+      submission:
+        type: integer
+      review-answer:
+        type: string
+      deadline:
+        type: integer
 
   submissionBody:
     type: object
