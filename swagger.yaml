@@ -501,6 +501,10 @@ definitions:
         type: string
       mark:
         type: integer
+      answer-list:
+        type: array
+        items: 
+          type: string
 
   examBody:
     type: object
