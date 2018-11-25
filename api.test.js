@@ -19,5 +19,17 @@ describe('loading express', function () {
         .expect(404, done);
     });
 
-    it('')
+    it('getting array of courses', (code)=>{
+        var courses_offered = {arr: 
+            [{id: 21, name: 'HCI'},
+            {id: 28, name:'sweng'}]
+         };
+        request(server)
+        .get('/courses')
+        .expect(200, code)
+        .expect( {arr: 
+            [{id: 21, name: 'HCI'},
+            {id: 28, name:'sweng'}]
+         });
+    })
   });
