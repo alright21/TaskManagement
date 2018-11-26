@@ -19,6 +19,7 @@
   "homepage": "https://github.com/ainter21/TaskManagement#readme",
   "dependencies": {
     "express": "^4.16.4",
+    "node-fetch": "^2.3.0",
     "supertest": "^3.3.0"
   },
   "jest": {
