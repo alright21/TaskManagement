@@ -2,7 +2,7 @@ var request = require('supertest');
 var fetch = require ('node-fetch');
 
 
-  
+
 function getTest(){
 
   return fetch('http://localhost:3000',{
@@ -26,5 +26,5 @@ test('prova', ()=>{
       expect(res.status).toBe(200);
     });
 
-  
+
 });
