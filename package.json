@@ -2,9 +2,9 @@
   "name": "taskmanagement",
   "version": "1.0.0",
   "description": "progetto ingegneria del software anno 2018-2019",
-  "main": "api.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node api.js",
+    "start": "node index.js",
     "test": "jest"
   },
   "repository": {
