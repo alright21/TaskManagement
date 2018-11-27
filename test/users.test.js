@@ -1,12 +1,17 @@
 var fetch = require ('node-fetch');
-
+const bodyParser = require('body-parser');
+const getfromdb = require('../v1/users').getfromdb;
+const users = require('../v1/users');
 
 const root = process.env.SERVER_URL || 'http://localhost:3000'
 const user_root = root+ '/v1/users';
 
 const id_tasks = user_root+'/3/tasks';
 
-var server;
+
+var valid=1;
+var invalid=-1;
+
 function getTest(){
   return fetch(user_root,{
     method: 'GET',
@@ -16,14 +21,8 @@ function getTest(){
   });
 }
 
-function getidtest(){
-  return fetch(id_tasks,{
-    method: 'GET',
-    headers: {
-      'Accept':'application/json'
-    }
-  });
-}
+
+
 
 beforeAll(function () {
   server = require('../index');
@@ -31,26 +30,28 @@ beforeAll(function () {
 afterAll(function(){
 server.close();
 });
-/*
-beforeEach(function(){
-  server= require('../index');
-});
-afterEach(function () {
-  server.close();
-});*/
 
-test('prova', ()=>{
 
+test('get', ()=>{
   return getTest()
     .then(res => {
       expect(res.status).toBe(200);
     });
 });
 
-test('acsadfasd',()=>{
 
-    return getidtest()
-      .then(res => {
-        expect(res.status).toBe(200);
-      });
-  });
+test('get/id/tasks',()=>{
+
+    return getfromdb(valid)
+    .then(res=>{
+      expect(res.id).toBe(valid)
+  })
+});
+
+test('get invalid ',()=>{
+
+    return getfromdb(invalid)
+    .then(res=>{
+      expect(res).toBeNull();
+  })
+});
