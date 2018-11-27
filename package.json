@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/ainter21/TaskManagement#readme",
   "dependencies": {
+    "body-parser": "^1.18.3",
     "express": "^4.16.4",
     "node-fetch": "^2.3.0",
     "pg": "^7.6.1",
