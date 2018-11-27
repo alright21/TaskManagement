@@ -22,12 +22,7 @@
     "express": "^4.16.4",
     "node-fetch": "^2.3.0",
     "pg": "^7.6.1",
-<<<<<<< HEAD
     "supertest": "^3.3.0"
-=======
-    "supertest": "^3.3.0",
-    "uuid-v4": "^0.1.0"
->>>>>>> Aggiunta interazione col Db e GET con casi di test
   },
   "jest": {
     "verbose": true,
