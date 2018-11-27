@@ -93,4 +93,8 @@ async function getUserByEmail(email){
 		}
 	}
 }
-module.exports = users;
+module.exports = {
+	getUserById: getUserById,
+	getUserByEmail: getUserByEmail,
+	postUser: postUser
+};
