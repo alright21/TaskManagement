@@ -2,6 +2,7 @@ const fetch = require('node-fetch');
 const submissions = require('../v1/submissions').submissions;
 const insertSubmissionIntoDatabase = require('../v1/submissions').insertSubmissionIntoDatabase;
 const getSubmissionById = require('../v1/submissions').getSubmissionById;
+const updateSubmissionInDatabase = require('../v1/submissions').updateSubmissionInDatabase;
 
 const PORT = process.env.PORT || 3000;
 
@@ -34,6 +35,19 @@ var invalidExamSubmission = {
 	"answer": "This is my answer"
 };
 
+var modifiedSubmissionStudent = {
+  "user": 2,
+  "task": 2,
+  "exam": 1,
+  "answer": "This is a question"
+}
+var modifiedSubmissionTeacher = {
+  "user": 2,
+  "task": 2,
+  "exam": 1,
+  "final_mark": 30
+}
+
 //helpers method using fetch
 function createSubmission(newSubmission){
   return fetch(SERVER_URL,{
@@ -43,6 +57,17 @@ function createSubmission(newSubmission){
         'Accept': 'application/json'
       },
       body: JSON.stringify(newSubmission)
+  })
+}
+
+function updateSubmission(id,toModify){
+  return fetch(SERVER_URL + '/' + id,{
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(toModify)
   })
 }
 
@@ -156,6 +181,99 @@ test('if the id returns no result, should return null', ()=>{
     expect(res).toBeNull();
   });
 });
+
+//TEST put submission
+
+
+test('testing a valid update', ()=>{
+
+  return updateSubmission(validSubmission.id, validSubmission)
+  .then(res =>{
+    expect(res.status).toBe(201);
+    return res.json();
+  }).then(resJson =>{
+    return getSubmissionById(resJson.id);
+  }).then(modifiedSubmission =>{
+      expect(modifiedSubmission).toHaveProperty('id');
+      expect(modifiedSubmission).toHaveProperty('user');
+      expect(modifiedSubmission).toHaveProperty('task');
+      expect(modifiedSubmission).toHaveProperty('exam');
+      expect(modifiedSubmission).toHaveProperty('answer');
+  });
+});
+
+
+test('if the submission modifies the exam, should return 409', ()=>{
+
+  return updateSubmission(validSubmission.id, invalidExamSubmission)
+  .then(res => {
+    expect(res.status).toBe(409);
+  });
+  
+});
+test('if the submission modify the task, should return 409', () =>{
+  return updateSubmission(validSubmission.id, invalidTaskSubmission)
+  .then(res=>{
+    expect(res.status).toBe(409);
+  });
+});
+
+test('if the submission modify the user, should return 409', ()=>{
+  return updateSubmission(validSubmission.id, invalidUserSubmission)
+  .then(res =>{
+    expect(res.status).toBe(409);
+  });
+});
+
+
+test('if you,as a student, modify a submission, should get the same submission updated, but with the same final-mark property', ()=>{
+
+  return updateSubmissionInDatabase(validSubmission.id, modifiedSubmissionStudent)
+  .then(updated =>{
+
+    return getSubmissionById(updated.id)
+    .then(res =>{
+
+      expect(res.id).toEqual(validSubmission.id);
+      expect(res.exam).toEqual(validSubmission.exam);
+      expect(res.user).toEqual(validSubmission.user);
+      expect(res.task).toEqual(validSubmission.task);
+      expect(res.answer).toEqual(modifiedSubmissionStudent.answer);
+      expect(res.final_mark).toBeNull();
+    });
+  });
+});
+
+test('if you modify the user, it should return null', ()=>{
+
+  return updateSubmissionInDatabase(validSubmission.id, invalidUserSubmission)
+  .then(res =>{
+    expect(res).toBeNull();
+  });
+});
+test('if you modify the exam, it should return null', ()=>{
+
+  return updateSubmissionInDatabase(validSubmission.id, invalidExamSubmission)
+  .then(res =>{
+    expect(res).toBeNull();
+  });
+});
+
+test('if you modify the task, it should return null', ()=>{
+
+  return updateSubmissionInDatabase(validSubmission.id, invalidTaskSubmission)
+  .then(res =>{
+    expect(res).toBeNull();
+  });
+});
+
+
+
+// test('if you are a student you should not be able to modify the mark', ()=>{
+
+//   return updateSubmissionInDatabase(validSubmission.id, )
+// })
+
 
 
 
