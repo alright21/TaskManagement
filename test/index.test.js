@@ -24,7 +24,5 @@ test('prova', ()=>{
   return getTest()
     .then(res => {
       expect(res.status).toBe(200);
-    });
-
-  
+    });  
 });
