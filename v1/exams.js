@@ -11,8 +11,6 @@ const pool = new pg.Pool({
     port: '5432'
 })
 
-exams.get('/', (req, res) => res.status(200).send('Hello World!'));
-
 exams.post('/', async (req, res) =>{
     let results = await insertExamIntoDatabase(req.body);
     
@@ -24,6 +22,19 @@ exams.post('/', async (req, res) =>{
         res.status(400).end();
     }
 });
+
+exams.get('/:id', async (req, res) =>{
+    console.log(req.params.id);
+    let results = await getExamById(req.params.id);
+    console.log(results);
+    if(results){
+        var resultJson = JSON.parse(JSON.stringify(results));
+        res.status(200).send(resultJson);
+    }
+    else{
+        res.status(404).end();
+    }
+})
 
 async function insertExamIntoDatabase(exam){
     // check creatorId exists into database

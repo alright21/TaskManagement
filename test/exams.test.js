@@ -25,15 +25,27 @@ const invalidTaskList = {
   "mark": 30,
   "task_list": [1, 2, 3]
 };
+
+const validId = 1;
+const invalidId = 100;
   
 function createExam(exampleExam){
   return fetch(SERVER_URL,{
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-      body: JSON.stringify(exampleExam)
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    },
+    body: JSON.stringify(exampleExam)
+  })
+}
+
+function getExam(id){
+  return fetch(SERVER_URL + '/' + id,{
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json'
+    }
   })
 }
 
@@ -47,7 +59,7 @@ afterAll(function () {
   server.close();
 });
 
-// Test for API
+// Test for API POST/exams
 
 test('if the exam is succesful created, the API shoul return 201 with the json. The returned json should be the same of sent one, plus exam\'s id', ()=>{
 
@@ -78,12 +90,11 @@ test('if one task does not exist, the API should return 400', ()=> {
   })
 });
 
-// Test for logic funcion inside API calls
+// Test for logic funcion inside API POST/exams calls
 
 test('valid exam is successful created and inserted into db', ()=>{
   return insertExamIntoDatabase(validExam)
   .then(exam =>{
-    console.log(exam);
     return getExamById(exam.id)
     .then(res =>{
       validExam.id = res.id;
@@ -104,4 +115,25 @@ test('wrong exam can\'t shouldn\'t be atted to database. Case: invalid task list
   .then(exam =>{
     expect(exam).toBeNull();
   })
+});
+
+// Test for API GET/exams/{id}
+
+test('test if valid exam id return the selected exam', ()=>{
+  console.log(validId);
+  return getExam(validId)
+    .then(response => {
+      expect(response.status).toBe(200);
+      return response.json();
+    })
+    .then(jsonRes => {
+      expect(jsonRes.id).toEqual(validId);
+    })
+});
+
+test('test if invalid exam id return 404 not found', ()=>{
+  return getExam(invalidId)
+    .then(response =>{
+      expect(response.status).toBe(404);
+    })
 });
