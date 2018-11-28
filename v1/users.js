@@ -94,6 +94,7 @@ async function getUserByEmail(email){
 	}
 }
 module.exports = {
+	users: users,
 	getUserById: getUserById,
 	getUserByEmail: getUserByEmail,
 	postUser: postUser
