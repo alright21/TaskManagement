@@ -2,9 +2,9 @@
   "name": "taskmanagement",
   "version": "1.0.0",
   "description": "progetto ingegneria del software anno 2018-2019",
-  "main": "index.js",
+  "main": "api.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node api.js",
     "test": "jest"
   },
   "repository": {
@@ -19,9 +19,6 @@
   "homepage": "https://github.com/ainter21/TaskManagement#readme",
   "dependencies": {
     "express": "^4.16.4",
-    "express-router": "0.0.1",
-    "node-fetch": "^2.3.0",
-    "pg": "^7.6.1",
     "supertest": "^3.3.0"
   },
   "jest": {
