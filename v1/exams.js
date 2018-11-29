@@ -6,8 +6,8 @@ const exams = express.Router();
 const pool = new pg.Pool({
     user: 'postgres',
     host: 'localhost',
-    database: 'taskmanagement',
-    password: 'root',
+    database: 'travis_ci_test',
+    password: '',
     port: '5432'
 })
 
