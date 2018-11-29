@@ -1,6 +1,6 @@
 var fetch = require ('node-fetch');
 const bodyParser = require('body-parser');
-const getfromdb = require('../v1/users').getfromdb;
+const gettasks = require('../v1/users').gettasks;
 const users = require('../v1/users');
 
 const root = process.env.SERVER_URL || 'http://localhost:3000'
@@ -9,7 +9,14 @@ const user_root = root+ '/v1/users';
 const id_tasks = user_root+'/3/tasks';
 
 
-var valid=1;
+var valid={
+  id: 1,
+  creator: 2,
+  task_type: 2,
+  question: "quanto è bello ciccio?"",
+  example: "tanto bello",
+  mark: 30,
+  }
 var invalid=-1;
 
 function getTest(){
@@ -20,8 +27,6 @@ function getTest(){
     }
   });
 }
-
-
 
 
 beforeAll(function () {
@@ -41,8 +46,7 @@ test('get', ()=>{
 
 
 test('get/id/tasks',()=>{
-
-    return getfromdb(valid)
+    return gettasks(valid)
     .then(res=>{
       expect(res.id).toBe(valid)
   })
@@ -50,7 +54,7 @@ test('get/id/tasks',()=>{
 
 test('get invalid ',()=>{
 
-    return getfromdb(invalid)
+    return gettasks(invalid)
     .then(res=>{
       expect(res).toBeNull();
   })
