@@ -3,7 +3,6 @@ const bodyParser = require('body-parser');
 const pg = require('pg');
 const users = express.Router();
 
-
 const pool = new pg.Pool({
     user: 'postgres',
     host: 'localhost',
@@ -15,10 +14,6 @@ const pool = new pg.Pool({
 users.use(bodyParser.json());
 users.get('/', (req, res) => res.status(200).send('Hello World!'));
 
-
-users.get('/:id/tasks',(req,res)=> {
-      res.status(200).send("Hello "+req.params.id/*query per il database*/);
-});
 
 users.get('/:id/exams', async(req,res)=> {
   console.log(""+req.params.id);
@@ -34,6 +29,34 @@ users.get('/:id/exams', async(req,res)=> {
 });
 
 
+
+
+
+users.get('/:id/tasks', async(req,res)=> {
+console.log(req.params.id);
+res.status(200).send("ciao "+req.params.id)
+  var result=await gettasks(req.params.id);
+  if(result){
+         var resultJson = JSON.parse(JSON.stringify(result));
+         res.status(200).send(resultJson);
+     }
+     else{
+         res.status(404).end();
+     }
+  });
+
+
+async function gettasks(id){
+  let queryText = 'SELECT * FROM "tasks" WHERE creator==$1';
+  let queryParams = [id];
+  let result = await pool.query(queryText, queryParams);
+  let exams;
+  if(result.rowCount!=0){
+     exams = JSON.parse(JSON.stringify(result));
+  }else {
+     return null;
+  }
+}
 //GET EXAMS FROM DB WHERE CREATOR==ID
 
 async function getexams(id){
@@ -53,7 +76,8 @@ async function getexams(id){
     }
 }
 
-module.exports = {
+module.exports ={
   users: users,
+  gettasks : gettasks,
   getexams: getexams
-};
+}
