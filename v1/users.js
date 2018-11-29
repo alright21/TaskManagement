@@ -23,7 +23,7 @@ users.get('/:id/tasks',(req,res)=> {
 users.get('/:id/exams', async(req,res)=> {
   console.log(""+req.params.id);
   res.status(200).send("ciao "+req.params.id);
-  let result=await getfromdb(req.params.id);
+  let result=await getexams(req.params.id);
   if(result){
        var resultJson = JSON.parse(JSON.stringify(result));
        res.status(200).send(resultJson);
@@ -36,7 +36,7 @@ users.get('/:id/exams', async(req,res)=> {
 
 //GET EXAMS FROM DB WHERE CREATOR==ID
 
-async function getfromdb(id){
+async function getexams(id){
   if(!id){
   return null;
     }
@@ -55,5 +55,5 @@ async function getfromdb(id){
 
 module.exports = {
   users: users,
-  getfromdb: getfromdb
+  getexams: getexams
 };

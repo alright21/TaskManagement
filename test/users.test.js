@@ -1,7 +1,7 @@
 var fetch = require ('node-fetch');
 const bodyParser = require('body-parser');
-const exams = require('../v1/exams');
-const getfromdb = require('../v1/users').getfromdb;
+const users  = require('../v1/users');
+const getexams = require('../v1/users').getexams;
 const root = process.env.SERVER_URL || 'http://localhost:3000'
 const user_root = root+ '/v1/users';
 
@@ -31,7 +31,7 @@ function getTest(){
   });
 }
 
-
+var server;
 beforeAll(function () {
   server = require('../index');
 });
@@ -49,7 +49,7 @@ test('get', ()=>{
 
 
 test('get/users/id/exams',()=>{
-    return getfromdb(valid.id)
+    return getexams(valid.id)
     .then(res=>{
       expect(res).toBe(200);
       return res.json();
@@ -60,7 +60,7 @@ test('get/users/id/exams',()=>{
 });
 
 test('get invalid ',()=>{
-    return getfromdb(invalid)
+    return getexams(invalid)
     .then(res=>{
       expect(res).toBeNull();
   })
