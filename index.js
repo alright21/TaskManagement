@@ -23,4 +23,14 @@ app.get('/', (req, res) => res.status(200).send('Hello World!'));
  
 var server = app.listen(PORT, () => console.log('Example app listening on port '+ PORT));
 
+process.on('SIGTERM', function(){
+    server.close();
+});
+process.on('SIGKILL', function(){
+    server.close();
+});
+process.on('SIGINT', function(){
+    server.close();
+});
+
 module.exports = server;

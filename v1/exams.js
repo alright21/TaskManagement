@@ -36,15 +36,21 @@ exams.get('/:id', async (req, res) =>{
 async function insertExamIntoDatabase(exam){
     // check creatorId exists into database
     let isUser = await getUserById(exam.creator);
-    if(!isUser)
+    if(!isUser){
+        console.log("DEBUG: L'utente che inserisci come creatore dell'esame non esiste");
         return null;
+    }
+        
 
     // check every tasks exist into database
     let tasklist = exam.task_list;
     for(i in tasklist){
         let isTask = await getTaskById(tasklist[i]);
-        if(!isTask)
+        if(!isTask){
+            console.log("DEBUG: Qualcuna delle task che provi a inserire non esiste");
             return null;
+        }
+            
     }
 
     // insert exam into database
@@ -55,8 +61,11 @@ async function insertExamIntoDatabase(exam){
     let res = await pool.query(queryText, queryParam);
     if(res)
         insertExam = JSON.parse(JSON.stringify(res.rows[0]));
-    else
+    else{
+        console.log("DEBUG: L'inserimento dell'esame nel db non va a buon termine");
         return null;
+    }
+        
 
 
     // insert every task into database table "task in exams", creating a relation task-exam
@@ -72,7 +81,7 @@ async function insertExamIntoDatabase(exam){
 
     // put a new param into the json called task_list
     insertExam.task_list = tasklist2;
-
+    console.log("DEBUG: Return exam");
     // return the exam with the id and the tasks list
     return insertExam;
 }
