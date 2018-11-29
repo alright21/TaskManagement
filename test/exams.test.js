@@ -96,10 +96,10 @@ test('valid exam is successful created and inserted into db', ()=>{
   return insertExamIntoDatabase(validExam)
   .then(exam =>{
     return getExamById(exam.id)
-    .then(res =>{
-      validExam.id = res.id;
-      expect(res).toEqual(validExam);
-    })
+  })
+  .then(res =>{
+    validExam.id = res.id;
+    expect(res).toEqual(validExam);
   })
 });
 
