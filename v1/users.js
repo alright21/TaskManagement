@@ -11,7 +11,6 @@ users.use(bodyParser.urlencoded({ extended: true }));
 
 users.post('/', async (req, res) => {
 	const toInsert = req.body;
-	
 	//Check if user already in
 	let check = await getUserByEmail(toInsert.email);
 	if(check){
