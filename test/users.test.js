@@ -117,10 +117,10 @@ test('Get user response body if found', () => {
 			//Object values
 			expect(getResponseJson).toEqual({
 					'id': 1,
-					'name': 'exa',
-					'surname': 'mple',
-					'email': 'exa.mple@gmail.com',
-					'password': 'abc'
+					'name': 'francesco',
+					'surname': 'da dalt',
+					'email': 'francescodadalt@hotmail.it',
+					'password': 'lol'
 			});
 	});
 });

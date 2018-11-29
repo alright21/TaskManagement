@@ -43,7 +43,7 @@ submissions.put('/:id', async (req, res)=>{
 
     if(result){
         var resultJson = JSON.parse(JSON.stringify(result));
-        await console.log(resultJson + '\n\n\n\n');
+        //await console.log(resultJson + '\n\n\n\n');
         res.status(201).send(resultJson);
     }else{
         res.status(409).end();
