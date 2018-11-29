@@ -71,7 +71,7 @@ function updateSubmission(id,toModify){
   })
 }
 
-function getSubmission(id){
+function getSubmission(id){ 
   return fetch(SERVER_URL + '/' + id,{
     method: 'GET',
     headers: {
@@ -120,6 +120,14 @@ test('test the creation of a valid new Submission using node-fetch',() =>{
     })
   })});
 
+test('if the submission is null, should return 400', ()=> {
+
+  return createSubmission(null)
+  .then(response => {
+    expect(response.status).toBe(400);
+  });
+
+});
 test('if the user does not exists, the function should return 400', ()=>{
 
   return createSubmission(invalidUserSubmission)
@@ -145,6 +153,25 @@ test('if the exam does not exists, the function should return 400', ()=>{
 });
 
 //TESTS FOR insertSubmissionIntoDatabase
+
+
+
+test('if the arguments length is 2, should return null', () =>{
+
+  return insertSubmissionIntoDatabase(validSubmission,invalidExamSubmission)
+  .then(res =>{
+    expect(res).toBeNull();
+  })
+});
+
+test('if the arguments length is 0, should return null', () =>{
+
+  return insertSubmissionIntoDatabase()
+  .then(res =>{
+    expect(res).toBeNull();
+  })
+});
+
 test('this test verify that a valid submission is added to the database correctly', ()=>{
 
 
@@ -155,6 +182,14 @@ test('this test verify that a valid submission is added to the database correctl
       validSubmission.id = res.id;
       expect(res.user).toBe(validSubmission.user);
     })
+  })
+});
+
+test('if the submission is null, should return null', ()=>{
+
+  return insertSubmissionIntoDatabase(null)
+  .then(res =>{
+    expect(res).toBeNull();
   })
 });
 
@@ -183,6 +218,22 @@ test('if the exam is invalid, should return null', ()=>{
 });
 
 //TEST for getSubmissionById
+
+test('if the arguments length is 2, should return null', () =>{
+
+  return getSubmissionById(validSubmission.id,validSubmission.id)
+  .then(res =>{
+    expect(res).toBeNull();
+  })
+});
+
+test('if the arguments length is 0, should return null', () =>{
+
+  return getSubmissionById()
+  .then(res =>{
+    expect(res).toBeNull();
+  })
+});
 
 test('if the submission is valid, getting it should get return the submission', ()=>{
 
@@ -220,7 +271,7 @@ test('if the id is null, should return 400', () =>{
 
 test('if the id is 0, should return 400', () =>{
 
-  return getSubmission(null)
+  return getSubmission(0)
   .then(res =>{
     expect(res.status).toBe(400);
   });

@@ -1,6 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const pg = require('pg');
+const getUserById = require('./users').getUserById;
+const getExamById = require('./exams').getExamById;
 const submissions = express.Router();
 
 const config = require('../db_config');
@@ -12,8 +14,10 @@ submissions.get('/', (req, res) => res.status(200).send('Hello World!'));
 
 submissions.post('/',async (req, res) =>{
 
-    // console.log('post');
-    // console.log(req.body);
+
+    if(!req.body){
+        res.status(400).end();
+    }
     var result = await insertSubmissionIntoDatabase(req.body);
     // var submission = req.body;
     
@@ -32,7 +36,7 @@ submissions.post('/',async (req, res) =>{
 
 submissions.put('/:id', async (req, res)=>{
 
-    const id = req.params.id;
+    const id = Number.parseInt(req.params.id);
     const toModify = req.body;
     if(!id){
         res.status(400).end();
@@ -52,7 +56,7 @@ submissions.put('/:id', async (req, res)=>{
 
 submissions.get('/:id', async (req,res)=> {
 
-    const id = req.params.id;
+    const id = Number.parseInt(req.params.id);
     console.log('id: ' + id);
     if(!id){
         console.log('entro if');
@@ -73,6 +77,12 @@ submissions.get('/:id', async (req,res)=> {
 
 async function insertSubmissionIntoDatabase (submission){
 
+    if(arguments.length !== 1){
+        return null;
+    }
+    if(!submission){
+        return null;
+    }
     //Qui ci andrà la logica per controllare che user, task e exam esistano per evitare problemi di database
     var isUser = await getUserById(submission.user);
     var isTask = await getTaskById(submission.task);
@@ -101,6 +111,10 @@ async function insertSubmissionIntoDatabase (submission){
 
 async function getSubmissionById(id){
 
+    if(arguments.length !== 1){
+        return null;
+    }
+
     if(!id){
         return null;
     }else{
@@ -120,25 +134,6 @@ async function getSubmissionById(id){
     }
 }
 
-async function getUserById(id){
-
-    if(!id){
-        return null;
-    }else{
-
-        var queryText = 'SELECT * FROM "user" WHERE id=$1';
-        var queryParams = [id];
-        var result = await pool.query(queryText, queryParams);
-        // console.log("result rows: " + Object.getOwnPropertyNames(result.rows[0]).length);
-        // for (const i of result.rows) console.log(i)
-        if(result.rowCount != 0){
-            return result.rows[0];
-        }else{
-            return null;
-        }
-
-    }
-}
 
 
 async function getTaskById(id){
@@ -160,29 +155,6 @@ async function getTaskById(id){
 
     }
 }
-
-async function getExamById(id){
-
-    if(!id){
-        return null;
-    }else{
-
-        var queryText = 'SELECT * FROM "exam" WHERE id=$1';
-        var queryParams = [id];
-        var result = await pool.query(queryText, queryParams);
-        // console.log("result rows: " +Object.getOwnPropertyNames(result.rows[0]).length);
-        // for (const i of result.rows) console.log(i)
-        if(result.rowCount != 0){
-            return result.rows[0];
-        }else{
-            return null;
-        }
-
-    }
-}
-
-
-
 
 
 async function updateSubmissionInDatabase(id, toModify){
