@@ -4,11 +4,11 @@ const pg = require('pg');
 const users = express.Router();
 
 const pool = new pg.Pool({
-	user: 'postgres',
-	host: 'localhost',
-	database: 'taskmanagement',
-	password: 'abc123',
-	port: '5432'
+	user: process.env.USER,
+	host: process.env.HOST,
+	database: process.env.DATABASE,
+	password: process.env.PASSWORD,
+	port: process.env.PORT
 });
 
 users.use(bodyParser.json());
