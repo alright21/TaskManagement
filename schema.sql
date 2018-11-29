@@ -1,11 +1,11 @@
-DROP TABLE "permissions";
-DROP TABLE "task_in_exams";
-DROP TABLE "review";
-DROP TABLE "submission";
-DROP TABLE "class";
-DROP TABLE "task";
-DROP TABLE "exam";
-DROP TABLE "user";
+DROP TABLE IF EXISTS "permissions";
+DROP TABLE IF EXISTS "task_in_exams";
+DROP TABLE IF EXISTS "review";
+DROP TABLE IF EXISTS "submission";
+DROP TABLE IF EXISTS "class";
+DROP TABLE IF EXISTS "task";
+DROP TABLE IF EXISTS "exam";
+DROP TABLE IF EXISTS "user";
 
 CREATE TABLE "user"
 (
@@ -59,7 +59,6 @@ CREATE TABLE "review"
 	
 );
 
-
 CREATE TABLE "task_in_exams"
 (
 	"task" integer REFERENCES "task"("id") ON DELETE CASCADE,
@@ -77,5 +76,7 @@ CREATE TABLE "permissions"
 
 INSERT INTO "user" ("name", "surname", "email", "password") VALUES ('francesco', 'da dalt', 'francescodadalt@hotmail.it', 'lol');
 INSERT INTO "task" ("creator", "task_type", "question", "example", "mark") VALUES (1, 1, 'blablabla', 'blablabla', 30);
+INSERT INTO "task" ("creator", "task_type", "question", "example", "mark") VALUES (1, 1, 'blablabla2', 'blablabla2', 30);
 INSERT INTO "exam" ("creator", "deadline", "mark") VALUES (1, 500, 30);
 INSERT INTO "task_in_exams" VALUES(1,1);
+INSERT INTO "task_in_exams" VALUES(2,1);
