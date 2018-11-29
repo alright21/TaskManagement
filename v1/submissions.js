@@ -3,13 +3,8 @@ const bodyParser = require('body-parser');
 const pg = require('pg');
 const submissions = express.Router();
 
-const pool = new pg.Pool({
-    user: 'postgres',
-    host: 'localhost',
-    database: 'taskmanagement',
-    password: 'root',
-    port: '5432'
-})
+const config = require('../db_config');
+const pool = new pg.Pool(config);
 
 submissions.use(bodyParser.json());
 submissions.get('/', (req, res) => res.status(200).send('Hello World!'));
