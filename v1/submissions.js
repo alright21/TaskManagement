@@ -19,11 +19,9 @@ submissions.post('/',async (req, res) =>{
         res.status(400).end();
     }
     var result = await insertSubmissionIntoDatabase(req.body);
-    // var submission = req.body;
-    
-    // console.log(result);
+
     if(result){
-        // console.log('entro if');
+
         var resultJson = JSON.parse(JSON.stringify(result));
         res.status(201).send(resultJson);
     }
@@ -47,7 +45,7 @@ submissions.put('/:id', async (req, res)=>{
 
     if(result){
         var resultJson = JSON.parse(JSON.stringify(result));
-        //await console.log(resultJson + '\n\n\n\n');
+
         res.status(201).send(resultJson);
     }else{
         res.status(409).end();
@@ -89,14 +87,15 @@ async function insertSubmissionIntoDatabase (submission){
     var isExam = await getExamById(submission.exam);
     
     if(!isUser || !isExam || !isTask){
-        // console.log("Null values");
+
         return null;
     }else{
 
         var queryText = 'INSERT INTO "submission" ("user","task","exam", "answer") VALUES($1,$2,$3,$4) RETURNING *';
         var queryParams = [submission.user, submission.task, submission.exam, submission.answer]; 
         
-        // console.log(submission);
+
+        //non sono sicuro che serva
         var result = await pool.query(queryText, queryParams);
         if(result){
             return result.rows[0];
@@ -122,10 +121,9 @@ async function getSubmissionById(id){
         var queryText = 'SELECT * FROM "submission" WHERE id=$1';
         var queryParams = [id];
         var result = await pool.query(queryText, queryParams);
-        // console.log("result rows: " + Object.getOwnPropertyNames(result.rows[0]).length);
-        // for (const i of result.rows) console.log(i)
+
         if(result.rowCount != 0){
-            // console.log("result rows: " + result.rows[0]);
+
             return result.rows[0];
         }else{
             return null;
@@ -145,8 +143,8 @@ async function getTaskById(id){
         var queryText = 'SELECT * FROM "task" WHERE id=$1';
         var queryParams = [id];
         var result = await pool.query(queryText, queryParams);
-        // console.log("result rows: " + Object.getOwnPropertyNames(result.rows[0]).length);
-        // for (const i of result.rows) console.log(i)
+
+        //non sono sicuro che serva
         if(result.rowCount != 0){
             return result.rows[0];
         }else{
@@ -159,7 +157,11 @@ async function getTaskById(id){
 
 async function updateSubmissionInDatabase(id, toModify){
 
-    if(!id){
+    if(arguments.length !== 2){
+        return null;
+    }
+    id = Number.parseInt(id);
+    if(!id || !toModify){
         return null;
     }else{
         var isSubmission = await getSubmissionById(id);
@@ -182,7 +184,7 @@ async function updateSubmissionInDatabase(id, toModify){
 
                 var result = await pool.query(queryText,queryParams);
 
-                //console.log(result);
+                //non sono sicuro che serva
                 if(result.rowCount != 0){
                     return result.rows[0];
                 }else{

@@ -94,7 +94,7 @@ afterAll(function () {
 
 
 test('test the creation of a valid new Submission using node-fetch',() =>{
-  // expect.assertions(1);
+
   return createSubmission(validSubmission)
   .then(response => {
     expect(response.status).toBe(201);
@@ -311,6 +311,13 @@ test('if the id exists in the db, should return 200 and the submission', () => {
 //TEST put submission
 
 
+test('if the id is null, should return 400', () => {
+  return updateSubmission(null, modifiedSubmissionStudent)
+  .then(res => {
+    expect(res.status).toBe(400);
+  });
+});
+
 test('testing a valid update', ()=>{
 
   return updateSubmission(validSubmission.id, validSubmission)
@@ -351,6 +358,46 @@ test('if the submission modify the user, should return 409', ()=>{
   });
 });
 
+test('if the arguments length is 3, should return null', () => {
+
+  return updateSubmissionInDatabase(validSubmission.id, modifiedSubmissionStudent, modifiedSubmissionStudent)
+  .then(res =>{
+    expect(res).toBeNull();
+  })
+});
+
+test('if the arguments length is 1, should return null', () => {
+
+  return updateSubmissionInDatabase(validSubmission.id)
+  .then(res =>{
+    expect(res).toBeNull();
+  })
+});
+
+test('if id is null, should return null', ()=> {
+
+  return updateSubmissionInDatabase(null, modifiedSubmissionStudent)
+  .then(res => {
+    expect(res).toBeNull();
+  })
+});
+
+test('if the submission is null, should return null', () => {
+
+  return updateSubmissionInDatabase(validSubmission.id, null)
+  .then(res => {
+    expect(res).toBeNull();
+  });
+
+});
+
+test('if the submission does not exist, should return null', () => {
+
+  return updateSubmissionInDatabase(100000, modifiedSubmissionStudent)
+  .then(res => {
+    expect(res).toBeNull();
+  });
+});
 
 test('if you,as a student, modify a submission, should get the same submission updated, but with the same final-mark property', ()=>{
 
