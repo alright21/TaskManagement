@@ -11,14 +11,7 @@ const exams_root = user_root+'/1/exams';
 
 
 var validtask={
-  id: 15,
-  creator:1,
-  deadline: 200,
-  mark: 30,
-};
-
-var invalidtask={
-  id: -1,
+  id: 1,
   creator:1,
   deadline: 200,
   mark: 30,
@@ -29,7 +22,7 @@ var validexam={
   id: 1,
   creator: 2,
   task_type: 2,
-  question: "quanto è bello ciccio?"",
+  question: "quanto è bello ciccio?",
   example: "tanto bello",
   mark: 30,
   }
@@ -63,30 +56,32 @@ test('get', ()=>{
 
 
 test('get valid exam',()=>{
-    return getexams(valid.id)
+    return getexams(validexam.creator)
     .then(res=>{
       expect(res).toBe(200);
       return res.json();
     })
     .then(jres => {
-      expect(jres.id).toEqual(valid)
+      expect(jres.id).toEqual(validexam)
     })
 });
 
 test('get invalid exam',()=>{
-    return getexams(invalid)
-  
+    return getexams(invalidid)
+    .then(res =>{
+      expect(res).toBeNull();
+    })
+});
+
 test('get valid task',()=>{
-    return gettasks(valid)
+    return gettasks(validtask.creator)
     .then(res=>{
-      expect(res.id).toBe(valid)
+      expect(res.id).toBe(validtask)
   })
 });
 
 test('get invalid task',()=>{
-
-    return gettasks(invalid)
-
+    return gettasks(invalidid)
     .then(res=>{
       expect(res).toBeNull();
   })

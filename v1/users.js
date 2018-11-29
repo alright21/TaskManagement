@@ -30,8 +30,6 @@ users.get('/:id/exams', async(req,res)=> {
 
 
 
-
-
 users.get('/:id/tasks', async(req,res)=> {
 console.log(req.params.id);
 res.status(200).send("ciao "+req.params.id)
