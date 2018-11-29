@@ -63,6 +63,7 @@ afterAll(function() {
 
 const postClass = function(newClass){
 	return fetch(SERVER_URL, {
+
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
@@ -84,7 +85,6 @@ function getClass(id){
 //Test cases:
 
 // 1) TESTING POST/classes
-
 test('Post class response, case of a valid new Class', () => {
 	return postClass(exampleValidClass)
 		.then(postResponse => {expect(postResponse.status).toBe(201)});

@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const classes = express.Router();
 const pg = require('pg');
 
-const pool = new pg.Pool( {
+const pool = new pg.Pool({
 	user: 'postgres',
 	host: 'localhost',
 	database: 'taskmanagement',
@@ -13,8 +13,8 @@ const pool = new pg.Pool( {
 classes.use(bodyParser.json());
 
 //classes.get('/', (req, res) => res.status(200).send('Hello World!'));
-
 /*const postedClasses = [];
+const postedClasses = [];
 classes.post('/', function(req, res) {
 	const newClass = req.body;
 	newClass.id = 1;
@@ -24,6 +24,7 @@ classes.post('/', function(req, res) {
 }); */
 
 /*CODICE CHE SERVIRA' UNA VOLTA CHE AVRO' IL DATABASE*/
+
 
 classes.post('/', async(req, res) => {
 	var result = await insertClassIntoDatabase(req.body);
