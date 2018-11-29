@@ -37,7 +37,7 @@ async function insertExamIntoDatabase(exam){
     // check creatorId exists into database
     let isUser = await getUserById(exam.creator);
     if(!isUser){
-        console.log("DEBUG: L'utente che inserisci come creatore dell'esame non esiste");
+        //console.log("DEBUG: L'utente che inserisci come creatore dell'esame non esiste");
         return null;
     }
         
@@ -47,7 +47,7 @@ async function insertExamIntoDatabase(exam){
     for(i in tasklist){
         let isTask = await getTaskById(tasklist[i]);
         if(!isTask){
-            console.log("DEBUG: Qualcuna delle task che provi a inserire non esiste");
+            //console.log("DEBUG: Qualcuna delle task che provi a inserire non esiste");
             return null;
         }
             
@@ -62,7 +62,7 @@ async function insertExamIntoDatabase(exam){
     if(res)
         insertExam = JSON.parse(JSON.stringify(res.rows[0]));
     else{
-        console.log("DEBUG: L'inserimento dell'esame nel db non va a buon termine");
+        //console.log("DEBUG: L'inserimento dell'esame nel db non va a buon termine");
         return null;
     }
         
@@ -81,7 +81,7 @@ async function insertExamIntoDatabase(exam){
 
     // put a new param into the json called task_list
     insertExam.task_list = tasklist2;
-    console.log("DEBUG: Return exam");
+    //console.log("DEBUG: Return exam");
     // return the exam with the id and the tasks list
     return insertExam;
 }
