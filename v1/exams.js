@@ -3,13 +3,9 @@ const bodyParser = require('body-parser');
 const pg = require('pg');
 const exams = express.Router();
 
-const pool = new pg.Pool({
-    user: 'postgres',
-    host: 'localhost',
-    database: 'travis_ci_test',
-    password: 'root',
-    port: '5432'
-})
+const config = require('../db_config');
+const pool = new pg.Pool(config);
+
 
 exams.post('/', async (req, res) =>{
     let results = await insertExamIntoDatabase(req.body);

@@ -3,14 +3,8 @@ const bodyParser = require('body-parser');
 const pg = require('pg');
 const users = express.Router();
 
-const pool = new pg.Pool({
-	user: process.env.USER,
-	host: process.env.HOST,
-	database: process.env.DATABASE,
-	password: process.env.PASSWORD,
-	port: process.env.PORT_DB,
-	ssl: true
-});
+const config = require('../db_config');
+const pool = new pg.Pool(config);
 
 users.use(bodyParser.json());
 users.use(bodyParser.urlencoded({ extended: true }));
