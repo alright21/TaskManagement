@@ -1,18 +1,53 @@
-const fetch = require('node-fetch');
-const root = 'http://localhost:3000';
-//const insertClassInToDatabase = require('../v1/classes').classes;
+const fetch = require ('node-fetch');
+const PORT = process.env.SERVER_URL || 3000;
+const SERVER_URL = 'http://localhost:' + PORT + '/v1/classes';
+const exams = require('../v1/classes').classes;
+//const insertClassIntoDatabase = require('../v1/classes').insertClassIntoDatabase;
+//const getClassById = require('../v1/classes').getClassById;
 
 var server;
+const validId = 1;
+const invalidId = 0;
 
 //Example of what a Class should contain
 const exampleValidClass = {
 	//'id': 5,
 	'name': 'class1',
 	'prof': 'prof1',
-	'assistants': ['assistant1', 'assistant2'], //NB: array's element are type "user"
+	'description': 'Course of SE'
+	//'assistants': ['assistant1', 'assistant2'], //NB: array's element are type "user"
+	//'students': ['student1', 'student2', 'student3'] //same type of assistants
+};
+
+const exampleInvalidName =  {
+	'name': '0',
+	'prof': 'prof1',
+	'description': 'Course of SE'
+	//'assistants': ['assistant1', 'assistant2'], //NB: array's element are type "user"
+	//'students': ['student1', 'student2', 'student3'] //same type of assistants
+};
+
+const exampleInvalidProf =  {
+	'name': 'class1',
+	'prof': '0',
+	'description': 'Course of SE'
+	//'assistants': ['assistant1', 'assistant2'], //NB: array's element are type "user"
+	//'students': ['student1', 'student2', 'student3'] //same type of assistants
+};
+
+/*const exampleInvalidAssist =  {
+	'name': 'class1',
+	'prof': 'prof1',
+	'assistants': ['assistant1', 'assistant2', 'assistant3'], //NB: array's element are type "user"
 	'students': ['student1', 'student2', 'student3'] //same type of assistants
 };
 
+const exampleInvalidStud =  {
+	'name': 'class1',
+	'prof': 'prof1',
+	'assistants': ['assistant1', 'assistant2'], //NB: array's element are type "user"
+	'students': ['student1', 'student2'] //same type of assistants
+};*/
 
 //Functions executed before (and after) doing test cases, to open and close
 //the server:
@@ -27,7 +62,8 @@ afterAll(function() {
 
 
 const postClass = function(newClass){
-	return fetch(root + '/v1/classes', {
+	return fetch(SERVER_URL, {
+
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
@@ -37,9 +73,18 @@ const postClass = function(newClass){
 	});
 }
 
+function getClass(id){
+  return fetch(SERVER_URL + '/' + id,{
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json'
+    }
+  });
+}
+
 //Test cases:
 
-// 1) Testing if the post was successful, looking if the status is "201"
+// 1) TESTING POST/classes
 test('Post class response, case of a valid new Class', () => {
 	return postClass(exampleValidClass)
 		.then(postResponse => {expect(postResponse.status).toBe(201)});
@@ -54,38 +99,67 @@ test('Post class response body', () => {
 			expect(typeof postResponseJson).toEqual('object');
 			expect(postResponseJson).toHaveProperty('name');
 			expect(postResponseJson).toHaveProperty('prof');
-			expect(postResponseJson).toHaveProperty('assistants');
-			expect(postResponseJson).toHaveProperty('students');
+			expect(postResponseJson).toHaveProperty('description');
+			//expect(postResponseJson).toHaveProperty('assistants');
+			//expect(postResponseJson).toHaveProperty('students');
 			//Keys types
 			expect(typeof postResponseJson).toEqual('object');
 			expect(typeof postResponseJson).toEqual('object');
-			expect(typeof postResponseJson).toEqual('object');
-			expect(typeof postResponseJson).toEqual('object');
+			expect(typeof postResponseJson).toEqual('string');
+			//expect(typeof postResponseJson).toEqual('object');
+			//expect(typeof postResponseJson).toEqual('object');
 			//Object values
 			expect(postResponseJson).toMatchObject({
 				//'id': 5,
 				'name': 'class1',
 				'prof': 'prof1',
-				'assistants': ['assistant1', 'assistant2'],
-				'students': ['student1', 'student2', 'student3']
+				'description': 'Course of SE'
+				//'assistants': ['assistant1', 'assistant2'],
+				//'students': ['student1', 'student2', 'student3']
 			});
 		});
 });
 
-//3) Testing for insertClassInToDatabase
+test('if class\'s prof does not exist, the API should return 400', () => {
+  return postClass(exampleInvalidProf)
+  .then(response => {
+    expect(response.status).toBe(400);
+  })
+});
 
-//PER POTER FUNZIONARE HO BISOGNO DELLA FUNZIONE DI GET CLASS
+/*test('if the assistants\'s list is incorrect, then the API should return 400', () => {
+  return postClass(exampleInvalidAssist)
+  .then(response =>{
+    expect(response.status).toBe(400);
+  })
+});
 
-/*test('to verify if a valid class is added correctly to the db', () => {
-	return insertClassInToDatabase(exampleValidClass)
-		.then(created => {
-			return getClassById(created.id)
-				.then(res => {
-					exampleValidClass.id = res.id;
-					expect(res.name).toBe(exampleValidClass.name);
-				})
-		})
+test('if the students\'s list is incorrect, then the API should return 400', () => {
+  return postClass(exampleInvalidStud)
+  .then(response =>{
+    expect(response.status).toBe(400);
+  })
 });*/
 
-//4) DA INSERIRE DOPO IL GET
-// Testare se è valido, allora mi ritorna la classe.
+
+//2) TESTING GET/classes/{id}
+
+test('test if valid class id returns the selected class', () => {
+  console.log(validId);
+  return getClass(validId)
+    .then(response => {
+      expect(response.status).toBe(200);
+      return response.json();
+    })
+    .then(jsonRes => {
+      expect(jsonRes.id).toEqual(validId);
+    })
+});
+
+test('test if invalid class id returns 404 not found', () => {
+  return getClass(invalidId)
+    .then(response => {
+      expect(response.status).toBe(404);
+    })
+});
+
