@@ -7,7 +7,7 @@ const pool = new pg.Pool({
     user: 'postgres',
     host: 'localhost',
     database: 'travis_ci_test',
-    password: '',
+    password: 'root',
     port: '5432'
 })
 
@@ -24,9 +24,9 @@ exams.post('/', async (req, res) =>{
 });
 
 exams.get('/:id', async (req, res) =>{
-    console.log(req.params.id);
+    //console.log(req.params.id);
     let results = await getExamById(req.params.id);
-    console.log(results);
+    //console.log(results);
     if(results){
         var resultJson = JSON.parse(JSON.stringify(results));
         res.status(200).send(resultJson);

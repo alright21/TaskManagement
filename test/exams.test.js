@@ -120,7 +120,7 @@ test('wrong exam can\'t shouldn\'t be atted to database. Case: invalid task list
 // Test for API GET/exams/{id}
 
 test('test if valid exam id return the selected exam', ()=>{
-  console.log(validId);
+  //console.log(validId);
   return getExam(validId)
     .then(response => {
       expect(response.status).toBe(200);
