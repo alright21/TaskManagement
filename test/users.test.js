@@ -47,7 +47,7 @@ server.close();
 });
 
 
-test('get', ()=>{
+test('Base GET, 200', ()=>{
   return getTest()
     .then(res => {
       expect(res.status).toBe(200);
@@ -55,7 +55,7 @@ test('get', ()=>{
 });
 
 
-test('get valid exam',()=>{
+test('get valid exam, 200',()=>{
     return getexams(validexam.creator)
     .then(res=>{
       expect(res).toBe(200);
@@ -66,21 +66,21 @@ test('get valid exam',()=>{
     })
 });
 
-test('get invalid exam',()=>{
-    return getexams(invalidid)
-    .then(res =>{
-      expect(res).toBeNull();
-    })
-});
-
-test('get valid task',()=>{
+test('get valid task, 200',()=>{
     return gettasks(validtask.creator)
     .then(res=>{
       expect(res.id).toBe(validtask)
   })
 });
 
-test('get invalid task',()=>{
+test('get invalid exam, NULL',()=>{
+    return getexams(invalidid)
+    .then(res =>{
+      expect(res).toBeNull();
+    })
+});
+
+test('get invalid task, NULL',()=>{
     return gettasks(invalidid)
     .then(res=>{
       expect(res).toBeNull();
