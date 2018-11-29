@@ -13,10 +13,10 @@ function getTest(){
   });
 }
 
-beforeEach(function () {
+beforeAll(function () {
   server = require('../index');
 });
-afterEach(function () {
+afterAll(function () {
   server.close();
 });
 test('prova', ()=>{
