@@ -74,9 +74,9 @@ CREATE TABLE "permissions"
 	PRIMARY KEY("user","class")
 );
 
-INSERT INTO "user" ("name", "surname", "email", "password") VALUES ('francesco', 'da dalt', 'francescodadalt@hotmail.it', 'lol');
-INSERT INTO "task" ("creator", "task_type", "question", "example", "mark") VALUES (1, 1, 'blablabla', 'blablabla', 30);
-INSERT INTO "task" ("creator", "task_type", "question", "example", "mark") VALUES (1, 1, 'blablabla2', 'blablabla2', 30);
-INSERT INTO "exam" ("creator", "deadline", "mark") VALUES (1, 500, 30);
+INSERT INTO "user" ("id", "name", "surname", "email", "password") VALUES (1, 'francesco', 'da dalt', 'francescodadalt@hotmail.it', 'lol');
+INSERT INTO "task" ("id", "creator", "task_type", "question", "example", "mark") VALUES (1, 1, 1, 'blablabla', 'blablabla', 30);
+INSERT INTO "task" ("id", "creator", "task_type", "question", "example", "mark") VALUES (2, 1, 1, 'blablabla2', 'blablabla2', 30);
+INSERT INTO "exam" ("id", "creator", "deadline", "mark") VALUES (1, 1, 500, 30);
 INSERT INTO "task_in_exams" VALUES(1,1);
 INSERT INTO "task_in_exams" VALUES(2,1);

@@ -13,7 +13,7 @@ const validExam = {
 };
 
 const invalidExamCreator = {
-  "creator": 0,
+  "creator": 0, // non esiste l'utente numero 0
   "deadline": 500,
   "mark": 30,
   "task_list": [1, 2]
@@ -23,7 +23,7 @@ const invalidTaskList = {
   "creator": 1,
   "deadline": 500,
   "mark": 30,
-  "task_list": [1, 2, 3]
+  "task_list": [1, 2, 0] // non esiste la task numero 0
 };
 
 const validId = 1;
