@@ -405,6 +405,26 @@ paths:
         503:
           description: Service unavailable.
   
+  /submissions/{id}:
+    put:
+      parameter:
+        - in: path
+          name: id
+          required: true
+          type: integer
+          description: the submission ID
+        - in: body
+          name: submission
+          schema:
+              $ref: "#/definitions/submission"
+      responses:
+        204:
+          description: Submission updated successfully.
+        409: 
+          description: Conflict. Can't update.
+
+
+  
 definitions:
   user:
     type: object

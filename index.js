@@ -1,10 +1,10 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
-const users = require('./v1/users');
-const exams = require('./v1/exams');
+const users = require('./v1/users').users;
+const exams = require('./v1/exams').exams;
 const tasks = require('./v1/tasks');
-const submissions = require('./v1/submissions');
+const submissions = require('./v1/submissions').submissions;
 const classes = require('./v1/classes');
 const reviews = require('./v1/reviews');
 
@@ -21,6 +21,16 @@ const PORT = process.env.PORT || 3000
 
 app.get('/', (req, res) => res.status(200).send('Hello World!'));
  
-var server = app.listen(PORT, () => console.log('Example app listening on port'+ PORT));
+var server = app.listen(PORT, () => console.log('Example app listening on port '+ PORT));
+
+process.on('SIGTERM', function(){
+    server.close();
+});
+process.on('SIGKILL', function(){
+    server.close();
+});
+process.on('SIGINT', function(){
+    server.close();
+});
 
 module.exports = server;

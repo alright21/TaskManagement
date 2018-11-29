@@ -13,10 +13,10 @@ function getTest(){
   });
 }
 
-beforeEach(function () {
+beforeAll(function () {
   server = require('../index');
 });
-afterEach(function () {
+afterAll(function () {
   server.close();
 });
 test('prova', ()=>{
@@ -24,7 +24,5 @@ test('prova', ()=>{
   return getTest()
     .then(res => {
       expect(res.status).toBe(200);
-    });
-
-  
+    });  
 });
