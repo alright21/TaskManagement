@@ -3,29 +3,28 @@ const bodyParser = require('body-parser');
 const classes = express.Router();
 const pg = require('pg');
 
-/*const pool = new pg.Pool( {
+const pool = new pg.Pool({
 	user: 'postgres',
 	host: 'localhost',
 	database: 'taskmanagement',
 	port: '5432'
-});*/
+});
 
 classes.use(bodyParser.json());
 
 //classes.get('/', (req, res) => res.status(200).send('Hello World!'));
-
+/*const postedClasses = [];
 const postedClasses = [];
-
-
 classes.post('/', function(req, res) {
 	const newClass = req.body;
 	newClass.id = 1;
 	postedClasses.push(newClass);
 	res.status(201);
 	res.json(newClass).send();
-});
+}); */
 
-/*CODICE CHE SERVIRA' UNA VOLTA CHE AVRO' IL DATABASE
+/*CODICE CHE SERVIRA' UNA VOLTA CHE AVRO' IL DATABASE*/
+
 
 classes.post('/', async(req, res) => {
 	var result = await insertClassIntoDatabase(req.body);
@@ -38,25 +37,206 @@ classes.post('/', async(req, res) => {
 	{
 		res.status(404).end();
 	}
-});
+}); 
 
-async function insertClassIntoDatabase (classes){
-
- //controlli sui campi del db
-
-    var queryText = 'INSERT INTO "classes" ("name","prof","assistants", "students") VALUES($1,$2,$3,$4) RETURNING *';
-    var queryParams = [classes.name, classes.prof, classes.assistants, classes.students];     
-    var result = [1];
-    //var result = await pool.query(queryText, queryParams);
-    if(result)
+classes.get('/:id', async (req, res) =>{
+    console.log(req.params.id);
+    let results = await getClassById(req.params.id);
+    console.log(results);
+    if(results)
     {
-        return result.rows[0];
+        var resultJson = JSON.parse(JSON.stringify(results));
+        res.status(200).send(resultJson);
     }
     else
     {
+        res.status(404).end();
+    }
+});
+
+classes.put('/:id', async (req, res) => {
+
+    const id = req.params.id;
+    const toModify = req.body;
+    if(!id)
+    {
+        res.status(400).end();
+    }
+    var result = await updateClassInDatabase(id, toModify);
+    if(result)
+    {
+        var resultJson = JSON.parse(JSON.stringify(result));
+        await console.log(resultJson + '\n\n\n\n');
+        res.status(201).send(resultJson);
+    }
+    else
+    {
+        res.status(409).end();
+    }
+});
+
+
+async function insertClassIntoDatabase (classe){
+    
+    // check class's name exists into database
+    let isName = await getUserById(classe.name);
+    if(!isName)
+        return null;
+    
+    // check prof exists into database
+    let isUser = await getUserById(classe.prof);
+    if(!isUser)
+        return null;
+
+    // check every assistants exist into database
+    // check every students exists into database
+
+    // insert exam into database
+    let queryText = 'INSERT INTO "class" ("name", "prof", "description") VALUES ($1, $2, $3) RETURNING *';
+    let queryParam = [classe.name, classe.prof, classe.description];
+
+    let insertClass;
+    let res = await pool.query(queryText, queryParam);
+
+    if(res)
+        insertExam = JSON.parse(JSON.stringify(res.rows[0]));
+    else
+        return null;
+
+
+    // insert every assistant into database table "permissions"
+    // put a new param into the json called assistantList
+    // insert every students into database table "permissions"
+    // put a new param into the json called studentsList
+
+    // return the class with the id
+    return insertClass;
+} 
+
+//funzione di appoggio
+async function getUserById(id){
+    
+    if(!id)
+    {
         return null;
     }
-}  */
+    else
+    {
+        const queryText = 'SELECT * FROM "user" WHERE id=$1';
+
+        let queryParams = [id];
+        let result = await pool.query(queryText, queryParams);
+        
+        if(result.rowCount != 0)
+        {
+            return result.rows[0];
+        }
+        else
+        {
+            return null;
+        }
+    }
+}
+
+async function getClassById(id){
+
+    if(!id)
+    {
+        return null;
+    }
+    else
+    {
+        // select class from table "class"
+        let queryText = 'SELECT * FROM "class" WHERE id=$1';
+        let queryParams = [id];
+        let result = await pool.query(queryText, queryParams);
+		var classe; //Variabile chiamata "classe" perchè la parola "class" è riservata
+		if(result.rowCount != 0)
+        {
+            classe = JSON.parse(JSON.stringify(result.rows[0]));
+        }
+        else
+        {
+            return null;
+        }
+      
+/*
+        // select assistants for that class from table "permissions"
+        queryText = 'SELECT * FROM "permissions" WHERE permission=$1';
+        let assistantsList = []; // this variable is used to store tasks which are in exam
+        result = await pool.query(queryText, queryParams);
+        if(result.rowCount != 0)
+        {
+            for (var i = 0; i < result.rowCount; i++)
+            {
+                assistantsList.push(result.rows[i].user);
+            }
+        }
+        // add the list of assistants to class variable
+        classe.assistants = assistantsList;
+
+        // select students for that class from table "permissions"
+        queryText = 'SELECT * FROM "permissions" WHERE permission=$2';
+        let studentsList = []; // this variable is used to store tasks which are in exam
+        result = await pool.query(queryText, queryParams);
+        if(result.rowCount != 0)
+        {
+            for (var i = 0; i < result.rowCount; i++)
+            {
+                studentsList.push(result.rows[i].user);
+            }
+        }
+        classe.students = studentsList;
+*/
+        return classe;
+    }
+}
 
 
-module.exports = classes;
+async function updateClassInDatabase(id, toModify){
+
+    if(!id)
+    {
+        return null;
+    }
+    else
+    {
+        var isClass = await getClassById(id);
+
+        if(!isClass)
+        {
+            return null;
+        }
+        else
+        {
+        	if(isClass.prof != toModify.prof)
+        	{
+                return null;
+			}
+
+            else 
+            {
+            	console.log(id);
+	            var queryText = 'UPDATE "class" SET "name"=$1, "description"=$2 WHERE "id"=$3 RETURNING *';
+	            var queryParams = [toModify.name, toModify.description, id];
+	            var result = await pool.query(queryText,queryParams);
+	            //console.log(result);
+	            if(result.rowCount != 0)
+	            {
+	                return result.rows[0];
+	            }
+	            else
+	            {
+	                return null;
+	            }
+	        }
+        }
+    }
+}
+
+module.exports = {
+    classes: classes,
+    insertClassIntoDatabase: insertClassIntoDatabase,
+    getClassById: getClassById,
+    updateClassInDatabase: updateClassInDatabase
+}
