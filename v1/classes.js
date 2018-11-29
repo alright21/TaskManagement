@@ -54,6 +54,27 @@ classes.get('/:id', async (req, res) =>{
     }
 });
 
+classes.put('/:id', async (req, res) => {
+
+    const id = req.params.id;
+    const toModify = req.body;
+    if(!id)
+    {
+        res.status(400).end();
+    }
+    var result = await updateClassInDatabase(id, toModify);
+    if(result)
+    {
+        var resultJson = JSON.parse(JSON.stringify(result));
+        await console.log(resultJson + '\n\n\n\n');
+        res.status(201).send(resultJson);
+    }
+    else
+    {
+        res.status(409).end();
+    }
+});
+
 
 async function insertClassIntoDatabase (classe){
     
@@ -171,8 +192,51 @@ async function getClassById(id){
     }
 }
 
+
+async function updateClassInDatabase(id, toModify){
+
+    if(!id)
+    {
+        return null;
+    }
+    else
+    {
+        var isClass = await getClassById(id);
+
+        if(!isClass)
+        {
+            return null;
+        }
+        else
+        {
+        	if(isClass.prof != toModify.prof)
+        	{
+                return null;
+			}
+
+            else 
+            {
+            	console.log(id);
+	            var queryText = 'UPDATE "class" SET "name"=$1, "description"=$2 WHERE "id"=$3 RETURNING *';
+	            var queryParams = [toModify.name, toModify.description, id];
+	            var result = await pool.query(queryText,queryParams);
+	            //console.log(result);
+	            if(result.rowCount != 0)
+	            {
+	                return result.rows[0];
+	            }
+	            else
+	            {
+	                return null;
+	            }
+	        }
+        }
+    }
+}
+
 module.exports = {
     classes: classes,
     insertClassIntoDatabase: insertClassIntoDatabase,
-    getClassById: getClassById
+    getClassById: getClassById,
+    updateClassInDatabase: updateClassInDatabase
 }

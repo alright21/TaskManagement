@@ -2,8 +2,10 @@ const fetch = require ('node-fetch');
 const PORT = process.env.SERVER_URL || 3000;
 const SERVER_URL = 'http://localhost:' + PORT + '/v1/classes';
 const exams = require('../v1/classes').classes;
-//const insertClassIntoDatabase = require('../v1/classes').insertClassIntoDatabase;
-//const getClassById = require('../v1/classes').getClassById;
+const insertClassIntoDatabase = require('../v1/classes').insertClassIntoDatabase;
+const getClassById = require('../v1/classes').getClassById;
+const updateClassInDatabase = require('../v1/classes').updateClassInDatabase;
+
 
 var server;
 const validId = 1;
@@ -35,6 +37,22 @@ const exampleInvalidProf =  {
 	//'students': ['student1', 'student2', 'student3'] //same type of assistants
 };
 
+const exampleModifiedName =  {
+	'name': 'SEclass',
+	'prof': 'prof1',
+	'description': 'Course of SE'
+	//'assistants': ['assistant1', 'assistant2'], //NB: array's element are type "user"
+	//'students': ['student1', 'student2', 'student3'] //same type of assistants
+};
+
+const exampleModifiedDescription =  {
+	'name': 'SEclass',
+	'prof': 'prof1',
+	'description': 'This is the class of SE'
+	//'assistants': ['assistant1', 'assistant2'], //NB: array's element are type "user"
+	//'students': ['student1', 'student2', 'student3'] //same type of assistants
+};
+
 /*const exampleInvalidAssist =  {
 	'name': 'class1',
 	'prof': 'prof1',
@@ -48,6 +66,8 @@ const exampleInvalidStud =  {
 	'assistants': ['assistant1', 'assistant2'], //NB: array's element are type "user"
 	'students': ['student1', 'student2'] //same type of assistants
 };*/
+
+
 
 //Functions executed before (and after) doing test cases, to open and close
 //the server:
@@ -81,6 +101,18 @@ function getClass(id){
     }
   });
 }
+
+function updateClass(id,toModify){
+  return fetch(SERVER_URL + '/' + id,{
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(toModify)
+  });
+}
+
 
 //Test cases:
 
@@ -161,5 +193,61 @@ test('test if invalid class id returns 404 not found', () => {
     .then(response => {
       expect(response.status).toBe(404);
     })
+});
+
+//3) TESTING PUT/classes/{id}
+
+test('testing a valid update', () => {
+  return updateClass(exampleValidClass.id, exampleValidClass)
+  .then(res => {
+    expect(res.status).toBe(201);
+    return res.json();
+  }).then(resJson =>{
+    return getClassById(resJson.id);
+  }).then(modifiedSubmission =>{
+      expect(modifiedSubmission).toHaveProperty('id');
+      expect(modifiedSubmission).toHaveProperty('name');
+      expect(modifiedSubmission).toHaveProperty('prof');
+      expect(modifiedSubmission).toHaveProperty('description');
+  });
+});
+
+
+// Not modificable field: prof
+
+test('if someone tries to modify the prof, should return 409', () => {
+  return updateClass(exampleValidClass.id, exampleInvalidProf)
+  .then(res => {
+    expect(res.status).toBe(409);
+  });
+});
+
+
+test('if you,as a prof, modify the name of the class, should get the same class updated', ()=>{
+
+  return updateClassInDatabase(exampleValidClass.id, exampleModifiedName)
+  .then(updated =>{
+    return getClassById(updated.id)
+    .then(res =>{
+      expect(res.id).toEqual(exampleValidClass.id);
+      expect(res.prof).toEqual(exampleValidClass.prof);
+      expect(res.description).toEqual(exampleValidClass.description);
+      expect(res.name).toEqual(exampleModifiedName.name);
+    });
+  });
+});
+
+test('if you,as a prof, modify the description of the class, should get the same class updated', ()=>{
+
+  return updateClassInDatabase(exampleValidClass.id, exampleModifiedDescription)
+  .then(updated =>{
+    return getClassById(updated.id)
+    .then(res =>{
+      expect(res.id).toEqual(exampleValidClass.id);
+      expect(res.prof).toEqual(exampleValidClass.prof);
+      expect(res.name).toEqual(exampleValidClass.name);
+      expect(res.description).toEqual(exampleModifiedDescription.description);
+    });
+  });
 });
 
