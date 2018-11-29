@@ -50,6 +50,26 @@ submissions.put('/:id', async (req, res)=>{
     }
 })
 
+submissions.get('/:id', async (req,res)=> {
+
+    const id = req.params.id;
+    console.log('id: ' + id);
+    if(!id){
+        console.log('entro if');
+        res.status(400).end();
+    }
+
+    var result = await getSubmissionById(id);
+
+    if(result){
+        var resultJson = JSON.parse(JSON.stringify(result));
+
+        res.status(200).send(resultJson);
+    }else{
+        res.status(404).end();
+    }
+})
+
 
 async function insertSubmissionIntoDatabase (submission){
 
@@ -57,10 +77,6 @@ async function insertSubmissionIntoDatabase (submission){
     var isUser = await getUserById(submission.user);
     var isTask = await getTaskById(submission.task);
     var isExam = await getExamById(submission.exam);
-    // var isUser = null;
-    // var isTask = null;
-    // var isExam = null;
-    // console.log("isUser: " + isUser + ", isTask: " + isTask + ", isExam: " + isExam);
     
     if(!isUser || !isExam || !isTask){
         // console.log("Null values");

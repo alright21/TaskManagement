@@ -9,41 +9,41 @@ const PORT = process.env.PORT || 3000;
 const SERVER_URL = process.env.SERVER_URL || 'http://localhost:' + PORT + '/v1/submissions';
  
 var validSubmission = {
-	"user": 2,
-	"task": 2,
+	"user": 1,
+	"task": 1,
 	"exam": 1,
 	"answer": "This is my answer"
 };
 
 var invalidUserSubmission = {
 	"user": 0,
-	"task": 2,
+	"task": 1,
 	"exam": 1,
 	"answer": "This is my answer"
 };
 var invalidTaskSubmission = {
-	"user": 2,
+	"user": 1,
 	"task": 0,
 	"exam": 1,
 	"answer": "This is my answer"
 };
 
 var invalidExamSubmission = {
-	"user": 2,
-	"task": 2,
+	"user": 1,
+	"task": 1,
 	"exam": 0,
 	"answer": "This is my answer"
 };
 
 var modifiedSubmissionStudent = {
-  "user": 2,
-  "task": 2,
+  "user": 1,
+  "task": 1,
   "exam": 1,
   "answer": "This is a question"
 }
 var modifiedSubmissionTeacher = {
-  "user": 2,
-  "task": 2,
+  "user": 1,
+  "task": 1,
   "exam": 1,
   "final_mark": 30
 }
@@ -71,6 +71,16 @@ function updateSubmission(id,toModify){
   })
 }
 
+function getSubmission(id){
+  return fetch(SERVER_URL + '/' + id,{
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    }
+  });
+}
+
 
 //TEST cases
 
@@ -89,9 +99,25 @@ test('test the creation of a valid new Submission using node-fetch',() =>{
   .then(response => {
     expect(response.status).toBe(201);
     return response.json();
-  })
-  .then(jsonRes =>{
-    expect(jsonRes.user).toEqual(validSubmission.user);
+  }).then(jsonRes =>{
+    expect(jsonRes.id).not.toBeNull();
+    validSubmission.id = jsonRes.id;
+    return getSubmission(jsonRes.id).then(response => {
+      expect(response.status).toBe(200);
+      return response.json();
+    }).then(resJson => {
+      expect(resJson).toHaveProperty('id');
+      expect(resJson).toHaveProperty('user');
+      expect(resJson).toHaveProperty('task');
+      expect(resJson).toHaveProperty('exam');
+      expect(resJson).toHaveProperty('answer');
+
+      expect(resJson.id).toEqual(validSubmission.id);
+      expect(resJson.user).toEqual(validSubmission.user);
+      expect(resJson.task).toEqual(validSubmission.task);
+      expect(resJson.exam).toEqual(validSubmission.exam);
+      expect(resJson.answer).toEqual(validSubmission.answer);
+    })
   })});
 
 test('if the user does not exists, the function should return 400', ()=>{
@@ -181,6 +207,55 @@ test('if the id returns no result, should return null', ()=>{
     expect(res).toBeNull();
   });
 });
+
+//TEST GET submission
+
+test('if the id is null, should return 400', () =>{
+
+  return getSubmission(null)
+  .then(res =>{
+    expect(res.status).toBe(400);
+  });
+});
+
+test('if the id is 0, should return 400', () =>{
+
+  return getSubmission(null)
+  .then(res =>{
+    expect(res.status).toBe(400);
+  });
+});
+
+test('if the submission does not exists in the db, should return 404', () =>{
+  return getSubmission(10000)
+  .then(res =>{
+    expect(res.status).toBe(404);
+  });
+});
+
+test('if the id exists in the db, should return 200 and the submission', () => {
+
+  return getSubmission(validSubmission.id)
+  .then(res => {
+    expect(res.status).toBe(200);
+    return res.json();
+  }).then(resJson => {
+
+    expect(resJson).toHaveProperty('id');
+    expect(resJson).toHaveProperty('user');
+    expect(resJson).toHaveProperty('task');
+    expect(resJson).toHaveProperty('exam');
+    expect(resJson).toHaveProperty('answer');
+
+    expect(resJson.id).toEqual(validSubmission.id);
+    expect(resJson.user).toEqual(validSubmission.user);
+    expect(resJson.task).toEqual(validSubmission.task);
+    expect(resJson.exam).toEqual(validSubmission.exam);
+    expect(resJson.answer).toEqual(validSubmission.answer);
+  });
+});
+
+
 
 //TEST put submission
 
