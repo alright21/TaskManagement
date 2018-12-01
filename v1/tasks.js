@@ -14,4 +14,18 @@ tasks.post('/', function (req,res) {
 	res.json(newTask).send();
 });
 
+
+
+tasks.put('/:id', (req,res) => {
+
+
+});
+
+
+async function updateTaskInDatabase(id, toModify){
+
+
+	
+}
+
 module.exports = tasks;

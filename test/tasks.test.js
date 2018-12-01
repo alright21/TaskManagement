@@ -7,12 +7,22 @@ var server; //if "const", it does not work!!
 const exampleTask = {
 	//'id': 5,
 	'creator': 12345,
-	'task-type': 1,
+	'task_type': 1,
 	'question': 'Do you like cats?',
-	'answer-example': 'Yes, I do!',
+	'example': 'Yes, I do!',
 	'mark': null,
-	'answer-list': []
+	'answer_list': []
 };
+
+const validUpdate = {
+
+	'creator': 1,
+	'task_type': 1,
+	'question': 'Do you like dogs?',
+	'example': 'Yes, I do!',
+	'mark': 30,
+	'answer_list': []
+}
 
 //Functions executed before (and after) doing test cases, to open and close
 //the server:
@@ -33,6 +43,20 @@ const postTask = function(newTask){
 			'Accept': 'application/json'
 		},
 		body: JSON.stringify(newTask)
+	});
+}
+
+
+function updateTask(id, toModify){
+
+	return fetch(root + 'v1/tasks/' + id, {
+
+		mthod: 'PUT',
+		headers: {
+			'Content-Type': 'application/json',
+			'Accept': 'application/json'
+		},
+		body: JSON.stringify(toModify)
 	});
 }
 
@@ -81,4 +105,13 @@ test('Post task response body', () => {
 				'answer-list': []
 			});
 		});
+});
+
+
+test('if the id for the update is null, should return 400', () =>{
+
+	return updateTask(null, validUpdate)
+	.then(res => {
+		expect(res.status).toBe(400);
+	});
 });
