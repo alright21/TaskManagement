@@ -1,5 +1,6 @@
 DROP TABLE IF EXISTS "permissions";
 DROP TABLE IF EXISTS "task_in_exams";
+DROP TABLE IF EXISTS "multiple_choices";
 DROP TABLE IF EXISTS "review";
 DROP TABLE IF EXISTS "submission";
 DROP TABLE IF EXISTS "class";
@@ -26,7 +27,7 @@ CREATE TABLE "task"
 
 CREATE TABLE "exam"
 (
-	id "serial" PRIMARY KEY,
+	"id" serial PRIMARY KEY,
 	"creator" integer REFERENCES "user"("id") ON DELETE CASCADE,
 	"deadline" integer,
 	"mark" integer);
@@ -74,9 +75,18 @@ CREATE TABLE "permissions"
 	PRIMARY KEY("user","class")
 );
 
+CREATE TABLE "multiple_choices"
+(
+	"id" serial PRIMARY KEY,
+	"task" integer REFERENCES "task"("id") ON DELETE CASCADE,
+	"answer" VARCHAR(2000)
+);
+
 INSERT INTO "user" ("name", "surname", "email", "password") VALUES ('francesco', 'da dalt', 'francescodadalt@hotmail.it', 'lol');
 INSERT INTO "task" ("creator", "task_type", "question", "example", "mark") VALUES (1, 1, 'blablabla', 'blablabla', 30);
 INSERT INTO "task" ("creator", "task_type", "question", "example", "mark") VALUES (1, 1, 'blablabla2', 'blablabla2', 30);
 INSERT INTO "exam" ("creator", "deadline", "mark") VALUES (1, 500, 30);
 INSERT INTO "task_in_exams" VALUES(1,1);
 INSERT INTO "task_in_exams" VALUES(2,1);
+INSERT INTO "multiple_choices" ("task", "answer") VALUES (1,'Yes');
+INSERT INTO "multiple_choices" ("task", "answer") VALUES (1, 'No');
