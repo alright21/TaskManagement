@@ -88,7 +88,16 @@ const updateUser = function(id, toModify){
 		},
 		body: JSON.stringify(toModify)
 	});
- }
+};
+
+const getUsersList = function(){
+	return fetch(root + '/v1/users', {
+		method: 'GET',
+		headers: {
+			'Accept': 'application/json'
+		}
+	})
+};
 
  const deleteUser = function(userID){
    return fetch(root + '/v1/users/' + userID, {
@@ -220,6 +229,61 @@ describe('GET USER TESTS', () => {
 		});
 	});
 });
+
+// GET USERS
+//#########################
+
+test('GET users response status if correct', () => {
+	return getUsersList()
+		.then(getResponse => {expect(getResponse.status).toBe(200)});
+});
+
+//NEED A DESCRIBE BLOCK TO TEST IT 
+// test('GET users response status if the query does not execute', () => {
+// 	return getUsersList()
+// 		.then(getResponse => {expect(getResponse.status).toBe(404)});
+// });
+
+test('GET users response body if correct', () => { //TEST MOLTO PESANTE CON LISTA LUNGA
+	return postUser(exampleUser2)
+		.then(postResponse2 => {
+			return postUser(exampleUser3);
+		})
+		.then(postResponse3 => {
+			return getUsersList();
+		})
+		.then(getResponse => {return getResponse.json()})
+		.then(getResponseJson => {
+
+			getResponseJson.forEach(user => {
+				expect(typeof user).toEqual('object');
+				expect(user).toHaveProperty('id');
+				expect(user).toHaveProperty('name');
+				expect(user).toHaveProperty('surname');
+				expect(user).toHaveProperty('email');
+				expect(user).toHaveProperty('password');
+				//Keys types
+				expect(typeof user.id).toEqual('number');
+				expect(typeof user.name).toEqual('string');
+				expect(typeof user.surname).toEqual('string');
+				expect(typeof user.email).toEqual('string');
+				expect(typeof user.password).toEqual('string');
+			});
+
+			//PROBLEMA CON ID
+			// expect(getResponseJson).toContain(exampleUser2);
+			// expect(getResponseJson).toContain(exampleUser3);
+		});
+});
+
+//NEED A DESCRIBE BLOCK TO TEST IT
+// test('GET users response body if there are no users inside the table', () => {
+// 	return getUsersList()
+// 		.then(getResponse => {return getResponse.json()})
+// 		.then(getResponseJson => {
+// 			expect(getResponseJson).toEqual({});
+// 		});
+//});
 
 //PUT USER
 //#########################
@@ -357,10 +421,19 @@ test('GET list of exams of a not valid user id',()=>{
 	})
 });
 
+<<<<<<< HEAD
 test('GET list of tasks of a not valid user id',()=>{
 return getTasks(16)
 .then(res =>{return res.json()})
 	.then(jres =>{
 		expect(jres).toEqual({});
 	})
+=======
+test('get invalid task, NULL',()=>{
+	return getTasks(16)
+	.then(res =>{return res.json()})
+		.then(jres =>{
+			expect(jres).toEqual({});
+		})
+>>>>>>> Aggiunta funzione e test di GET/users
 });
