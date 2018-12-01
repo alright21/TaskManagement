@@ -56,7 +56,7 @@ CREATE TABLE "review"
 	"submission" integer REFERENCES "submission"("id") ON DELETE CASCADE,
 	"review_answer" VARCHAR(2000),
 	"deadline" integer
-	
+
 );
 
 CREATE TABLE "task_in_exams"

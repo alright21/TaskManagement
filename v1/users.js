@@ -158,5 +158,7 @@ module.exports = {
 	users: users,
 	getUserById: getUserById,
 	getUserByEmail: getUserByEmail,
+  getexams : getexams,
+  gettasks : gettasks,
 	postUser: postUser
 };

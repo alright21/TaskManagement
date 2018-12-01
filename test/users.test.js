@@ -17,18 +17,18 @@ const exampleUserID = 1;
 const validtask={
   id: 1,
   creator:1,
-  deadline: 200,
-  mark: 30,
+  task_type: 1,
+  question: "blablabla",
+  example: "blablabla",
+  mark: 30
 };
 
 
 const validexam={
   id: 1,
   creator: 2,
-  task_type: 2,
-  question: "quanto è bello ciccio?",
-  example: "tanto bello",
-  mark: 30,
+  deadline: 550,
+  mark: 30
   };
 
 var invalidid=-1;
@@ -152,6 +152,7 @@ test('Get user response body if not found', () => {
 			expect(getResponseJson).toEqual({});
 		});
 });
+
 test('get valid exam, 200',()=>{
     return getexams(validexam.creator)
     .then(res=>{
@@ -159,14 +160,26 @@ test('get valid exam, 200',()=>{
       return res.json();
     })
     .then(jres => {
-      expect(jres.id).toEqual(validexam)
+      expect(jres.id).toEqual(validexam.id);
+      expect(jres.creator).toEqual(validexam.creator);
+      expect(jres.deadline).toEqual(validexam.deadline);
+      expect(jres.mark).toEqual(validexam.mark);
     })
 });
 
 test('get valid task, 200',()=>{
     return gettasks(validtask.creator)
     .then(res=>{
-      expect(res.id).toBe(validtask)
+      expect(res).toBe(200);
+      return res.json();
+    })
+    .then(jres=>{
+      expect(jres.id).toBe(validtask.id);
+      expect(jres.creator).toBe(validtask.creator);
+      expect(jres.task_type).toBe(validtask.task_type);
+      expect(jres.question).toBe(validtask.question);
+      expect(jres.mark).toBe(validtask.mark);
+
   })
 });
 
@@ -183,4 +196,3 @@ test('get invalid task, NULL',()=>{
       expect(res).toBeNull();
   })
 });
-
