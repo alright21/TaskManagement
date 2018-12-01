@@ -8,6 +8,7 @@ const pool = new pg.Pool(config);
 
 exams.use(bodyParser.json());
 
+
 exams.post('/', async (req, res) =>{
     let results = await insertExamIntoDatabase(req.body);
     

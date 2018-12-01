@@ -1,3 +1,4 @@
+
 const fetch = require ('node-fetch');
 const root = 'http://localhost:3000';
 var server;
@@ -12,6 +13,25 @@ const wrongUser3 = {'name': 'One','surname': 'Time','email': null,'password': 'c
 const wrongUser4 = {'name': 'One','surname': 'Time','email': 'one.time@gmail.com','password': null};
 const wrongUser5 = {'name': 'One','surname': 'Time','email': 'one.time@gmail.com','password': 'azz'};
 const exampleUserID = 1;
+
+const validtask={
+  id: 1,
+  creator:1,
+  deadline: 200,
+  mark: 30,
+};
+
+
+const validexam={
+  id: 1,
+  creator: 2,
+  task_type: 2,
+  question: "quanto è bello ciccio?",
+  example: "tanto bello",
+  mark: 30,
+  };
+
+var invalidid=-1;
 
 beforeAll(function () {
    server = require('../index');
@@ -132,3 +152,35 @@ test('Get user response body if not found', () => {
 			expect(getResponseJson).toEqual({});
 		});
 });
+test('get valid exam, 200',()=>{
+    return getexams(validexam.creator)
+    .then(res=>{
+      expect(res).toBe(200);
+      return res.json();
+    })
+    .then(jres => {
+      expect(jres.id).toEqual(validexam)
+    })
+});
+
+test('get valid task, 200',()=>{
+    return gettasks(validtask.creator)
+    .then(res=>{
+      expect(res.id).toBe(validtask)
+  })
+});
+
+test('get invalid exam, NULL',()=>{
+    return getexams(invalidid)
+    .then(res =>{
+      expect(res).toBeNull();
+    })
+});
+
+test('get invalid task, NULL',()=>{
+    return gettasks(invalidid)
+    .then(res=>{
+      expect(res).toBeNull();
+  })
+});
+
