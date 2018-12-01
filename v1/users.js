@@ -125,7 +125,7 @@ async function getTasks(id){
   if(!id){
     return null;
   }else{
-    let queryText = 'SELECT * FROM "task" WHERE creator==$1';
+    let queryText = 'SELECT * FROM "task" WHERE creator=$1';
     let queryParams = [id];
     let result = await pool.query(queryText, queryParams);
     let tasks;
@@ -143,7 +143,7 @@ async function getExams(id){
   return null;
     }
     else{
-      let queryText = 'SELECT * FROM "exam" WHERE creator==$1';
+      let queryText = 'SELECT * FROM "exam" WHERE creator=$1';
       let queryParams = [id];
       let result = await pool.query(queryText, queryParams);
       let exams;
