@@ -59,7 +59,7 @@ users.get('/:id/exams', async(req,res)=> {
 
 users.get('/:id/tasks', async(req,res)=> {
   console.log(req.params.id);
-  res.status(200).
+  res.status(200);
     var result=await getTasks(req.params.id);
     if(result){
            var resultJson = JSON.parse(JSON.stringify(result));
