@@ -3,7 +3,7 @@ const root = 'http://localhost:3000';
 var server;
 
 const getTasks = require('../v1/users').getTasks;
-const getExamById = require('../v1/users').getExams;
+const getExams = require('../v1/users').getExams;
 
 const exampleUser = {'name': 'Mario','surname': 'Rossi','email': 'mario.rossi@gmail.com','password': 'password'};
 const exampleUser2 = {'name': 'Marione','surname': 'Razzi','email': 'marione.razzi@gmail.com','password': 'a'};
@@ -160,10 +160,16 @@ test('get valid exam, 200',()=>{
       return res.json();
     })
     .then(jres => {
-      expect(jres.id).toEqual(validexam.id);
-      expect(jres.creator).toEqual(validexam.creator);
-      expect(jres.deadline).toEqual(validexam.deadline);
-      expect(jres.mark).toEqual(validexam.mark);
+      expect(typeof getResponseJson).toEqual('object');
+			expect(jres).toHaveProperty('id');
+			expect(jres).toHaveProperty('creator');
+			expect(jres).toHaveProperty('deadline');
+			expect(jres).toHaveProperty('mark');
+
+      expect(jres.id).toEqual('number');
+      expect(jres.creator).toEqual('string');
+      expect(jres.deadline).toEqual('number');
+      expect(jres.mark).toEqual('number');
     })
 });
 
@@ -174,11 +180,19 @@ test('get valid task, 200',()=>{
       return res.json();
     })
     .then(jres=>{
-      expect(jres.id).toBe(validtask.id);
-      expect(jres.creator).toBe(validtask.creator);
-      expect(jres.task_type).toBe(validtask.task_type);
-      expect(jres.question).toBe(validtask.question);
-      expect(jres.mark).toBe(validtask.mark);
+      expect(typeof jres).toEqual('object');
+			expect(jres).toHaveProperty('id');
+			expect(jres).toHaveProperty('creator');
+			expect(jres).toHaveProperty('task_type');
+			expect(jres).toHaveProperty('question');
+			expect(jres).toHaveProperty('mark');
+      expect(jres).toHaveProperty('mark');
+
+      expect(jres.id).toEqual('number')
+      expect(jres.creator).toEqual('number')
+      expect(jres.task_type).toEqual('string')
+      expect(jres.question).toEqual('string')
+      expect(jres.mark).toEqual('string')
 
   })
 });
