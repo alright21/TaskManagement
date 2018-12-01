@@ -7,7 +7,7 @@ const exams = require('./v1/exams').exams;
 
 const tasks = require('./v1/tasks');
 const submissions = require('./v1/submissions').submissions;
-const classes = require('./v1/classes');
+const classes = require('./v1/classes').classes;
 const reviews = require('./v1/reviews');
 
 app.use(bodyParser.json());

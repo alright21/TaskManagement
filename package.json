@@ -20,6 +20,7 @@
   "dependencies": {
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
+    "express-router": "0.0.1",
     "node-fetch": "^2.3.0",
     "pg": "^7.6.1",
     "supertest": "^3.3.0"
