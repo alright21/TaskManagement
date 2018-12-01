@@ -6,7 +6,7 @@ const users = express.Router();
 const pool = new pg.Pool({
     user: 'postgres',
     host: 'localhost',
-    database: 'taskmanagement',
+    database: 'travis_ci_test',
     password: 'root',
     port: '5432'
 });
@@ -45,7 +45,7 @@ async function gettasks(id){
   if(!id){
     return null;
   }else{
-    let queryText = 'SELECT * FROM "tasks" WHERE creator==$1';
+    let queryText = 'SELECT * FROM "task" WHERE creator==$1';
     let queryParams = [id];
     let result = await pool.query(queryText, queryParams);
     let tasks;
@@ -63,7 +63,7 @@ async function getexams(id){
   return null;
     }
     else{
-      let queryText = 'SELECT * FROM "exams" WHERE creator==$1';
+      let queryText = 'SELECT * FROM "exam" WHERE creator==$1';
       let queryParams = [id];
       let result = await pool.query(queryText, queryParams);
       let exams;
