@@ -46,28 +46,30 @@ users.get('/:userID',async (req, res) => {
 
 users.get('/:id/exams', async(req,res)=> {
   res.status(200).send("ciao "+req.params.id);
-  let result=await getexams(req.params.id);
+  let result=await getExams(req.params.id);
   if(result){
        var resultJson = JSON.parse(JSON.stringify(result));
        res.status(200).send(resultJson);
    }
    else{
-       res.status(404).end();
+     let resultnegJSON = JSON.parse(JSON.stringify({}));
+       res.status(404).send(resultnegJSON);
    }
 });
 
 users.get('/:id/tasks', async(req,res)=> {
-console.log(req.params.id);
-res.status(200).send("ciao "+req.params.id)
-  var result=await gettasks(req.params.id);
-  if(result){
-         var resultJson = JSON.parse(JSON.stringify(result));
-         res.status(200).send(resultJson);
-     }
-     else{
-         res.status(404).end();
-     }
-  });
+  console.log(req.params.id);
+  res.status(200).
+    var result=await getTasks(req.params.id);
+    if(result){
+           var resultJson = JSON.parse(JSON.stringify(result));
+           res.status(200).send(resultJson);
+       }
+       else{
+            let resultnegJSON = JSON.parse(JSON.stringify({}));
+            res.status(404).send(resultnegJSON);
+       }
+});
 
 
 
@@ -118,9 +120,8 @@ async function getUserByEmail(email){
 	}
 }
 
-
 //GET TASKS FROM DB WHERE CREATOR==ID
-async function gettasks(id){
+async function getTasks(id){
   if(!id){
     return null;
   }else{
@@ -137,7 +138,7 @@ async function gettasks(id){
   return tasks;
 }
 //GET EXAMS FROM DB WHERE CREATOR==ID
-async function getexams(id){
+async function getExams(id){
   if(!id){
   return null;
     }
@@ -154,11 +155,12 @@ async function getexams(id){
     }
   return exams;
  }
+
 module.exports = {
 	users: users,
 	getUserById: getUserById,
 	getUserByEmail: getUserByEmail,
-  getexams : getexams,
-  gettasks : gettasks,
+  getTasks : getTasks,
+  getExams: getExams,
 	postUser: postUser
 };

@@ -1,7 +1,9 @@
-
 const fetch = require ('node-fetch');
 const root = 'http://localhost:3000';
 var server;
+
+const getTasks = require('../v1/users').getTasks;
+const getExamById = require('../v1/users').getExams;
 
 const exampleUser = {'name': 'Mario','surname': 'Rossi','email': 'mario.rossi@gmail.com','password': 'password'};
 const exampleUser2 = {'name': 'Marione','surname': 'Razzi','email': 'marione.razzi@gmail.com','password': 'a'};
@@ -22,8 +24,6 @@ const validtask={
   example: "blablabla",
   mark: 30
 };
-
-
 const validexam={
   id: 1,
   creator: 2,
@@ -154,7 +154,7 @@ test('Get user response body if not found', () => {
 });
 
 test('get valid exam, 200',()=>{
-    return getexams(validexam.creator)
+    return getExams(validexam.creator)
     .then(res=>{
       expect(res).toBe(200);
       return res.json();
@@ -168,7 +168,7 @@ test('get valid exam, 200',()=>{
 });
 
 test('get valid task, 200',()=>{
-    return gettasks(validtask.creator)
+    return getTasks(validtask.creator)
     .then(res=>{
       expect(res).toBe(200);
       return res.json();
@@ -184,14 +184,14 @@ test('get valid task, 200',()=>{
 });
 
 test('get invalid exam, NULL',()=>{
-    return getexams(invalidid)
+    return getExams(invalidid)
     .then(res =>{
       expect(res).toBeNull();
     })
 });
 
 test('get invalid task, NULL',()=>{
-    return gettasks(invalidid)
+    return getTasks(invalidid)
     .then(res=>{
       expect(res).toBeNull();
   })
