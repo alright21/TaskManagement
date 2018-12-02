@@ -517,11 +517,11 @@ definitions:
         type: integer
       question:
         type: string
-      answer-example:
+      example:
         type: string
       mark:
         type: integer
-      answer-list:
+      answer_list:
         type: array
         items: 
           type: string
@@ -581,5 +581,5 @@ definitions:
         type: integer
       answer:
         type: string
-      final-mark:
+      final_mark:
         type: integer
