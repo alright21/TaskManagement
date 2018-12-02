@@ -130,12 +130,11 @@ async function getTasks(id){
     let result = await pool.query(queryText, queryParams);
     let tasks;
     if(result.rowCount!=0){
-       tasks = JSON.parse(JSON.stringify(result));
+       return JSON.parse(JSON.stringify(result));
     }else {
        return null;
     }
   }
-  return tasks;
 }
 //GET EXAMS FROM DB WHERE CREATOR==ID
 async function getExams(id){
@@ -146,14 +145,12 @@ async function getExams(id){
       let queryText = 'SELECT * FROM "exam" WHERE creator=$1';
       let queryParams = [id];
       let result = await pool.query(queryText, queryParams);
-      let exams;
-      if(result.rowCount!=0){
-        exams = JSON.parse(JSON.stringify(result));
+      	if(result.rowCount!=0){
+        return JSON.parse(JSON.stringify(result));
       }else {
         return null;
       }
     }
-  return exams;
  }
 
 module.exports = {
