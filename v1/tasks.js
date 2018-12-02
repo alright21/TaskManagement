@@ -115,7 +115,7 @@ async function updateTaskInDatabase(id, toModify){
         return null;
     }
     id = Number.parseInt(id);
-    if(!id || !toModify ){
+    if(!id || !toModify || !toModify.mark){
         return null;
     }else{
 		var isTask = await getTaskById(id);
@@ -125,19 +125,16 @@ async function updateTaskInDatabase(id, toModify){
             return null;
         }else{
             
-			console.log(id);
 			var queryText = 'UPDATE "task" SET "creator"=$1,"task_type"=$2, "question"=$3, "example"=$4, "mark"=$5 WHERE "id"=$6 RETURNING *';
 			var queryParams = [toModify.creator,toModify.task_type, toModify.question, toModify.example, toModify.mark, id];
 
 			var result = await pool.query(queryText,queryParams);
-			console.log('fatta la query');
 			//non sono sicuro che serva
 			if(result.rowCount != 0){
 				let task = result.rows[0];
 				if(task.task_type ===0){
 					return task;
 				}else{
-					console.log("ora modifico multiple_choices");
 					let multipleChoicesResult = await updateMultipleChoices(toModify.multiple_choices);
 					if(multipleChoicesResult){
 						task.multiple_choices = await getMultipleChoices(id);
@@ -158,7 +155,6 @@ async function updateTaskInDatabase(id, toModify){
 
 async function updateMultipleChoices(multipleChoices){
 
-	console.log(multipleChoices);
 	if(arguments.length !== 1){
         return null;
 	}
@@ -167,13 +163,11 @@ async function updateMultipleChoices(multipleChoices){
 	}
 	let isList = true;
 	for(let i = 0; i<multipleChoices.length; i++){
-		console.log(multipleChoices[i].id);
 		let getResult = await getMultipleChoice(multipleChoices[i].id);
 		if(!getResult){
 			isList = false;
 		}
 	}
-	console.log("isList: " + isList);
 	if(!isList){
 		return null;
 	}else{
@@ -181,21 +175,17 @@ async function updateMultipleChoices(multipleChoices){
 		let list = [];
 		for(let i = 0; i<multipleChoices.length;i++){
 
-			console.log(multipleChoices[i]);
 			let queryText = 'UPDATE "multiple_choices" SET "answer"=$1 WHERE "id"=$2 RETURNING *';
 			let queryParams = [multipleChoices[i].answer,multipleChoices[i].id];
 
 			let result = await pool.query(queryText,queryParams);
 			if(result){
-				// console.log(result);
 				list.push(result.rows[0]);
-				console.log(result.rows[0]);
 			}else{
 				return null;
 			}
 
 		}
-		// console.log(list);
 		return list;
 	}
 

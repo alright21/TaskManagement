@@ -1,17 +1,32 @@
 const fetch = require('node-fetch');
 const root = 'http://localhost:3000';
 
+const insertTaskInDatabase = require('../v1/tasks').insertTaskInDatabase;
+const insertMultipleChoices = require('../v1/tasks').insertMultipleChoices;
+const getTaskById = require('../v1/tasks').getTaskById;
+const getMultipleChoices = require('../v1/tasks').getMultipleChoices;
+const getMultipleChoice = require('../v1/tasks').getMultipleChoice;
+const updateTaskInDatabase = require('../v1/tasks').updateTaskInDatabase;
+const updateMultipleChoices = require('../v1/tasks').updateMultipleChoices;
+
 var server; //if "const", it does not work!!
 
 //Example of what a Task should contain
 const validTask = {
-	//'id': 5,
 	"creator": 1,
 	"task_type": 1,
 	"question": "Do you like cats?",
 	"example": "Yes, I do!",
-	"mark": null,
-	"multiple_choices": null
+	"mark": 30,
+	"multiple_choices": [{
+		"id": 3,
+		"task": 3,
+		"answer": "Yes"
+	},{
+		"id": 4,
+		"task": 3,
+		"answer": "No"
+	}]
 };
 
 const validUpdateOpen = {
@@ -32,7 +47,51 @@ const validUpdateClose = {
 	"example": "Yes",
 	"mark": 30,
 	"multiple_choices": [{
-		"id": 1,
+		"id": 3,
+		"task": 3,
+		"answer": "Yes"
+	},{
+		"id": 4,
+		"task": 3,
+		"answer": "No"
+	}]
+}
+const nullCreatorUpdate = {
+	"creator": null,
+	"task_type": 0,
+	"question": "Do you like dogs?",
+	"example": "Yes, I do!",
+	"mark": 30,
+	"multiple_choices": null
+}
+
+const invalidCreatorUpdate = {
+	"creator": 10000,
+	"task_type": 0,
+	"question": "Do you like dogs?",
+	"example": "Yes, I do!",
+	"mark": 30,
+	"multiple_choices": null
+}
+
+const nullMarkTask = {
+	"creator": 10000,
+	"task_type": 0,
+	"question": "Do you like dogs?",
+	"example": "Yes, I do!",
+	"mark": null,
+	"multiple_choices": null
+}
+
+const invalidTaskMultipleChoices = {
+
+	"creator": 1,
+	"task_type": 1,
+	"question": "Do you like cows?",
+	"example": "Yes",
+	"mark": 30,
+	"multiple_choices": [{
+		"id": null,
 		"task": 3,
 		"answer": "Yes"
 	},{
@@ -41,6 +100,31 @@ const validUpdateClose = {
 		"answer": "No"
 	}]
 }
+
+const validMultipleChoices = [
+	{
+		"id": 3,
+		"task": 3,
+		"answer": "YesYesYes"
+	},{
+		"id": 4,
+		"task": 3,
+		"answer": "NoNoNo"
+	}
+];
+
+const invalidMultipleChoices = [
+	{
+		"id": null,
+		"task": 3,
+		"answer": "Yes"
+	},{
+		"id": 2,
+		"task": 3,
+		"answer": "No"
+	}
+];
+
 //Functions executed before (and after) doing test cases, to open and close
 //the server:
 beforeAll(function() {
@@ -66,9 +150,9 @@ const postTask = function(newTask){
 
 function updateTask(id, toModify){
 
-	return fetch(root + 'v1/tasks/' + id, {
+	return fetch(root + '/v1/tasks/' + id, {
 
-		mthod: 'PUT',
+		method: 'PUT',
 		headers: {
 			'Content-Type': 'application/json',
 			'Accept': 'application/json'
@@ -78,7 +162,7 @@ function updateTask(id, toModify){
 }
 
 function getTask(id){
-	return fetch(root + 'v1/tasks/' + id, {
+	return fetch(root + '/v1/tasks/' + id, {
 
 		mthod: 'GET',
 		headers: {
@@ -91,10 +175,6 @@ function getTask(id){
 //Test cases:
 
 // 1) Testing if the post was successful, looking if the status is "201"
-test('Post task response', () => {
-	return postTask(validTask)
-		.then(postResponse => {expect(postResponse.status).toBe(201)});
-});
 
 // 2) Testing wheter te response body is correct or not.
 //First, test if the response is of type 'object'
@@ -103,17 +183,20 @@ test('Post task response', () => {
 //At last test if the JSON can match properties
 test('Post task response body', () => {
 	return postTask(validTask)
-		.then(postResponse => {return postResponse.json()})
+		.then(postResponse => {
+			expect(postResponse.status).toBe(201);
+			return postResponse.json()})
 		.then(postResponseJson => {
+			validTask.id = postResponseJson.id;
 			//Object Schema
 			expect(typeof postResponseJson).toEqual('object');
 			expect(postResponseJson).toHaveProperty('id');
 			expect(postResponseJson).toHaveProperty('creator');
-			expect(postResponseJson).toHaveProperty('task-type');
+			expect(postResponseJson).toHaveProperty('task_type');
 			expect(postResponseJson).toHaveProperty('question');
-			expect(postResponseJson).toHaveProperty('answer-example');
+			expect(postResponseJson).toHaveProperty('example');
 			expect(postResponseJson).toHaveProperty('mark');
-			expect(postResponseJson).toHaveProperty('answer-list');
+			expect(postResponseJson).toHaveProperty('multiple_choices');
 			//Keys types
 			expect(typeof postResponseJson).toEqual('object');
 			expect(typeof postResponseJson).toEqual('object');
@@ -144,9 +227,43 @@ test('if the id for the update is 0, should return 400', () => {
 	});
 });
 
-test('if the update id is 3, and the modification is correct, should return 201', () => {
+test('if the creator of the update is null, should return 409', () => {
 
-	return updateTask(3, validUpdateOpen)
+	return updateTask(3, nullCreatorUpdate)
+	.then(res => {
+		expect(res.status).toBe(409);
+	});
+});
+
+test('if the creator does not exist, should return 409', () => {
+	return updateTask(3, invalidCreatorUpdate)
+	.then(res => {
+		expect(res.status).toBe(409);
+	});
+});
+
+test('if the mark of the update is null, should return 409', () => {
+	return updateTask(3, nullMarkTask)
+	.then(res => {
+		expect(res.status).toBe(409);
+	});
+
+});
+
+test('if the multiple choices have invalid id, should return 409', () => {
+	return updateTask(3, invalidTaskMultipleChoices)
+	.then(res => {
+		expect(res.status).toBe(409);
+	});
+});
+
+
+
+
+
+test('if the update id is 3 and the task is an close question, and the modification is correct, should return 201', () => {
+
+	return updateTask(3, validUpdateClose)
 	.then(res => {
 		expect(res.status).toBe(201);
 		return getTask(3)
@@ -160,10 +277,53 @@ test('if the update id is 3, and the modification is correct, should return 201'
 			expect(resJson).toHaveProperty('question');
 			expect(resJson).toHaveProperty('example');
 			expect(resJson).toHaveProperty('mark');
-			expect(resJson).toHaveProperty('answer_list');
+			
 
 			validUpdateOpen.id = resJson.id;
-			expect(resJson).toMatchObject(validUpdateOpen);
+			expect(resJson).toMatchObject(validUpdateClose);
 		});
+	});
+});
+
+
+//tests for updateMultipleChoices
+
+test('if argument length is not 1, should return null', () => {
+	return updateMultipleChoices(validMultipleChoices, 1)
+	.then(res => {
+		expect(res).toBeNull();
+	});
+});
+
+test('if the multipleChoices is null, should return null', () => {
+	return updateMultipleChoices(null)
+	.then(res => {
+		 expect(res).toBeNull();
+	}) 
+});
+
+test('if multipleChoices are invalid, should return null', () => {
+
+	return updateMultipleChoices(invalidMultipleChoices)
+	.then(res => {
+		expect(res).toBeNull();
+	})
+});
+
+test('if the mutiple Choices array is valid, should return the array updated', () =>{
+	return updateMultipleChoices(validMultipleChoices)
+	.then(res => {
+		expect(res).toMatchObject(validMultipleChoices);
+	})
+});
+
+
+// tests for updateTaskInDatabase
+
+
+test('if the argument length is != 2 shoul return null', () => {
+	return updateTaskInDatabase(validTask.id)
+	.then(res => {
+		expect(res).toBeNull();
 	});
 });
