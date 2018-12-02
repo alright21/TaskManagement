@@ -68,7 +68,7 @@ const getExam = function(userID){
   });
 };
 
-const getExam = function(userID){
+const getTasks = function(userID){
   return fetch(root + '/v1/users/' + userID +'/tasks', {
     method: 'GET',
     headers: {
