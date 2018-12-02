@@ -324,4 +324,13 @@ async function insertMultipleChoices(multipleChoices, task){
 	}
 }
 
-module.exports = tasks;
+module.exports = {
+	tasks: tasks,
+	insertTaskInDatabase: insertTaskInDatabase,
+	insertMultipleChoices: insertMultipleChoices,
+	getTaskById: getTaskById,
+	getMultipleChoices: getMultipleChoices,
+	getMultipleChoice: getMultipleChoice,
+	updateTaskInDatabase: updateTaskInDatabase,
+	updateMultipleChoices: updateMultipleChoices
+};
