@@ -239,10 +239,10 @@ test('GET users response status if correct', () => {
 });
 
 //NEED A DESCRIBE BLOCK TO TEST IT 
-// test('GET users response status if the query does not execute', () => {
-// 	return getUsersList()
-// 		.then(getResponse => {expect(getResponse.status).toBe(404)});
-// });
+test('GET users response status if the query does not execute', () => {
+	return getUsersList()
+		.then(getResponse => {expect(getResponse.status).toBe(404)});
+});
 
 test('GET users response body if correct', () => { //TEST MOLTO PESANTE CON LISTA LUNGA
 	return postUser(exampleUser2)
@@ -255,6 +255,7 @@ test('GET users response body if correct', () => { //TEST MOLTO PESANTE CON LIST
 		.then(getResponse => {return getResponse.json()})
 		.then(getResponseJson => {
 
+			let addedIDs = [];
 			getResponseJson.forEach(user => {
 				expect(typeof user).toEqual('object');
 				expect(user).toHaveProperty('id');
@@ -268,11 +269,14 @@ test('GET users response body if correct', () => { //TEST MOLTO PESANTE CON LIST
 				expect(typeof user.surname).toEqual('string');
 				expect(typeof user.email).toEqual('string');
 				expect(typeof user.password).toEqual('string');
+				//For testing
+				addedIDs.push(user.id);
 			});
-
 			//PROBLEMA CON ID
-			// expect(getResponseJson).toContain(exampleUser2);
-			// expect(getResponseJson).toContain(exampleUser3);
+			exampleUser2.id = addedIDs[0];
+			expect(getResponseJson).toContainEqual(exampleUser2);
+			exampleUser3.id = addedIDs[1];
+			expect(getResponseJson).toContainEqual(exampleUser3);
 		});
 });
 
