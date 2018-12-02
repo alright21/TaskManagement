@@ -321,9 +321,62 @@ test('if the mutiple Choices array is valid, should return the array updated', (
 // tests for updateTaskInDatabase
 
 
-test('if the argument length is != 2 shoul return null', () => {
+test('if the argument length is != 2 should return null', () => {
 	return updateTaskInDatabase(validTask.id)
 	.then(res => {
 		expect(res).toBeNull();
 	});
 });
+
+test('if the id is null, should return null', () => {
+	return updateTaskInDatabase(null, validUpdateClose)
+	.then(res => {
+		expect(res).toBeNull();
+	});
+});
+
+test('if the modified Task is null, should return null', () => {
+	return updateTaskInDatabase(3, null)
+	.then(res => {
+		expect(res).toBeNull();
+	});
+});
+
+test('if the modified task has mark null, should return null', () => {
+
+	return updateTaskInDatabase(3, nullMarkTask)
+	.then(res => {
+		expect(res).toBeNull();
+	});
+});
+
+test('if the modified task does not exists in the database, should return null', () => {
+	return updateTaskInDatabase(10000, validTask)
+	.then(res => {
+		expect(res).toBeNull();
+	});
+});
+
+test('if the creator does not exists, should return null', () => {
+
+	return updateTaskInDatabase(3, invalidCreatorUpdate)
+	.then(res => {
+		expect(res).toBeNull();
+	});
+});
+
+
+test('if the update is valid, should return the task updated', () => {
+
+	return updateTaskInDatabase(3, validUpdateClose)
+	.then(res => {
+		expect(res).toMatchObject(validUpdateClose);
+	});
+});
+
+
+
+
+
+
+
