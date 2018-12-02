@@ -2,8 +2,6 @@ const fetch = require ('node-fetch');
 const root = 'http://localhost:3000';
 var server;
 
-const getTasks = require('../v1/users').getTasks;
-const getExams = require('../v1/users').getExams;
 
 const exampleUser = {'name': 'Mario','surname': 'Rossi','email': 'mario.rossi@gmail.com','password': 'password'};
 const exampleUser2 = {'name': 'Marione','surname': 'Razzi','email': 'marione.razzi@gmail.com','password': 'a'};
@@ -59,7 +57,25 @@ const getUser = function(userID){
 			'Accept': 'application/json'
 		}
 	});
-}
+};
+
+const getExam = function(userID){
+  return fetch(root + '/v1/users/' + userID +'/exams', {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json'
+    }
+  });
+};
+
+const getExam = function(userID){
+  return fetch(root + '/v1/users/' + userID +'/tasks', {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json'
+    }
+  });
+};
 
 //TESTS
 //POST
@@ -155,10 +171,7 @@ test('Get user response body if not found', () => {
 
 test('get valid exam, 200',()=>{
     return getExams(validexam.creator)
-    .then(res=>{
-      //expect(res).toBe(200);
-      return res.json();
-    })
+    .then(res=>{return res.json();})
     .then(jres => {
       expect(typeof getResponseJson).toEqual('object');
 			expect(jres).toHaveProperty('id');

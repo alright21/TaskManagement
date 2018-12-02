@@ -45,8 +45,8 @@ users.get('/:userID',async (req, res) => {
 
 
 users.get('/:id/exams', async(req,res)=> {
-  res.status(200).send("ciao "+req.params.id);
-  let result=await getExams(req.params.id);
+  let id=req.params.userID;
+	let result = await getExams(id);
   if(result){
        var resultJson = JSON.parse(JSON.stringify(result));
        res.status(200).send(resultJson);
@@ -58,17 +58,16 @@ users.get('/:id/exams', async(req,res)=> {
 });
 
 users.get('/:id/tasks', async(req,res)=> {
-  console.log(req.params.id);
-  res.status(200);
-    var result=await getTasks(req.params.id);
+    var id=req.params.id;
+		let result = await getTasks(id);
     if(result){
-           var resultJson = JSON.parse(JSON.stringify(result));
-           res.status(200).send(resultJson);
-       }
-       else{
-            let resultnegJSON = JSON.parse(JSON.stringify({}));
-            res.status(404).send(resultnegJSON);
-       }
+     	var resultJson = JSON.parse(JSON.stringify(result));
+     	res.status(200).send(resultJson);
+    }
+    else{
+      let resultnegJSON = JSON.parse(JSON.stringify({}));
+      res.status(404).send(resultnegJSON);
+    }
 });
 
 
