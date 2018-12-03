@@ -3,33 +3,22 @@ const bodyParser = require('body-parser');
 const classes = express.Router();
 const pg = require('pg');
 
-const pool = new pg.Pool({
-	user: 'postgres',
-	host: 'localhost',
-	database: 'taskmanagement',
-	port: '5432'
-});
+const config = require('../db_config');
+const pool = new pg.Pool(config);
 
 classes.use(bodyParser.json());
 
-//classes.get('/', (req, res) => res.status(200).send('Hello World!'));
-/*const postedClasses = [];
-const postedClasses = [];
-classes.post('/', function(req, res) {
-	const newClass = req.body;
-	newClass.id = 1;
-	postedClasses.push(newClass);
-	res.status(201);
-	res.json(newClass).send();
-}); */
-
-/*CODICE CHE SERVIRA' UNA VOLTA CHE AVRO' IL DATABASE*/
-
+classes.get('/', (req, res) => res.status(200).send('Hello World!'));
 
 classes.post('/', async(req, res) => {
+
+    //console.log('sono nella post');
+    //console.log('req.body' + req.body);
 	var result = await insertClassIntoDatabase(req.body);
+    //console.log(result);
 	if (result) 
 	{
+        //console.log('class post if result: '+ result)
 		var resultJson = JSON.parse(JSON.stringify(result));
 		res.status(201).send(resultJson);
 	}
@@ -40,9 +29,12 @@ classes.post('/', async(req, res) => {
 }); 
 
 classes.get('/:id', async (req, res) =>{
-    console.log(req.params.id);
+    //console.log('sono in classes.get e id: ' + req.params.id);
+    
     let results = await getClassById(req.params.id);
-    console.log(results);
+    
+    //console.log('classes.get results: ' +results);
+
     if(results)
     {
         var resultJson = JSON.parse(JSON.stringify(results));
@@ -56,8 +48,11 @@ classes.get('/:id', async (req, res) =>{
 
 classes.put('/:id', async (req, res) => {
 
+    //console.log('sono nella put!');
     const id = req.params.id;
+    //console.log('id: '+id);
     const toModify = req.body;
+    //console.log('toModify: ' + toModify)
     if(!id)
     {
         res.status(400).end();
@@ -79,14 +74,19 @@ classes.put('/:id', async (req, res) => {
 async function insertClassIntoDatabase (classe){
     
     // check class's name exists into database
-    let isName = await getUserById(classe.name);
-    if(!isName)
+    //console.log(classe);
+    let isName = await getClassById(classe.id);
+    console.log('isName: ' +isName)
+    if(!isName){
         return null;
+    }
     
     // check prof exists into database
     let isUser = await getUserById(classe.prof);
-    if(!isUser)
+    //console.log('isProf: ' +isUser)
+    if(!isUser){
         return null;
+    }
 
     // check every assistants exist into database
     // check every students exists into database
@@ -99,7 +99,7 @@ async function insertClassIntoDatabase (classe){
     let res = await pool.query(queryText, queryParam);
 
     if(res)
-        insertExam = JSON.parse(JSON.stringify(res.rows[0]));
+        insertClass = JSON.parse(JSON.stringify(res.rows[0]));
     else
         return null;
 
@@ -116,6 +116,7 @@ async function insertClassIntoDatabase (classe){
 //funzione di appoggio
 async function getUserById(id){
     
+    //console.log("sono in GETUSER e id:"+id);
     if(!id)
     {
         return null;
@@ -139,6 +140,8 @@ async function getUserById(id){
 }
 
 async function getClassById(id){
+
+    //console.log('sono in getClassById e id: ' +id)
 
     if(!id)
     {
@@ -195,28 +198,40 @@ async function getClassById(id){
 
 async function updateClassInDatabase(id, toModify){
 
-    if(!id)
+    id = Number.parseInt(id);
+
+    //console.log('sono in updateClass: toModify: ' + toModify);
+    //console.log('sono in updateClass: id: ' + id);
+
+    if(!id && !toModify)
     {
+        //console.log('sono in not id e not toModify')
         return null;
     }
     else
     {
+        //console.log('sono in else')
         var isClass = await getClassById(id);
 
         if(!isClass)
         {
+            //console.log('sono in not isClass')
             return null;
         }
         else
         {
+            //console.log('sono in else 2')
+
         	if(isClass.prof != toModify.prof)
         	{
+                //console.log('sono in prof')
                 return null;
 			}
 
             else 
             {
-            	console.log(id);
+                //console.log('sono in else!!!!!')
+            	//console.log(id);
 	            var queryText = 'UPDATE "class" SET "name"=$1, "description"=$2 WHERE "id"=$3 RETURNING *';
 	            var queryParams = [toModify.name, toModify.description, id];
 	            var result = await pool.query(queryText,queryParams);
