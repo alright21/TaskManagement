@@ -206,7 +206,6 @@ async function getMultipleChoice(id){
         var queryParams = [id];
         var result = await pool.query(queryText, queryParams);
 
-		let task;
         if(result.rowCount != 0){
 
 			return result.rows[0];

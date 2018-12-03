@@ -474,3 +474,34 @@ test('if a task is correct, should return the task created', () => {
 
 
 
+//tests for getMultipleChoice
+
+test('if arguments length of getMultipleChoice if !== 1 should return null', ()=> {
+	return getMultipleChoice()
+	.then(res => {
+		expect(res).toBeNull();
+	});
+});
+
+test('if the id of getMultipleChoice is null, should return null', () => {
+	return getMultipleChoice(null)
+	.then(res => {
+		expect(res).toBeNull();
+	});
+});
+
+test('if the multiple choice does not exists in the database, should return null', () => {
+	return getMultipleChoice(10000)
+	.then(res => {
+		expect(res).toBeNull();
+	});
+});
+
+test('if the multiple choice id is 3, should return the multiple choice', () => {
+	return getMultipleChoice(3)
+	.then(res => {
+		expect(res).toHaveProperty('id');
+		expect(res).toHaveProperty('task');
+		expect(res).toHaveProperty('answer');
+	});
+});
