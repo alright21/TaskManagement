@@ -125,6 +125,18 @@ const invalidMultipleChoices = [
 	}
 ];
 
+const validInsertMultipleChoices = [
+	{
+		
+		"task": 2,
+		"answer": "Maybe"
+	},{
+		
+		"task": 2,
+		"answer": "Sure"
+	
+	}
+];
 //Functions executed before (and after) doing test cases, to open and close
 //the server:
 beforeAll(function() {
@@ -371,6 +383,38 @@ test('if the update is valid, should return the task updated', () => {
 	return updateTaskInDatabase(3, validUpdateClose)
 	.then(res => {
 		expect(res).toMatchObject(validUpdateClose);
+	});
+});
+
+//test for insertMultipleChoices
+
+test('if argument length is !== 2 should return null', () => {
+	 
+	return insertMultipleChoices(validMultipleChoices,validTask.id, validTask)
+	.then(res => {
+		expect(res).toBeNull();
+	});
+});
+
+test('if multiple choices are null, should return null', () => {
+
+	return insertMultipleChoices(null, validTask.id)
+	.then(res => {
+		expect(res).toBeNull();
+	});
+});
+
+test('if multiple choices are valid, should return the array of the multiple choices created', () => {
+
+	return insertMultipleChoices(validInsertMultipleChoices, 2)
+	.then(res => {
+		
+		for(let i = 0; i< res.length; i++){
+			validInsertMultipleChoices[i].id = res[i].id;
+		}
+		return getMultipleChoices(2);
+	}).then(res => {
+		expect(res).toMatchObject(validInsertMultipleChoices);
 	});
 });
 
