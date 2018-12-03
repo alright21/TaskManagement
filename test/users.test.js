@@ -357,7 +357,7 @@ return getTasks(16)
 
 
 test('delete valid user',()=>{
-    return deleteUser(1)
+    return deleteUser(2)
     .then(res=>{
       expect(res.status).toBe(204);
   })

@@ -83,6 +83,7 @@ CREATE TABLE "multiple_choices"
 );
 
 INSERT INTO "user" ("name", "surname", "email", "password") VALUES ('francesco', 'da dalt', 'francescodadalt@hotmail.it', 'lol');
+INSERT INTO "user" ("name", "surname", "email", "password") VALUES ('Utente', 'Utente', 'blllll', 'password');
 INSERT INTO "task" ("creator", "task_type", "question", "example", "mark") VALUES (1, 1, 'blablabla', 'blablabla', 30);
 INSERT INTO "task" ("creator", "task_type", "question", "example", "mark") VALUES (1, 1, 'blablabla2', 'blablabla2', 30);
 INSERT INTO "exam" ("creator", "deadline", "mark") VALUES (1, 500, 30);
@@ -92,3 +93,5 @@ INSERT INTO "task_in_exams" VALUES(1,1);
 INSERT INTO "task_in_exams" VALUES(2,1);
 INSERT INTO "multiple_choices" ("task", "answer") VALUES (1,'Yes');
 INSERT INTO "multiple_choices" ("task", "answer") VALUES (1, 'No');
+
+SELECT * FROM "user"
