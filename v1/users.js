@@ -8,7 +8,6 @@ const config = require('../db_config');
 const pool = new pg.Pool(config);
 
 users.use(bodyParser.json());
-users.use(bodyParser.urlencoded({ extended: true }));
 
 users.post('/', async (req, res) => {
 	const toInsert = req.body;
@@ -72,21 +71,39 @@ users.get('/:id/tasks', async(req,res)=> {
 users.put('/:userID', async (req, res) => {
 	const userID = Number.parseInt(req.params.userID);
 	const toModify = req.body;
-	
+
 	if(!userID){
 		res.status(400).end();
 	}else{
 		let result = await updateUserInDatabase(userID, toModify);
-		
 		if(result){
 			let resultJSON = JSON.parse(JSON.stringify(result));
-			res.status(204).send(resultJSON);
+			res.status(200).send(resultJSON);
 		}else{
 			res.status(409).end();
 		}
 	}
 });
 
+//DELETE only for testing
+users.delete('/', async (req, res) => {
+	let result = await deleteAllUsers();
+
+	if(result)
+		res.status(204).send();
+	else
+		res.status(404).end();
+});
+
+async function deleteAllUsers(){
+	let queryText = 'DELETE FROM "user" WHERE id > 1 RETURNING *';
+	let result = await pool.query(queryText);
+
+	if(result)
+		return result;
+	else
+		return null;
+}
 
 //FUNCTIONS INTERFACING WITH THE DB
 async function getUserById(id){
@@ -135,25 +152,25 @@ async function getUserByEmail(email){
 }
 
 async function updateUserInDatabase(id, toModify){
-	if(arguments.length !== 2)
+	if(arguments.length !== 2){
 		return null;
-	id = Number.parseInt(id);
-	if(!id || !toModify)
+	}
+	if(!id || !toModify){
 		return null;
+	}
 	else{
 		let isUser = await getUserById(id);
-		
-		if(!isUser)
+		if(!isUser){
 			return null;
+		}
 		else{
-			if(!toModify.name || !toModify.surname || !toModify.email || !toModify.password || isUser.id !== toModify.id)
+			if(!toModify.name || !toModify.surname || !toModify.email || !toModify.password || isUser.id !== id){
 				return null;
-			else{
-				let queryText = 'UPDATE "user" SET "name"=$1,"surname"=$2,"email"=$3,"password"=$4 WHERE "id"=$5 RETURNING *';
+			}else{
+				let queryText = 'UPDATE "user" SET name=$1, surname=$2, email=$3, password=$4 WHERE  id=$5 RETURNING *';
 				let queryParams = [toModify.name, toModify.surname, toModify.email, toModify.password, id];
-				
 				let result = await pool.query(queryText, queryParams);
-				
+
 				if(result.rowCount != 0)
 					return result.rows[0];
 				else
@@ -164,47 +181,48 @@ async function updateUserInDatabase(id, toModify){
 }
 
 //GET TASKS FROM DB WHERE CREATOR==ID
-// async function getTasks(id){
-//   if(!id){
-//     return null;
-//   }else{
-//     let queryText = 'SELECT * FROM "task" WHERE creator=$1';
-//     let queryParams = [id];
-//     let result = await pool.query(queryText, queryParams);
-//     let tasks;
-//     if(result.rowCount!=0){
-//        tasks = JSON.parse(JSON.stringify(result));
-//     }else {
-//        return null;
-//     }
-//   }
-//   return tasks;
-// }
-// //GET EXAMS FROM DB WHERE CREATOR==ID
-// async function getExams(id){
-//   if(!id){
-//   return null;
-//     }
-//     else{
-//       let queryText = 'SELECT * FROM "exam" WHERE creator=$1';
-//       let queryParams = [id];
-//       let result = await pool.query(queryText, queryParams);
-//       let exams;
-//       if(result.rowCount!=0){
-//         exams = JSON.parse(JSON.stringify(result));
-//       }else {
-//         return null;
-//       }
-//     }
-//   return exams;
-//  }
+async function getTasks(id){
+  if(!id){
+    return null;
+  }else{
+    let queryText = 'SELECT * FROM "task" WHERE creator=$1';
+    let queryParams = [id];
+    let result = await pool.query(queryText, queryParams);
+    let tasks;
+    if(result.rowCount!=0){
+       tasks = JSON.parse(JSON.stringify(result));
+    }else {
+       return null;
+    }
+  }
+  return tasks;
+}
+//GET EXAMS FROM DB WHERE CREATOR==ID
+async function getExams(id){
+  if(!id){
+  return null;
+    }
+    else{
+      let queryText = 'SELECT * FROM "exam" WHERE creator=$1';
+      let queryParams = [id];
+      let result = await pool.query(queryText, queryParams);
+      let exams;
+      if(result.rowCount!=0){
+        exams = JSON.parse(JSON.stringify(result));
+      }else {
+        return null;
+      }
+    }
+  return exams;
+}
 
 module.exports = {
 	users: users,
 	getUserById: getUserById,
 	getUserByEmail: getUserByEmail,
-  // getTasks : getTasks,
-  // getExams: getExams,
+  	getTasks : getTasks,
+	getExams: getExams,
+	deleteAllUsers: deleteAllUsers,
 	postUser: postUser,
 	updateUserInDatabase: updateUserInDatabase
 };
