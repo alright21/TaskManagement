@@ -12,8 +12,13 @@ tasks.post('/', async (req,res) => {
 	
 	if(!req.body){
         res.status(400).end();
-    }
-    var result = await insertTaskInDatabase(req.body);
+	}
+	try{
+		var result = await insertTaskInDatabase(req.body);
+	}catch(e){
+		console.log(e);
+	}
+    
 
     if(result){
 
@@ -33,8 +38,13 @@ tasks.put('/:id', async (req,res) => {
     const toModify = req.body;
     if(!id){
         res.status(400).end();
-    }
-    var result = await updateTaskInDatabase(id, toModify);
+	}
+	try{
+		var result = await updateTaskInDatabase(id, toModify);
+
+	}catch(e){
+		console.log(e);
+	}
 
     if(result){
         var resultJson = JSON.parse(JSON.stringify(result));
@@ -54,8 +64,12 @@ tasks.get('/:id', async (req,res) => {
 
         res.status(400).end();
     }
-
-	var result = await getTaskById(id);
+	try{
+		var result = await getTaskById(id);
+	}catch(e){
+		console.log(e);
+	}
+	
 
     if(result){
         var resultJson = JSON.parse(JSON.stringify(result));
@@ -75,7 +89,13 @@ async function insertTaskInDatabase(task){
         return null;
     }
     //Qui ci andrà la logica per controllare che user, task e exam esistano per evitare problemi di database
-    var isUser = await getUserById(task.creator);
+	let isUser;
+	try{
+		isUser = await getUserById(task.creator);
+
+	}catch(e){
+		console.log(e);
+	}
     
     if(!isUser || !task.mark){
 
@@ -86,8 +106,13 @@ async function insertTaskInDatabase(task){
         var queryParams = [task.creator, task.task_type, task.question, task.example, task.mark]; 
         
 
-        //non sono sicuro che serva
-        var result = await pool.query(queryText, queryParams);
+		//non sono sicuro che serva
+		try{
+			var result = await pool.query(queryText, queryParams);
+
+		}catch(e){
+			console.log(e);
+		}
         if(result){
 			if(task.task_type === 0){
 				return result.rows[0];
@@ -95,7 +120,13 @@ async function insertTaskInDatabase(task){
 
 				let newTask = result.rows[0];
 
-				let multipleChoices = await insertMultipleChoices(task.multiple_choices, result.rows[0].id);
+				let multipleChoices;
+				try{
+					multipleChoices = await insertMultipleChoices(task.multiple_choices, result.rows[0].id);
+
+				}catch(e){
+					console.log(e);
+				}
 				if(multipleChoices){
 					newTask.multiple_choices = multipleChoices;
 					return newTask;
@@ -118,8 +149,19 @@ async function updateTaskInDatabase(id, toModify){
     if(!id || !toModify || !toModify.mark){
         return null;
     }else{
-		var isTask = await getTaskById(id);
-		var isCreator = await getUserById(toModify.creator);
+		try{
+			var isTask = await getTaskById(id);
+		}catch(e){
+			console.log(e);
+		}
+
+		try{
+			var isCreator = await getUserById(toModify.creator);
+
+		}catch(e){
+			console.log(e);
+		}
+
 
         if(!isTask || !isCreator){
             return null;
@@ -128,16 +170,30 @@ async function updateTaskInDatabase(id, toModify){
 			var queryText = 'UPDATE "task" SET "creator"=$1,"task_type"=$2, "question"=$3, "example"=$4, "mark"=$5 WHERE "id"=$6 RETURNING *';
 			var queryParams = [toModify.creator,toModify.task_type, toModify.question, toModify.example, toModify.mark, id];
 
-			var result = await pool.query(queryText,queryParams);
+			try{
+				var result = await pool.query(queryText,queryParams);
+			}catch(e){
+				console.log(e);
+			}
 			//non sono sicuro che serva
 			if(result.rowCount != 0){
 				let task = result.rows[0];
 				if(task.task_type ===0){
 					return task;
 				}else{
-					let multipleChoicesResult = await updateMultipleChoices(toModify.multiple_choices);
+					let multipleChoicesResult;
+					try{
+						multipleChoicesResult = await updateMultipleChoices(toModify.multiple_choices);
+					}catch(e){
+						console.log(e);
+					}
 					if(multipleChoicesResult){
-						task.multiple_choices = await getMultipleChoices(id);
+						try{
+							task.multiple_choices = await getMultipleChoices(id);
+
+						}catch(e){
+							console.log(e);
+						}
 						return task;
 					}else{
 						return null;
@@ -163,7 +219,13 @@ async function updateMultipleChoices(multipleChoices){
 	}
 	let isList = true;
 	for(let i = 0; i<multipleChoices.length; i++){
-		let getResult = await getMultipleChoice(multipleChoices[i].id);
+
+		let getResult;
+		try{
+			getResult = await getMultipleChoice(multipleChoices[i].id);
+		}catch(e){
+			console.log(e);
+		}
 		if(!getResult){
 			isList = false;
 		}
@@ -178,7 +240,13 @@ async function updateMultipleChoices(multipleChoices){
 			let queryText = 'UPDATE "multiple_choices" SET "answer"=$1 WHERE "id"=$2 RETURNING *';
 			let queryParams = [multipleChoices[i].answer,multipleChoices[i].id];
 
-			let result = await pool.query(queryText,queryParams);
+
+			let result;
+			try{
+				result = await pool.query(queryText,queryParams);
+			}catch(e){
+				console.log(e);
+			}
 			if(result){
 				list.push(result.rows[0]);
 			}else{
@@ -204,7 +272,12 @@ async function getMultipleChoice(id){
 
         var queryText = 'SELECT * FROM "multiple_choices" WHERE id=$1';
         var queryParams = [id];
-        var result = await pool.query(queryText, queryParams);
+		let result; 
+		try{
+			result= await pool.query(queryText, queryParams);
+		}catch(e){
+			console.log(e);
+		}
 
         if(result.rowCount != 0){
 
@@ -226,15 +299,27 @@ async function getTaskById(id){
     }else{
 
         var queryText = 'SELECT * FROM "task" WHERE id=$1';
-        var queryParams = [id];
-        var result = await pool.query(queryText, queryParams);
+		var queryParams = [id];
+		let result;
+		try{
+			result = await pool.query(queryText, queryParams);
+		}catch(e){
+			console.log(e);
+		}
+        
 
 		let task;
         if(result.rowCount != 0){
 
 			task = result.rows[0];
-			
-			let multipleChoices = await getMultipleChoices(id);
+
+			let multipleChoices;
+			try{
+				multipleChoices = await getMultipleChoices(id);
+
+			}catch(e){
+				console.log(e);
+			}
 
 			if(multipleChoices){
 				task.multiple_choices = multipleChoices;
@@ -261,8 +346,15 @@ async function getMultipleChoices(id){
     }else{
 
         var queryText = 'SELECT * FROM "multiple_choices" WHERE "task"=$1';
-        var queryParams = [id];
-        var result = await pool.query(queryText, queryParams);
+		var queryParams = [id];
+		
+		let result;
+		try{
+			result = await pool.query(queryText, queryParams);
+
+		}catch(e){
+			console.log(e);
+		}
 
         if(result.rowCount != 0){
 
@@ -297,7 +389,13 @@ async function insertMultipleChoices(multipleChoices, task){
 			var queryText = 'INSERT INTO "multiple_choices" ("task","answer") VALUES ($1,$2) RETURNING *';
 			var queryParams = [task, multipleChoices[i].answer];
 
-			var result = await pool.query(queryText,queryParams);
+			let result;
+			try{
+				result = await pool.query(queryText,queryParams);
+			}catch(e){
+				console.log(e);
+			}
+			
 
 			if(!result){
 				resultList = false;
