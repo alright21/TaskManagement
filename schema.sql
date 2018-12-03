@@ -83,7 +83,7 @@ CREATE TABLE "multiple_choices"
 );
 
 INSERT INTO "user" ("name", "surname", "email", "password") VALUES ('francesco', 'da dalt', 'francescodadalt@hotmail.it', 'lol');
-INSERT INTO "user" ("name", "surname", "email", "password") VALUES ('Utente', 'Utente', 'blllll', 'password');
+INSERT INTO "user" ("2", "name", "surname", "email", "password") VALUES ('2','Utente', 'Utente', 'blllll', 'password');
 INSERT INTO "task" ("creator", "task_type", "question", "example", "mark") VALUES (1, 1, 'blablabla', 'blablabla', 30);
 INSERT INTO "task" ("creator", "task_type", "question", "example", "mark") VALUES (1, 0, 'blablabla2', 'blablabla2', 30);
 INSERT INTO "exam" ("creator", "deadline", "mark") VALUES (1, 500, 30);

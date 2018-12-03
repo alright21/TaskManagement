@@ -6,7 +6,6 @@ var server;
 
 const getUserByID = require('../v1/users').getUserById;
 const deleteAll = require('../v1/users').deleteAllUsers;
-const insertUserWID = require('../v1/users').postUserWithID;
 const updateUserDB = require('../v1/users').updateUserInDatabase;
 
 const exampleUser = {'name': 'Mario','surname': 'Rossi','email': 'mario.rossi@gmail.com','password': 'password'};
@@ -20,7 +19,6 @@ const wrongUser4 = {'name': 'One','surname': 'Time','email': 'one.time@gmail.com
 const wrongUser5 = {'name': 'One','surname': 'Time','email': 'one.time@gmail.com','password': 'azz'};
 const putUser = {'name': 'Mario','surname': 'Rossi','email': 'mario.rossi@gmail.com','password': 'abba'};
 const exampleUserID = 1;
-let globalID;
 
 const validtask={
   id: 1,
@@ -300,7 +298,6 @@ describe('GET USERS', () => {
 			return getUsersList()
 				.then(getResponse => {return getResponse.json()})
 				.then(getResponseJson => {
-					let listWithoutFirstElem;
 					for(let i = 0; i < getResponseJson.length; i++){
 						if(getResponseJson[i].id === 1){
 							getResponseJson.pop();
@@ -461,9 +458,9 @@ test('GET list of exams of a not valid user id',()=>{
 });
 
 test('GET list of tasks of a not valid user id',()=>{
-return getTasks(16)
-.then(res =>{return res.json()})
+	return getTasks(16)
+	.then(res =>{return res.json()})
 	.then(jres =>{
-		expect(jres).toEqual({});
-	})
+	  expect(jres).toEqual({});
+  })
 });
