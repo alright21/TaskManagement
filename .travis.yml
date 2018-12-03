@@ -9,4 +9,4 @@ before_script:
   - psql -c 'create database travis_ci_test;' -U postgres
   - psql -U postgres -d travis_ci_test -a -f ./schema.sql
   - psql -c "ALTER USER postgres WITH PASSWORD 'root';" -U postgres
-  - npm start
+  - node index.js &
