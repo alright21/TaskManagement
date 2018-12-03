@@ -45,7 +45,7 @@ users.get('/:userID',async (req, res) => {
 
 
 users.get('/:id/exams', async(req,res)=> {
-  let id=req.params.userID;
+  var id=req.params.id;
 	let result = await getExams(id);
   if(result){
        var resultJson = JSON.parse(JSON.stringify(result));
@@ -128,8 +128,8 @@ async function getTasks(id){
     let queryParams = [id];
     let result = await pool.query(queryText, queryParams);
     let tasks;
-    if(result.rowCount!=0){
-       return JSON.parse(JSON.stringify(result));
+    if(result.rowCount != 0){
+       return result.rows;
     }else {
        return null;
     }
@@ -144,8 +144,9 @@ async function getExams(id){
       let queryText = 'SELECT * FROM "exam" WHERE creator=$1';
       let queryParams = [id];
       let result = await pool.query(queryText, queryParams);
-      	if(result.rowCount!=0){
-        return JSON.parse(JSON.stringify(result));
+			console.log("result:"+result)
+      	if(result.rowCount != 0){
+        return result.rows;
       }else {
         return null;
       }
