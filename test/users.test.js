@@ -24,7 +24,7 @@ const validtask={
 };
 const validexam={
   id: 1,
-  creator: 2,
+  creator: 1,
   deadline: 550,
   mark: 30
   };
@@ -59,7 +59,7 @@ const getUser = function(userID){
 	});
 };
 
-const getExam = function(userID){
+const getExams = function(userID){
   return fetch(root + '/v1/users/' + userID +'/exams', {
     method: 'GET',
     headers: {
@@ -79,6 +79,7 @@ const getTasks = function(userID){
 
 //TESTS
 //POST
+
 test('Post user response', () => {
    return postUser(exampleUser4)
       .then(postResponse => {expect(postResponse.status).toBe(201)});
@@ -173,52 +174,57 @@ test('get valid exam, 200',()=>{
     return getExams(validexam.creator)
     .then(res=>{return res.json();})
     .then(jres => {
-      expect(typeof getResponseJson).toEqual('object');
-			expect(jres).toHaveProperty('id');
-			expect(jres).toHaveProperty('creator');
-			expect(jres).toHaveProperty('deadline');
-			expect(jres).toHaveProperty('mark');
+      var dim = Object.keys(jres).length;
+      for(var i=0;i<dim;i++){
+        expect(typeof jres[i]).toEqual('object');
+        expect(jres[i]).toHaveProperty('id');
+        expect(jres[i]).toHaveProperty('creator');
+        expect(jres[i]).toHaveProperty('deadline');
+        expect(jres[i]).toHaveProperty('mark');
 
-      expect(jres.id).toEqual('number');
-      expect(jres.creator).toEqual('string');
-      expect(jres.deadline).toEqual('number');
-      expect(jres.mark).toEqual('number');
-    })
+        expect(typeof jres[i].id).toEqual('number');
+        expect(typeof jres[i].creator).toEqual('number');
+        expect(typeof jres[i].deadline).toEqual('number');
+        expect(typeof jres[i].mark).toEqual('number');
+
+      }
+  })
 });
 
 test('get valid task, 200',()=>{
     return getTasks(validtask.creator)
-    .then(res=>{
-      return res.json();
-    })
+    .then(res=>{return res.json();})
     .then(jres=>{
-      expect(typeof jres).toEqual('object');
-			expect(jres).toHaveProperty('id');
-			expect(jres).toHaveProperty('creator');
-			expect(jres).toHaveProperty('task_type');
-			expect(jres).toHaveProperty('question');
-			expect(jres).toHaveProperty('mark');
-      expect(jres).toHaveProperty('mark');
+      var dim = Object.keys(jres).length;
+      for(var i=0;i<dim;i++) {
+  			expect(jres[i]).toHaveProperty('id');
+  			expect(jres[i]).toHaveProperty('creator');
+  			expect(jres[i]).toHaveProperty('task_type');
+  			expect(jres[i]).toHaveProperty('question');
+  			expect(jres[i]).toHaveProperty('mark');
+        expect(jres[i]).toHaveProperty('mark');
 
-      expect(jres.id).toEqual('number')
-      expect(jres.creator).toEqual('number')
-      expect(jres.task_type).toEqual('string')
-      expect(jres.question).toEqual('string')
-      expect(jres.mark).toEqual('string')
-
+        expect(typeof jres[i].id).toEqual('number')
+        expect(typeof jres[i].creator).toEqual('number')
+        expect(typeof jres[i].task_type).toEqual('number')
+        expect(typeof jres[i].question).toEqual('string')
+        expect(typeof jres[i].mark).toEqual('number')
+      }
   })
 });
-
 test('get invalid exam, NULL',()=>{
-    return getExams(invalidid)
-    .then(res =>{
-      expect(res).toBeNull();
+  return getExams(16)
+  .then(res =>{return res.json()})
+    .then(jres =>{
+      expect(jres).toEqual({});
     })
 });
+
 
 test('get invalid task, NULL',()=>{
-    return getTasks(invalidid)
-    .then(res=>{
-      expect(res).toBeNull();
-  })
+  return getTasks(16)
+  .then(res =>{return res.json()})
+    .then(jres =>{
+      expect(jres).toEqual({});
+    })
 });
