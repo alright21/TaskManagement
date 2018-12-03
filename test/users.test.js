@@ -213,6 +213,7 @@ describe('GET USER TESTS', () => {
 		});
 	});
 });
+
 test('get valid exam, 200',()=>{
     return getExams(validexam.creator)
     .then(res=>{return res.json();})
@@ -271,11 +272,6 @@ test('get invalid task, NULL',()=>{
       expect(jres).toEqual({});
     })
 });
-//PUT
-test('PUT user with less than two parameters', () => {
-	return updateUser(1)
-		.then(putResponse => {expect(putResponse.status).toBe(409)});
-});
 
 //PUT USER
 //#########################
@@ -304,7 +300,7 @@ describe('PUT USER TESTS', () => {
 		return updateUserDB(exampleUserID, null)
 			.then(putResponse => {expect(putResponse).toBeNull()});
 	});
-
+	
 	test('PUT user with wrond id', () => {
 		return updateUser(0, putUser)
 			.then(putResponse => {expect(putResponse.status).toBe(400)});
