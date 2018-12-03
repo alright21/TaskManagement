@@ -8,6 +8,7 @@ const config = require('../db_config');
 const pool = new pg.Pool(config);
 
 users.use(bodyParser.json());
+users.use(bodyParser.urlencoded({ extended: true }));
 
 users.post('/', async (req, res) => {
 	const toInsert = req.body;
@@ -43,29 +44,29 @@ users.get('/:userID',async (req, res) => {
 });
 
 users.get('/:id/exams', async(req,res)=> {
-  var id=req.params.id;
-	let result = await getExams(id);
-  if(result){
-       var resultJson = JSON.parse(JSON.stringify(result));
-       res.status(200).send(resultJson);
-   }
-   else{
-     let resultnegJSON = JSON.parse(JSON.stringify({}));
-       res.status(404).send(resultnegJSON);
-   }
+	var id=req.params.id;
+		let result = await getExams(id);
+	if(result){
+			var resultJson = JSON.parse(JSON.stringify(result));
+			res.status(200).send(resultJson);
+		}
+		else{
+		let resultnegJSON = JSON.parse(JSON.stringify({}));
+			res.status(404).send(resultnegJSON);
+		}
 });
-
+ 
 users.get('/:id/tasks', async(req,res)=> {
-    var id=req.params.id;
+	var id=req.params.id;
 		let result = await getTasks(id);
-    if(result){
-     	var resultJson = JSON.parse(JSON.stringify(result));
-     	res.status(200).send(resultJson);
-    }
-    else{
-      let resultnegJSON = JSON.parse(JSON.stringify({}));
-      res.status(404).send(resultnegJSON);
-    }
+	if(result){
+		var resultJson = JSON.parse(JSON.stringify(result));
+		res.status(200).send(resultJson);
+	}
+	else{
+		let resultnegJSON = JSON.parse(JSON.stringify({}));
+		res.status(404).send(resultnegJSON);
+	}
 });
 
 users.put('/:userID', async (req, res) => {
@@ -182,38 +183,36 @@ async function updateUserInDatabase(id, toModify){
 
 //GET TASKS FROM DB WHERE CREATOR==ID
 async function getTasks(id){
-  if(!id){
-    return null;
-  }else{
-    let queryText = 'SELECT * FROM "task" WHERE creator=$1';
-    let queryParams = [id];
-    let result = await pool.query(queryText, queryParams);
-    let tasks;
-    if(result.rowCount!=0){
-       tasks = JSON.parse(JSON.stringify(result));
-    }else {
-       return null;
-    }
-  }
-  return tasks;
+	if(!id){
+	  return null;
+	}else{
+	  let queryText = 'SELECT * FROM "task" WHERE creator=$1';
+	  let queryParams = [id];
+	  let result = await pool.query(queryText, queryParams);
+	  let tasks;
+	  if(result.rowCount != 0){
+		  return result.rows;
+	  }else {
+		  return null;
+	  }
+	}
 }
-//GET EXAMS FROM DB WHERE CREATOR==ID
+ //GET EXAMS FROM DB WHERE CREATOR==ID
 async function getExams(id){
-  if(!id){
-  return null;
-    }
-    else{
-      let queryText = 'SELECT * FROM "exam" WHERE creator=$1';
-      let queryParams = [id];
-      let result = await pool.query(queryText, queryParams);
-      let exams;
-      if(result.rowCount!=0){
-        exams = JSON.parse(JSON.stringify(result));
-      }else {
-        return null;
-      }
-    }
-  return exams;
+if(!id){
+return null;
+	}
+	else{
+		let queryText = 'SELECT * FROM "exam" WHERE creator=$1';
+		let queryParams = [id];
+		let result = await pool.query(queryText, queryParams);
+			console.log("result:"+result)
+			if(result.rowCount != 0){
+		return result.rows;
+		}else {
+		return null;
+		}
+	}
 }
 
 module.exports = {
