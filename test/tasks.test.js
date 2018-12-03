@@ -121,36 +121,6 @@ const invalidMultipleChoices = [
 	}
 ];
 
-const validInsertMultipleChoices = [
-	{
-		
-		"task": 2,
-		"answer": "Maybe"
-	},{
-		
-		"task": 2,
-		"answer": "Sure"
-	
-	}
-];
-
-const nullMultipleChoicesTask = {
-	"creator": 1,
-	"task_type": 1,
-	"question": "Do you like cats?",
-	"example": "Yes, I do!",
-	"mark": 30,
-	"multiple_choices": null
-};
-//Functions executed before (and after) doing test cases, to open and close
-//the server:
-beforeAll(function() {
-	server = require('../index');
-});
-afterAll(function() {
-	server.close();
-});
-
 //Little function useful as an helper function, with a Promise:
 
 const postTask = function(newTask){

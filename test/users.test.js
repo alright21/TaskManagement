@@ -37,13 +37,6 @@ const validexam={
 
 var invalidid=-1;
 
-beforeAll(function () {
-   server = require('../index');
-});
-afterAll(function () {
-   server.close();
-});
-
 //--------------------------------------------
 //					HELPER FUNCTIONS
 //--------------------------------------------
