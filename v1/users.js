@@ -62,34 +62,69 @@ users.delete('/:id',async (req, res) => {
 });
 
 
+
 users.get('/:id/exams', async(req,res)=> {
-  let id=req.params.userID;
-	let result = await getExams(id);
-  if(result){
-       var resultJson = JSON.parse(JSON.stringify(result));
-       res.status(200).send(resultJson);
-   }
-   else{
-     let resultnegJSON = JSON.parse(JSON.stringify({}));
-       res.status(404).send(resultnegJSON);
-   }
+	var id=req.params.id;
+		let result = await getExams(id);
+	if(result){
+			var resultJson = JSON.parse(JSON.stringify(result));
+			res.status(200).send(resultJson);
+		}
+		else{
+		let resultnegJSON = JSON.parse(JSON.stringify({}));
+			res.status(404).send(resultnegJSON);
+		}
 });
-
+ 
 users.get('/:id/tasks', async(req,res)=> {
-    var id=req.params.id;
+	var id=req.params.id;
 		let result = await getTasks(id);
-    if(result){
-     	var resultJson = JSON.parse(JSON.stringify(result));
-     	res.status(200).send(resultJson);
-    }
-    else{
-      let resultnegJSON = JSON.parse(JSON.stringify({}));
-      res.status(404).send(resultnegJSON);
-    }
+	if(result){
+		var resultJson = JSON.parse(JSON.stringify(result));
+		res.status(200).send(resultJson);
+	}
+	else{
+		let resultnegJSON = JSON.parse(JSON.stringify({}));
+		res.status(404).send(resultnegJSON);
+	}
 });
 
+users.put('/:userID', async (req, res) => {
+	const userID = Number.parseInt(req.params.userID);
+	const toModify = req.body;
 
+	if(!userID){
+		res.status(400).end();
+	}else{
+		let result = await updateUserInDatabase(userID, toModify);
+		if(result){
+			let resultJSON = JSON.parse(JSON.stringify(result));
+			res.status(200).send(resultJSON);
+		}else{
+			res.status(409).end();
+		}
+	}
+});
 
+//DELETE only for testing
+users.delete('/', async (req, res) => {
+	let result = await deleteAllUsers();
+
+	if(result)
+		res.status(204).send();
+	else
+		res.status(404).end();
+});
+
+async function deleteAllUsers(){
+	let queryText = 'DELETE FROM "user" WHERE id > 1 RETURNING *';
+	let result = await pool.query(queryText);
+
+	if(result)
+		return result;
+	else
+		return null;
+}
 
 //FUNCTIONS INTERFACING WITH THE DB
 async function getUserById(id){
@@ -137,23 +172,52 @@ async function getUserByEmail(email){
 	}
 }
 
+async function updateUserInDatabase(id, toModify){
+	if(arguments.length !== 2){
+		return null;
+	}
+	if(!id || !toModify){
+		return null;
+	}
+	else{
+		let isUser = await getUserById(id);
+		if(!isUser){
+			return null;
+		}
+		else{
+			if(!toModify.name || !toModify.surname || !toModify.email || !toModify.password || isUser.id !== id){
+				return null;
+			}else{
+				let queryText = 'UPDATE "user" SET name=$1, surname=$2, email=$3, password=$4 WHERE  id=$5 RETURNING *';
+				let queryParams = [toModify.name, toModify.surname, toModify.email, toModify.password, id];
+				let result = await pool.query(queryText, queryParams);
+
+				if(result.rowCount != 0)
+					return result.rows[0];
+				else
+					return null;
+			}
+		}
+	}
+}
+
 //GET TASKS FROM DB WHERE CREATOR==ID
 async function getTasks(id){
-  if(!id){
-    return null;
-  }else{
-    let queryText = 'SELECT * FROM "task" WHERE creator=$1';
-    let queryParams = [id];
-    let result = await pool.query(queryText, queryParams);
-    let tasks;
-    if(result.rowCount!=0){
-       return JSON.parse(JSON.stringify(result));
-    }else {
-       return null;
-    }
-  }
+	if(!id){
+	  return null;
+	}else{
+	  let queryText = 'SELECT * FROM "task" WHERE creator=$1';
+	  let queryParams = [id];
+	  let result = await pool.query(queryText, queryParams);
+	  let tasks;
+	  if(result.rowCount != 0){
+		  return result.rows;
+	  }else {
+		  return null;
+	  }
+	}
 }
-//GET EXAMS FROM DB WHERE CREATOR==ID
+ //GET EXAMS FROM DB WHERE CREATOR==ID
 async function getExams(id){
   if(!id){
   return null;
@@ -185,6 +249,7 @@ async function getExams(id){
  	}
  }
 }
+
 module.exports = {
 	users: users,
 	getUserById: getUserById,
@@ -192,5 +257,6 @@ module.exports = {
   getTasks : getTasks,
   getExams: getExams,
 	postUser: postUser,
-	deleteUserById: deleteUserById
+	deleteUserById: deleteUserById,
+	updateUserInDatabase: updateUserInDatabase
 };
