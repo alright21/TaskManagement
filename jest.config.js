@@ -1,5 +1,5 @@
 module.exports = {
     verbose: true,
-    globalSetup: './setup.js',
+    globalSetup: './index.js',
     globalTeardown: './teardown.js'
 };
