@@ -19,12 +19,8 @@ const validTask = {
 	"example": "Yes, I do!",
 	"mark": 30,
 	"multiple_choices": [{
-		"id": 3,
-		"task": 3,
 		"answer": "Yes"
 	},{
-		"id": 4,
-		"task": 3,
 		"answer": "No"
 	}]
 };
@@ -125,6 +121,27 @@ const invalidMultipleChoices = [
 	}
 ];
 
+const validInsertMultipleChoices = [
+	{
+		
+		"task": 2,
+		"answer": "Maybe"
+	},{
+		
+		"task": 2,
+		"answer": "Sure"
+	
+	}
+];
+
+const nullMultipleChoicesTask = {
+	"creator": 1,
+	"task_type": 1,
+	"question": "Do you like cats?",
+	"example": "Yes, I do!",
+	"mark": 30,
+	"multiple_choices": null
+};
 //Functions executed before (and after) doing test cases, to open and close
 //the server:
 beforeAll(function() {
@@ -374,8 +391,93 @@ test('if the update is valid, should return the task updated', () => {
 	});
 });
 
+//test for insertMultipleChoices
+
+test('if argument length  of insertMultipleChoicesis !== 2 should return null', () => {
+	 
+	return insertMultipleChoices(validMultipleChoices,validTask.id, validTask)
+	.then(res => {
+		expect(res).toBeNull();
+	});
+});
+
+test('if multiple choices of insertMultipleChoices are null, should return null', () => {
+
+	return insertMultipleChoices(null, validTask.id)
+	.then(res => {
+		expect(res).toBeNull();
+	});
+});
+
+test('if multiple choices of insertMultipleChoices are valid, should return the array of the multiple choices created', () => {
+
+	return insertMultipleChoices(validInsertMultipleChoices, 2)
+	.then(res => {
+		
+		for(let i = 0; i< res.length; i++){
+			validInsertMultipleChoices[i].id = res[i].id;
+		}
+		return getMultipleChoices(2);
+	}).then(res => {
+		expect(res).toMatchObject(validInsertMultipleChoices);
+	});
+});
 
 
+// test for insertTaskInDatabase
+
+test('if argument length of insertTaskInDatabase is !== 1, should return null', () => {
+
+	return insertTaskInDatabase()
+	.then(res => {
+		expect(res).toBeNull();
+	});
+});
+
+test('if new task of insertTaskInDatabase is null, should return null', () => {
+	return insertTaskInDatabase(null)
+	.then(res => {
+		expect(res).toBeNull();
+	});
+});
+
+test('if the mark of the task is null of insertTaskInDatabase, should return null', () => {
+	return insertTaskInDatabase(nullMarkTask)
+	.then(res => {
+		expect(res).toBeNull();
+	});
+});
+
+test('if the creator of the task in insertTaskInDatabase is null, should return null', () => {
+	return insertTaskInDatabase(nullCreatorUpdate)
+	.then(res => {
+		expect(res).toBeNull();
+	});
+});
+
+test('if the task is Closed question in insertTaskInDatabase and has no multiple choices, should return null', () => {
+	return insertTaskInDatabase(nullMultipleChoicesTask)
+	.then(res => {
+		expect(res).toBeNull();
+	});
+});
+
+test('if a task is correct, should return the task created', () => {
+	return insertTaskInDatabase(validTask)
+	.then(res => {
+		validTask.id = res.id;
+		for(let i =0 ; i< res.multiple_choices.length; i++){
+			validTask.multiple_choices[i].id = res.multiple_choices[i].id;
+			validTask.multiple_choices[i].task = res.id;
+		
+		}
+		
+		return getTaskById(res.id);
+
+	}).then(getRes => {
+		expect(getRes).toMatchObject(validTask);
+	});
+});
 
 
 
