@@ -98,19 +98,9 @@ const updateUser = function(id, toModify){
 	});
  }
 
-<<<<<<< HEAD
-//TESTS
-//POST
-
-test('Post user response', () => {
-   return postUser(exampleUser4)
-      .then(postResponse => {expect(postResponse.status).toBe(201)});
-});
-=======
 //--------------------------------------------
 //							TESTS
 //--------------------------------------------
->>>>>>> Fixed test cases
 
 //POST USER
 //#########################
