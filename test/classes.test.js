@@ -13,24 +13,26 @@ const invalidId = 0;
 
 //Example of what a Class should contain
 const exampleValidClass = {
-	//'id': 5,
-	'name': 'class1',
-	'prof': 'prof1',
+	'id': 1,
+	'name': 'classee1',
+	'prof': 1,
 	'description': 'Course of SE'
 	//'assistants': ['assistant1', 'assistant2'], //NB: array's element are type "user"
 	//'students': ['student1', 'student2', 'student3'] //same type of assistants
 };
 
 const exampleInvalidName =  {
+  'id': 1,
 	'name': '0',
-	'prof': 'prof1',
+	'prof': 1,
 	'description': 'Course of SE'
 	//'assistants': ['assistant1', 'assistant2'], //NB: array's element are type "user"
 	//'students': ['student1', 'student2', 'student3'] //same type of assistants
 };
 
 const exampleInvalidProf =  {
-	'name': 'class1',
+  'id': 1,
+	'name': 'classee1',
 	'prof': '0',
 	'description': 'Course of SE'
 	//'assistants': ['assistant1', 'assistant2'], //NB: array's element are type "user"
@@ -38,16 +40,18 @@ const exampleInvalidProf =  {
 };
 
 const exampleModifiedName =  {
+  'id': 1,
 	'name': 'SEclass',
-	'prof': 'prof1',
+	'prof': 1,
 	'description': 'Course of SE'
 	//'assistants': ['assistant1', 'assistant2'], //NB: array's element are type "user"
 	//'students': ['student1', 'student2', 'student3'] //same type of assistants
 };
 
 const exampleModifiedDescription =  {
-	'name': 'SEclass',
-	'prof': 'prof1',
+  'id': 1,
+	'name': 'classee1',
+	'prof': 1,
 	'description': 'This is the class of SE'
 	//'assistants': ['assistant1', 'assistant2'], //NB: array's element are type "user"
 	//'students': ['student1', 'student2', 'student3'] //same type of assistants
@@ -81,7 +85,7 @@ afterAll(function() {
 //Little function useful as an helper function, with a Promise:
 
 
-const postClass = function(newClass){
+function postClass(newClass){
 	return fetch(SERVER_URL, {
 
 		method: 'POST',
@@ -97,6 +101,7 @@ function getClass(id){
   return fetch(SERVER_URL + '/' + id,{
     method: 'GET',
     headers: {
+      'Content-Type': 'application/json',
       'Accept': 'application/json'
     }
   });
@@ -117,45 +122,43 @@ function updateClass(id,toModify){
 //Test cases:
 
 // 1) TESTING POST/classes
+
 test('Post class response, case of a valid new Class', () => {
-	return postClass(exampleValidClass)
+	return postClass(exampleValidClass) 
 		.then(postResponse => {expect(postResponse.status).toBe(201)});
 });
 
 //2) Testing wheter the response body is correct.
-test('Post class response body', () => {
-	return postClass(exampleValidClass)
-		.then(postResponse => {return postResponse.json()})
-		.then(postResponseJson => {
-			//Object Schema
-			expect(typeof postResponseJson).toEqual('object');
-			expect(postResponseJson).toHaveProperty('name');
-			expect(postResponseJson).toHaveProperty('prof');
-			expect(postResponseJson).toHaveProperty('description');
-			//expect(postResponseJson).toHaveProperty('assistants');
-			//expect(postResponseJson).toHaveProperty('students');
-			//Keys types
-			expect(typeof postResponseJson).toEqual('object');
-			expect(typeof postResponseJson).toEqual('object');
-			expect(typeof postResponseJson).toEqual('string');
-			//expect(typeof postResponseJson).toEqual('object');
-			//expect(typeof postResponseJson).toEqual('object');
-			//Object values
-			expect(postResponseJson).toMatchObject({
-				//'id': 5,
-				'name': 'class1',
-				'prof': 'prof1',
-				'description': 'Course of SE'
-				//'assistants': ['assistant1', 'assistant2'],
-				//'students': ['student1', 'student2', 'student3']
-			});
-		});
-});
+test('Creation of a valid new Class', () => {
 
-test('if class\'s prof does not exist, the API should return 400', () => {
+  return postClass(exampleValidClass)
+  .then(postResponse => {
+    expect(postResponse.status).toBe(201);
+    return postResponse.json();
+  }).then(postResponseJson => {
+    expect(postResponseJson.id).not.toBeNull();
+    exampleValidClass.id = postResponseJson.id;
+    return getClass(postResponseJson.id).then(postResponse => {
+      expect(postResponse.status).toBe(200);
+      return postResponse.json();
+    }).then(postResponseJson => {
+      expect(postResponseJson).toHaveProperty('id');
+      expect(postResponseJson).toHaveProperty('name');
+      expect(postResponseJson).toHaveProperty('prof');
+      expect(postResponseJson).toHaveProperty('description');
+
+      expect(postResponseJson.id).toEqual(exampleValidClass.id);
+      expect(postResponseJson.name).toEqual(exampleValidClass.name);
+      expect(postResponseJson.prof).toEqual(exampleValidClass.prof);
+      expect(postResponseJson.description).toEqual(exampleValidClass.description);
+    });
+})});
+
+
+test('if class\'s prof does not exist, the API should return 404', () => {
   return postClass(exampleInvalidProf)
   .then(response => {
-    expect(response.status).toBe(400);
+    expect(response.status).toBe(404);
   })
 });
 
@@ -174,10 +177,11 @@ test('if the students\'s list is incorrect, then the API should return 400', () 
 });*/
 
 
+
 //2) TESTING GET/classes/{id}
 
 test('test if valid class id returns the selected class', () => {
-  console.log(validId);
+  //console.log(validId);
   return getClass(validId)
     .then(response => {
       expect(response.status).toBe(200);
@@ -195,6 +199,8 @@ test('test if invalid class id returns 404 not found', () => {
     })
 });
 
+
+
 //3) TESTING PUT/classes/{id}
 
 test('testing a valid update', () => {
@@ -204,17 +210,16 @@ test('testing a valid update', () => {
     return res.json();
   }).then(resJson =>{
     return getClassById(resJson.id);
-  }).then(modifiedSubmission =>{
-      expect(modifiedSubmission).toHaveProperty('id');
-      expect(modifiedSubmission).toHaveProperty('name');
-      expect(modifiedSubmission).toHaveProperty('prof');
-      expect(modifiedSubmission).toHaveProperty('description');
+  }).then(ModifiedClass =>{
+      expect(ModifiedClass).toHaveProperty('id');
+      expect(ModifiedClass).toHaveProperty('name');
+      expect(ModifiedClass).toHaveProperty('prof');
+      expect(ModifiedClass).toHaveProperty('description');
   });
 });
 
 
 // Not modificable field: prof
-
 test('if someone tries to modify the prof, should return 409', () => {
   return updateClass(exampleValidClass.id, exampleInvalidProf)
   .then(res => {
@@ -226,8 +231,8 @@ test('if someone tries to modify the prof, should return 409', () => {
 test('if you,as a prof, modify the name of the class, should get the same class updated', ()=>{
 
   return updateClassInDatabase(exampleValidClass.id, exampleModifiedName)
-  .then(updated =>{
-    return getClassById(updated.id)
+  .then(updatedClass =>{
+    return getClassById(updatedClass.id)
     .then(res =>{
       expect(res.id).toEqual(exampleValidClass.id);
       expect(res.prof).toEqual(exampleValidClass.prof);
@@ -236,6 +241,7 @@ test('if you,as a prof, modify the name of the class, should get the same class 
     });
   });
 });
+
 
 test('if you,as a prof, modify the description of the class, should get the same class updated', ()=>{
 

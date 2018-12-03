@@ -94,4 +94,10 @@ INSERT INTO "task_in_exams" VALUES(2,1);
 INSERT INTO "multiple_choices" ("task", "answer") VALUES (1,'Yes');
 INSERT INTO "multiple_choices" ("task", "answer") VALUES (1, 'No');
 
+INSERT INTO "class" ("name","prof","description") VALUES ('class1', 1, 'Course of SE');
+
+
+SELECT * FROM class;
+
+
 SELECT * FROM "user"
