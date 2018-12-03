@@ -49,16 +49,6 @@ function getExam(id){
   })
 }
 
-// TEST
-
-var server;
-beforeAll(function () {
-  server = require('../index');
-});
-afterAll(function () {
-  server.close();
-});
-
 // Test for API POST/exams
 
 test('if the exam is succesful created, the API shoul return 201 with the json. The returned json should be the same of sent one, plus exam\'s id', ()=>{
