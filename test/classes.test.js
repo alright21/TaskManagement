@@ -74,9 +74,12 @@ const exampleInvalidStud =  {
 //Little function useful as an helper function, with a Promise:
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 function postClass(newClass){
 =======
+=======
+>>>>>>> Remove server start inside test files. Now server start before executing npm test.
 const postClass = function(newClass){
 >>>>>>> Remove server start inside test files. Now server start before executing npm test.
 	return fetch(SERVER_URL, {
