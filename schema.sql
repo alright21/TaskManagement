@@ -86,16 +86,23 @@ CREATE TABLE "multiple_choices"
 );
 
 INSERT INTO "user" ("name", "surname", "email", "password") VALUES ('francesco', 'da dalt', 'francescodadalt@hotmail.it', 'lol');
+<<<<<<< HEAD
 INSERT INTO "user" ("name", "surname", "email", "password") VALUES ('vanes', 'carrer', 'vanescarrer@hotmail.it', 'dota');
 INSERT INTO "user" ("name", "surname", "email", "password") VALUES ('asia', 'salvaterra', 'asiasalva@hotmail.it', 'acr');
 INSERT INTO "user" ("name", "surname", "email", "password") VALUES ('stefano', 'branchi', 'stefanobranchi@hotmail.it', 'crl');
+=======
+INSERT INTO "user" ("name", "surname", "email", "password") VALUES ('Utente', 'Utente', 'blllll', 'password');
+>>>>>>> 263bc364ef08c57191838cfdd6bd63287a706e3d
 INSERT INTO "task" ("creator", "task_type", "question", "example", "mark") VALUES (1, 1, 'blablabla', 'blablabla', 30);
 INSERT INTO "task" ("creator", "task_type", "question", "example", "mark") VALUES (1, 1, 'blablabla2', 'blablabla2', 30);
 INSERT INTO "exam" ("creator", "deadline", "mark") VALUES (1, 500, 30);
+INSERT INTO "exam" ("creator", "deadline", "mark") VALUES (1, 200, 30);
+
 INSERT INTO "task_in_exams" VALUES(1,1);
 INSERT INTO "task_in_exams" VALUES(2,1);
 INSERT INTO "multiple_choices" ("task", "answer") VALUES (1,'Yes');
 INSERT INTO "multiple_choices" ("task", "answer") VALUES (1, 'No');
+<<<<<<< HEAD
 INSERT INTO "classe" ("name","prof","description") VALUES ('class1', 1, 'Course of SE');
 INSERT INTO "ruoli" ("user", "classe", "permesso") VALUES (1,1,1); --1 = assistente
 INSERT INTO "ruoli" ("user", "classe", "permesso") VALUES (2,1,0); --0 = prof
@@ -110,3 +117,13 @@ SELECT * FROM task_in_exams;
 SELECT * FROM multiple_choices;
 SELECT * FROM review;
 SELECT * FROM submission;
+=======
+
+INSERT INTO "class" ("name","prof","description") VALUES ('class1', 1, 'Course of SE');
+
+
+SELECT * FROM class;
+
+
+SELECT * FROM "user"
+>>>>>>> 263bc364ef08c57191838cfdd6bd63287a706e3d
