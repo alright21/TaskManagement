@@ -121,6 +121,7 @@ const invalidMultipleChoices = [
 	}
 ];
 
+<<<<<<< HEAD
 const validInsertMultipleChoices = [
 	{
 		
@@ -151,6 +152,8 @@ afterAll(function() {
 	server.close();
 });
 
+=======
+>>>>>>> Remove server start inside test files. Now server start before executing npm test.
 //Little function useful as an helper function, with a Promise:
 
 const postTask = function(newTask){
