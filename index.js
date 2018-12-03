@@ -26,5 +26,4 @@ app.get('/', (req, res) => res.status(200).send('Hello World!'));
 
 var server = app.listen(PORT, () => console.log('Example app listening on port '+ PORT));
 
-
 module.exports = server;
