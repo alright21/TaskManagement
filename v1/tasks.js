@@ -77,7 +77,7 @@ async function insertTaskInDatabase(task){
     //Qui ci andrà la logica per controllare che user, task e exam esistano per evitare problemi di database
     var isUser = await getUserById(task.creator);
     
-    if(!isUser){
+    if(!isUser || !task.mark){
 
         return null;
     }else{
