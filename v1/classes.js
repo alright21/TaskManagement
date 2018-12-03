@@ -73,35 +73,28 @@ classes.put('/:id', async (req, res) => {
 
 async function insertClassIntoDatabase (classe){
     
-    // check class's name exists into database
-    //console.log(classe);
-    let isName = await getClassById(classe.id);
-    console.log('isName: ' +isName)
-    if(!isName){
-        return null;
-    }
-    
-    // check prof exists into database
+    //check prof exists into database
     let isUser = await getUserById(classe.prof);
     //console.log('isProf: ' +isUser)
-    if(!isUser){
+    if(!isUser)
+    {
         return null;
     }
 
-    // check every assistants exist into database
-    // check every students exists into database
-
-    // insert exam into database
-    let queryText = 'INSERT INTO "class" ("name", "prof", "description") VALUES ($1, $2, $3) RETURNING *';
-    let queryParam = [classe.name, classe.prof, classe.description];
+    // insert class into database
+    let queryText = 'INSERT INTO "classe" ("name", "prof", "description") VALUES ($1, $2, $3) RETURNING *';
+    let queryParam = [classe.name, classe.prof, classe.description, classe.students, classe.assistants];
 
     let insertClass;
     let res = await pool.query(queryText, queryParam);
 
     if(res)
+    {
         insertClass = JSON.parse(JSON.stringify(res.rows[0]));
-    else
+    }
+    else{
         return null;
+    }
 
 
     // insert every assistant into database table "permissions"
@@ -150,7 +143,7 @@ async function getClassById(id){
     else
     {
         // select class from table "class"
-        let queryText = 'SELECT * FROM "class" WHERE id=$1';
+        let queryText = 'SELECT * FROM "classe" WHERE id=$1';
         let queryParams = [id];
         let result = await pool.query(queryText, queryParams);
 		var classe; //Variabile chiamata "classe" perchè la parola "class" è riservata
@@ -162,40 +155,78 @@ async function getClassById(id){
         {
             return null;
         }
-      
-/*
-        // select assistants for that class from table "permissions"
-        queryText = 'SELECT * FROM "permissions" WHERE permission=$1';
-        let assistantsList = []; // this variable is used to store tasks which are in exam
-        result = await pool.query(queryText, queryParams);
-        if(result.rowCount != 0)
-        {
-            for (var i = 0; i < result.rowCount; i++)
-            {
-                assistantsList.push(result.rows[i].user);
-            }
-        }
-        // add the list of assistants to class variable
-        classe.assistants = assistantsList;
 
-        // select students for that class from table "permissions"
-        queryText = 'SELECT * FROM "permissions" WHERE permission=$2';
-        let studentsList = []; // this variable is used to store tasks which are in exam
-        result = await pool.query(queryText, queryParams);
-        if(result.rowCount != 0)
+        var students = getStudents(id);
+        console.log('students: '+ JSON.stringify(students));
+        for (var student in students )
         {
-            for (var i = 0; i < result.rowCount; i++)
-            {
-                studentsList.push(result.rows[i].user);
-            }
+            classe.students[student] = students[student];
         }
-        classe.students = studentsList;
-*/
+
+        var assistants = getAssistants(id);
+        console.log('assistants: '+ assistants);
+        for (var assistant in assistants)
+        {
+            classe.assistants[assistant] = assistants[assistant];
+        }
+
+        console.log('classe: ' + JSON.stringify(classe));
         return classe;
     }
 }
 
+async function getStudents(id){
 
+    if (!id)
+    {
+        return null;
+    }
+    else
+    {
+        // select students for that class from table "permissions"
+        queryText = 'SELECT "user" FROM "ruoli" WHERE classe=$1 AND permesso=2';
+        let studentsList = []; // this variable is used to store tasks which are in exam
+        queryParams = [id]
+        result = await pool.query(queryText, queryParams);
+        if(result.rowCount != 0)
+        {
+            for (var i = 0; i < result.rowCount; i++)
+            {
+                studentsList.push(result.rows[i]);
+            }
+        }
+
+        return studentsList;
+    }
+    
+}
+
+
+async function getAssistants(id){
+
+    if (!id)
+    {
+        return null;
+    }
+    else
+    {
+        queryText = 'SELECT "user" FROM "ruoli" WHERE classe=$1 AND permesso=1';
+        let assistantsList = [];
+        queryParams = [id] 
+        result = await pool.query(queryText, queryParams);
+        if(result.rowCount != 0)
+        {
+            for (var i = 0; i < result.rowCount; i++)
+            {
+                assistantsList.push(result.rows[i]);
+            }
+        }
+        // add the list of assistants to class variable
+        //utenti.assistants = assistantsList;
+        return assistantsList;
+    }
+
+}
 async function updateClassInDatabase(id, toModify){
 
     id = Number.parseInt(id);
@@ -232,7 +263,7 @@ async function updateClassInDatabase(id, toModify){
             {
                 //console.log('sono in else!!!!!')
             	//console.log(id);
-	            var queryText = 'UPDATE "class" SET "name"=$1, "description"=$2 WHERE "id"=$3 RETURNING *';
+	            var queryText = 'UPDATE "classe" SET "name"=$1, "description"=$2 WHERE "id"=$3 RETURNING *';
 	            var queryParams = [toModify.name, toModify.description, id];
 	            var result = await pool.query(queryText,queryParams);
 	            //console.log(result);
