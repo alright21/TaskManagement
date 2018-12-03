@@ -18,8 +18,9 @@ const wrongUser2 = {'name': 'One','surname': null,'email': 'one.time@gmail.com',
 const wrongUser3 = {'name': 'One','surname': 'Time','email': null,'password': 'c'};
 const wrongUser4 = {'name': 'One','surname': 'Time','email': 'one.time@gmail.com','password': null};
 const wrongUser5 = {'name': 'One','surname': 'Time','email': 'one.time@gmail.com','password': 'azz'};
-const putUser = {'name': 'francesco','surname': 'da dalt','email': 'francescodadalt@hotmail.it','password': 'abba'};
+const putUser = {'name': 'Mario','surname': 'Rossi','email': 'mario.rossi@gmail.com','password': 'abba'};
 const exampleUserID = 1;
+let globalID;
 
 const validtask={
   id: 1,
@@ -188,13 +189,17 @@ describe('POST USER TESTS', () => {
 //#########################
 
 describe('GET USER TESTS', () => {
-	beforeAll(() => {
+	beforeEach(() => {
 		deleteAll();
-		insertUserWID(initUser);
+	});
+	afterEach(() => {
+		deleteAll();
 	});
 
 	test('GET user response', () => {
-		return getUser(exampleUserID)
+		return postUser(exampleUser)
+			.then(postResponse => {return postResponse.json()})
+			.then(json => {return getUser(json.id)})
 			.then(getResponse => {expect(getResponse.status).toBe(200)});
 	});
 
@@ -204,7 +209,12 @@ describe('GET USER TESTS', () => {
 	});
 
 	test('GET user response body if found', () => {
-		return getUser(exampleUserID)
+		let returnedID = -1;
+		return postUser(exampleUser)
+			.then(postResponse => {return postResponse.json()})
+			.then(json => {
+				returnedID = json.id;
+				return getUser(json.id)})
 			.then(getResponse => {return getResponse.json()})
 			.then(getResponseJson => {
 				//Object schema
@@ -222,11 +232,11 @@ describe('GET USER TESTS', () => {
 				expect(typeof getResponseJson.password).toEqual('string');
 				//Object values
 				expect(getResponseJson).toMatchObject({
-						'id': 1,
-						'name': 'francesco',
-						'surname': 'da dalt',
-						'email': 'francescodadalt@hotmail.it',
-						'password': 'lol'
+						'id': returnedID,
+						'name': 'Mario',
+						'surname': 'Rossi',
+						'email': 'mario.rossi@gmail.com',
+						'password': 'password'
 				});
 		});
 	});
@@ -285,13 +295,18 @@ describe('GET USERS', () => {
 		});
 		afterEach(() => {
 			deleteAll();
-			insertUserWID(initUser);
 		});
 		test('GET users response body if there are no users inside the table', () => {
 			return getUsersList()
 				.then(getResponse => {return getResponse.json()})
 				.then(getResponseJson => {
-					expect(getResponseJson).toEqual({});
+					let listWithoutFirstElem;
+					for(let i = 0; i < getResponseJson.length; i++){
+						if(getResponseJson[i].id === 1){
+							getResponseJson.pop();
+						}
+					}
+					expect(getResponseJson).toEqual([]);
 				});
 		});
 	});
@@ -302,13 +317,11 @@ describe('GET USERS', () => {
 //#########################
 
 describe('PUT USER TESTS', () => {
-	beforeAll(() => {
+	beforeEach(() => {
 		deleteAll();
-		insertUserWID(initUser);
 	});
-	afterAll(() => {
+	afterEach(() => {
 		deleteAll();
-		insertUserWID(initUser);
 	});
 
 	test('PUT user with less than two parameters', () => {
@@ -357,7 +370,15 @@ describe('PUT USER TESTS', () => {
 	});
 
 	test('PUT user response status and body correct', () => {
-		return updateUser(exampleUserID, putUser)
+		let returnedID;
+		return postUser(exampleUser)
+			.then(postResponse => {return postResponse.json()})
+			.then(json => {return getUser(json.id)})
+			.then(getResponse => {return getResponse.json()})
+			.then(gRjson => {
+				returnedID = gRjson.id;
+				return updateUser(gRjson.id, putUser)
+			})
 			.then(putResponse => {
 				expect(putResponse.status).toBe(200);
 				return putResponse.json()})
@@ -378,11 +399,11 @@ describe('PUT USER TESTS', () => {
 				expect(typeof putResponseJSON.password).toEqual('string');
 				//Object values
 				expect(putResponseJSON).toEqual({
-						'id': 1,
-						'name': 'francesco',
-						'surname': 'da dalt',
-						'email': 'francescodadalt@hotmail.it',
-						'password': 'abba'
+					'id': returnedID,
+					'name': 'Mario',
+					'surname': 'Rossi',
+					'email': 'mario.rossi@gmail.com',
+					'password': 'abba'
 				});
 			});
 	});

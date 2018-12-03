@@ -116,7 +116,7 @@ users.delete('/:id',async (req, res) => {
 //DELETE only for testing
 
 async function deleteAllUsers(){
-	let queryText = 'DELETE FROM "user"';
+	let queryText = 'DELETE FROM "user" WHERE id > 1';
 	let result = await pool.query(queryText);
 
 	if(result)
