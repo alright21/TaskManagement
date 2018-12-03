@@ -6,6 +6,7 @@ var server;
 
 const getUserByID = require('../v1/users').getUserById;
 const deleteAll = require('../v1/users').deleteAllUsers;
+const insertUserWID = require('../v1/users').postUserWithID;
 const updateUserDB = require('../v1/users').updateUserInDatabase;
 
 const exampleUser = {'name': 'Mario','surname': 'Rossi','email': 'mario.rossi@gmail.com','password': 'password'};
@@ -91,7 +92,7 @@ const updateUser = function(id, toModify){
 };
 
 const getUsersList = function(){
-	return fetch(root + '/v1/users', {
+	return fetch(SERVER_URL + '/v1/users', {
 		method: 'GET',
 		headers: {
 			'Accept': 'application/json'
@@ -188,7 +189,8 @@ describe('POST USER TESTS', () => {
 
 describe('GET USER TESTS', () => {
 	beforeAll(() => {
-		updateUserDB(exampleUserID, {'name': 'francesco','surname': 'da dalt','email': 'francescodadalt@hotmail.it','password': 'lol'});
+		deleteAll();
+		insertUserWID(initUser);
 	});
 
 	test('GET user response', () => {
@@ -233,61 +235,68 @@ describe('GET USER TESTS', () => {
 // GET USERS
 //#########################
 
-test('GET users response status if correct', () => {
-	return getUsersList()
-		.then(getResponse => {expect(getResponse.status).toBe(200)});
-});
+describe('GET USERS', () => {
 
-//NEED A DESCRIBE BLOCK TO TEST IT 
-test('GET users response status if the query does not execute', () => {
-	return getUsersList()
-		.then(getResponse => {expect(getResponse.status).toBe(404)});
-});
+	test('GET users response status if correct', () => {
+		return getUsersList()
+			.then(getResponse => {expect(getResponse.status).toBe(200)});
+	});
 
-test('GET users response body if correct', () => { //TEST MOLTO PESANTE CON LISTA LUNGA
-	return postUser(exampleUser2)
-		.then(postResponse2 => {
-			return postUser(exampleUser3);
-		})
-		.then(postResponse3 => {
-			return getUsersList();
-		})
-		.then(getResponse => {return getResponse.json()})
-		.then(getResponseJson => {
+	test('GET users response body if correct', () => { //TEST MOLTO PESANTE CON LISTA LUNGA
+		return postUser(exampleUser2)
+			.then(postResponse2 => {
+				return postUser(exampleUser3);
+			})
+			.then(postResponse3 => {
+				return getUsersList();
+			})
+			.then(getResponse => {return getResponse.json()})
+			.then(getResponseJson => {
 
-			let addedIDs = [];
-			getResponseJson.forEach(user => {
-				expect(typeof user).toEqual('object');
-				expect(user).toHaveProperty('id');
-				expect(user).toHaveProperty('name');
-				expect(user).toHaveProperty('surname');
-				expect(user).toHaveProperty('email');
-				expect(user).toHaveProperty('password');
-				//Keys types
-				expect(typeof user.id).toEqual('number');
-				expect(typeof user.name).toEqual('string');
-				expect(typeof user.surname).toEqual('string');
-				expect(typeof user.email).toEqual('string');
-				expect(typeof user.password).toEqual('string');
-				//For testing
-				addedIDs.push(user.id);
+				let addedIDs = [];
+				getResponseJson.forEach(user => {
+					expect(typeof user).toEqual('object');
+					expect(user).toHaveProperty('id');
+					expect(user).toHaveProperty('name');
+					expect(user).toHaveProperty('surname');
+					expect(user).toHaveProperty('email');
+					expect(user).toHaveProperty('password');
+					//Keys types
+					expect(typeof user.id).toEqual('number');
+					expect(typeof user.name).toEqual('string');
+					expect(typeof user.surname).toEqual('string');
+					expect(typeof user.email).toEqual('string');
+					expect(typeof user.password).toEqual('string');
+					//For testing
+					if(user.id !== 1)
+						addedIDs.push(user.id);
+				});
+				//PROBLEMA CON ID
+				exampleUser2.id = addedIDs[0];
+				expect(getResponseJson).toContainEqual(exampleUser2);
+				exampleUser3.id = addedIDs[1];
+				expect(getResponseJson).toContainEqual(exampleUser3);
 			});
-			//PROBLEMA CON ID
-			exampleUser2.id = addedIDs[0];
-			expect(getResponseJson).toContainEqual(exampleUser2);
-			exampleUser3.id = addedIDs[1];
-			expect(getResponseJson).toContainEqual(exampleUser3);
-		});
-});
+	});
 
-//NEED A DESCRIBE BLOCK TO TEST IT
-// test('GET users response body if there are no users inside the table', () => {
-// 	return getUsersList()
-// 		.then(getResponse => {return getResponse.json()})
-// 		.then(getResponseJson => {
-// 			expect(getResponseJson).toEqual({});
-// 		});
-//});
+	describe('--> To test the empty list', () => {
+		beforeEach(() => {
+			deleteAll();
+		});
+		afterEach(() => {
+			deleteAll();
+			insertUserWID(initUser);
+		});
+		test('GET users response body if there are no users inside the table', () => {
+			return getUsersList()
+				.then(getResponse => {return getResponse.json()})
+				.then(getResponseJson => {
+					expect(getResponseJson).toEqual({});
+				});
+		});
+	});
+
+});
 
 //PUT USER
 //#########################
@@ -295,6 +304,11 @@ test('GET users response body if correct', () => { //TEST MOLTO PESANTE CON LIST
 describe('PUT USER TESTS', () => {
 	beforeAll(() => {
 		deleteAll();
+		insertUserWID(initUser);
+	});
+	afterAll(() => {
+		deleteAll();
+		insertUserWID(initUser);
 	});
 
 	test('PUT user with less than two parameters', () => {
@@ -308,16 +322,16 @@ describe('PUT USER TESTS', () => {
 	});
 
 	test('PUT user with first parameter null', () => {
-		return updateUser(null, putUser)
-			.then(putResponse => {expect(putResponse.status).toBe(400)});
+		return updateUserDB(null, putUser)
+			.then(putResponse => {expect(putResponse).toBeNull()});
 	});
 
 	test('PUT user with second parameter null', () => {
 		return updateUserDB(exampleUserID, null)
 			.then(putResponse => {expect(putResponse).toBeNull()});
 	});
-
-	test('PUT user with wrond id', () => {
+	
+	test('PUT user with wrong id', () => {
 		return updateUser(0, putUser)
 			.then(putResponse => {expect(putResponse.status).toBe(400)});
 	});
@@ -425,19 +439,10 @@ test('GET list of exams of a not valid user id',()=>{
 	})
 });
 
-<<<<<<< HEAD
 test('GET list of tasks of a not valid user id',()=>{
 return getTasks(16)
 .then(res =>{return res.json()})
 	.then(jres =>{
 		expect(jres).toEqual({});
 	})
-=======
-test('get invalid task, NULL',()=>{
-	return getTasks(16)
-	.then(res =>{return res.json()})
-		.then(jres =>{
-			expect(jres).toEqual({});
-		})
->>>>>>> Aggiunta funzione e test di GET/users
 });

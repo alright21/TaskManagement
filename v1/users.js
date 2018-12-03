@@ -114,23 +114,30 @@ users.delete('/:id',async (req, res) => {
 });
 
 //DELETE only for testing
-users.delete('/', async (req, res) => {
-	let result = await deleteAllUsers();
-
-	if(result)
-		res.status(204).send();
-	else
-		res.status(404).end();
-});
 
 async function deleteAllUsers(){
-	let queryText = 'DELETE FROM "user" WHERE id > 1 RETURNING *';
+	let queryText = 'DELETE FROM "user"';
 	let result = await pool.query(queryText);
 
 	if(result)
 		return result;
 	else
 		return null;
+}
+
+async function postUserWithID(newUser){
+	if(!newUser.id || !newUser.name || !newUser.surname || !newUser.email || !newUser.password)
+		return null;
+	else{
+		let queryText = 'INSERT INTO "user" ("id","name","surname","email","password") VALUES ($1,$2,$3,$4,$5) RETURNING *';
+		let queryParams = [newUser.id, newUser.name, newUser.surname, newUser.email, newUser.password];
+		let result = await pool.query(queryText, queryParams);
+		if(result){
+			return result.rows[0];
+	  	}else{
+			return null;
+		}
+	}
 }
 
 //FUNCTIONS INTERFACING WITH THE DB
@@ -276,6 +283,7 @@ module.exports = {
 	getExams: getExams,
 	deleteAllUsers: deleteAllUsers,
 	postUser: postUser,
+	postUserWithID: postUserWithID,
 	updateUserInDatabase: updateUserInDatabase,
 	deleteUserById: deleteUserById,
 	getUsersList: getUsersList
