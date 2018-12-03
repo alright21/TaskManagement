@@ -77,6 +77,14 @@ const getTasks = function(userID){
   });
 };
 
+const deleteUser = function(userID){
+  return fetch(root + '/v1/users/' + userID, {
+    method: 'DELETE',
+    headers: {
+      'Accept': 'application/json'
+    }
+  });
+};
 //TESTS
 //POST
 test('Post user response', () => {
@@ -220,5 +228,22 @@ test('get invalid task, NULL',()=>{
     return getTasks(invalidid)
     .then(res=>{
       expect(res).toBeNull();
+  })
+});
+
+
+
+test('delete valid user',()=>{
+    return deleteUser(1)
+    .then(res=>{
+      expect(res.status).toBe(204);
+  })
+});
+
+
+test('delete invalid user',()=>{
+    return deleteUser(invalidid)
+    .then(res=>{
+      expect(res.status).toBe(404);
   })
 });

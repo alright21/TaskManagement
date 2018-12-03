@@ -43,6 +43,24 @@ users.get('/:userID',async (req, res) => {
 	}
 });
 
+users.delete('/:id',async (req, res) => {
+	const id = req.params.id;
+	let result = await deleteUserById(id);
+	console.log(result);
+	if(result){
+		console.log("sono in result")
+		console.log(id);
+		let check = await getUserById(id);
+ 		if(check==null){
+			res.status(204).end(); // RICHIESTA ANDATA A BUON FINE
+		}else{
+			res.status(404).end(); // RICHIESTA NON ESEGUITA
+		}
+	}else{
+		res.status(404).end(); // RICHIESTA NON ESEGUITA
+	}
+});
+
 
 users.get('/:id/exams', async(req,res)=> {
   let id=req.params.userID;
@@ -151,12 +169,28 @@ async function getExams(id){
       }
     }
  }
-
+//DELETE USERS WITH ID==ID FROM DB
+ async function deleteUserById(id){
+ 	if(!id){
+ 		return null;
+ 	}else{
+		console.log("sono in deleteUser")
+ 		var queryText = 'DELETE FROM "user" WHERE id=$1';
+ 		var queryParams = [id];
+		let result = await pool.query(queryText, queryParams);
+		if(result.rowCount!=0){
+			return JSON.parse(JSON.stringify(result)); //ho eliminato qualcosa
+		}else{
+			return null; //non ho eliminato nulla
+ 	}
+ }
+}
 module.exports = {
 	users: users,
 	getUserById: getUserById,
 	getUserByEmail: getUserByEmail,
   getTasks : getTasks,
   getExams: getExams,
-	postUser: postUser
+	postUser: postUser,
+	deleteUserById: deleteUserById
 };
