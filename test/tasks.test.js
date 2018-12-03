@@ -505,3 +505,44 @@ test('if the multiple choice id is 3, should return the multiple choice', () => 
 		expect(res).toHaveProperty('answer');
 	});
 });
+
+
+//tests for getMultipleChoices
+
+test('if arguments length of getMultipleChoices is !== 1, should return null', () => {
+	return getMultipleChoices()
+	.then(res => {
+		expect(res).toBeNull();
+	});
+});
+
+test('if the task of the multiple choices is null in getMultipleChoice, should return null', () => {
+	return getMultipleChoices(null)
+	.then(res => {
+		expect(res).toBeNull();
+	});
+});
+
+test('if the task does not exists in getMultipleChoices, should return null', () => {
+	return getMultipleChoices(10000)
+	.then(res => {
+		expect(res).toBeNull();
+	});
+});
+
+test('if the id of the tas is 3, should return the list of the multiple choices associated with it', () => {
+	return getMultipleChoices(3)
+	.then(res => {
+		expect(res).toMatchObject([
+			{
+				"id": 3,
+				"task": 3,
+				"answer": "Yes"
+			},{
+				"id": 4,
+				"task": 3,
+				"answer": "No"
+			}
+		]);
+	});
+});
