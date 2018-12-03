@@ -55,7 +55,7 @@ users.get('/:id/exams', async(req,res)=> {
 			res.status(404).send(resultnegJSON);
 		}
 });
- 
+
 users.get('/:id/tasks', async(req,res)=> {
 	var id=req.params.id;
 		let result = await getTasks(id);
@@ -83,6 +83,21 @@ users.put('/:userID', async (req, res) => {
 		}else{
 			res.status(409).end();
 		}
+	}
+});
+
+users.delete('/:id',async (req, res) => {
+	const id = req.params.id;
+	let result = await deleteUserById(id);
+	if(result){
+		let check = await getUserById(id);
+ 		if(check==null){
+			res.status(204).end(); // RICHIESTA ANDATA A BUON FINE
+		}else{
+			res.status(404).end(); // RICHIESTA NON ESEGUITA
+		}
+	}else{
+		res.status(404).end(); // RICHIESTA NON ESEGUITA
 	}
 });
 
@@ -206,7 +221,6 @@ return null;
 		let queryText = 'SELECT * FROM "exam" WHERE creator=$1';
 		let queryParams = [id];
 		let result = await pool.query(queryText, queryParams);
-			console.log("result:"+result)
 			if(result.rowCount != 0){
 		return result.rows;
 		}else {
@@ -215,13 +229,30 @@ return null;
 	}
 }
 
+//DELETE USERS WITH ID==ID FROM DB
+ async function deleteUserById(id){
+ 	if(!id){
+ 		return null;
+ 	}else{
+ 		var queryText = 'DELETE FROM "user" WHERE id=$1';
+ 		var queryParams = [id];
+		let result = await pool.query(queryText, queryParams);
+		if(result.rowCount!=0){
+			return JSON.parse(JSON.stringify(result)); //ho eliminato qualcosa
+		}else{
+			return null; //non ho eliminato nulla
+ 	}
+ }
+}
+
 module.exports = {
 	users: users,
 	getUserById: getUserById,
 	getUserByEmail: getUserByEmail,
-  	getTasks : getTasks,
+  getTasks : getTasks,
 	getExams: getExams,
 	deleteAllUsers: deleteAllUsers,
 	postUser: postUser,
-	updateUserInDatabase: updateUserInDatabase
+	updateUserInDatabase: updateUserInDatabase,
+	deleteUserById: deleteUserById
 };

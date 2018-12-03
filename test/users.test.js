@@ -97,6 +97,14 @@ const updateUser = function(id, toModify){
 	});
  }
 
+ const deleteUser = function(userID){
+   return fetch(root + '/v1/users/' + userID, {
+     method: 'DELETE',
+     headers: {
+       'Accept': 'application/json'
+     }
+   });
+ };
 //--------------------------------------------
 //							TESTS
 //--------------------------------------------
@@ -230,7 +238,7 @@ describe('PUT USER TESTS', () => {
 		return updateUserDB(exampleUserID, null)
 			.then(putResponse => {expect(putResponse).toBeNull()});
 	});
-	
+
 	test('PUT user with wrond id', () => {
 		return updateUser(0, putUser)
 			.then(putResponse => {expect(putResponse.status).toBe(400)});
@@ -288,7 +296,7 @@ describe('PUT USER TESTS', () => {
 	});
 });
 
-test('get valid exam, 200',()=>{
+test('GET list of exams of a valid user id',()=>{
 	return getExams(validexam.creator)
 	.then(res=>{return res.json();})
 	.then(jres => {
@@ -309,7 +317,7 @@ test('get valid exam, 200',()=>{
 	})
 });
 
-test('get valid task, 200',()=>{
+test('GET list of tasks of a valid user id',()=>{
 	return getTasks(validtask.creator)
 	.then(res=>{return res.json();})
 	.then(jres=>{
@@ -331,7 +339,7 @@ test('get valid task, 200',()=>{
 	})
 });
 
-test('get invalid exam, NULL',()=>{
+test('GET list of exams of a not valid user id',()=>{
 	return getExams(16)
 	.then(res =>{return res.json()})
 	.then(jres =>{
@@ -339,10 +347,26 @@ test('get invalid exam, NULL',()=>{
 	})
 });
 
-test('get invalid task, NULL',()=>{
+test('GET list of tasks of a not valid user id',()=>{
 return getTasks(16)
 .then(res =>{return res.json()})
 	.then(jres =>{
 		expect(jres).toEqual({});
 	})
+});
+
+
+test('delete valid user',()=>{
+    return deleteUser(1)
+    .then(res=>{
+      expect(res.status).toBe(204);
+  })
+});
+
+
+test('delete invalid user',()=>{
+    return deleteUser(invalidid)
+    .then(res=>{
+      expect(res.status).toBe(404);
+  })
 });
