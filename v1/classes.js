@@ -3,12 +3,8 @@ const bodyParser = require('body-parser');
 const classes = express.Router();
 const pg = require('pg');
 
-const pool = new pg.Pool({
-	user: 'postgres',
-	host: 'localhost',
-	database: 'taskmanagement',
-	port: '5432'
-});
+const config = require('../db_config');
+const pool = new pg.Pool(config);
 
 classes.use(bodyParser.json());
 
