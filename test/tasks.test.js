@@ -122,16 +122,7 @@ const invalidMultipleChoices = [
 ];
 
 const validInsertMultipleChoices = [
-	{
-		
-		"task": 2,
-		"answer": "Maybe"
-	},{
-		
-		"task": 2,
-		"answer": "Sure"
 	
-	}
 ];
 
 const nullMultipleChoicesTask = {
@@ -270,6 +261,8 @@ test('if the multiple choices have invalid id, should return 409', () => {
 
 
 
+
+
 test('if the update id is 3 and the task is an close question, and the modification is correct, should return 201', () => {
 
 	return updateTask(3, validUpdateClose)
@@ -403,15 +396,26 @@ test('if multiple choices of insertMultipleChoices are null, should return null'
 
 test('if multiple choices of insertMultipleChoices are valid, should return the array of the multiple choices created', () => {
 
-	return insertMultipleChoices(validInsertMultipleChoices, 2)
+	return insertMultipleChoices(validInsertMultipleChoices, 1)
 	.then(res => {
 		
 		for(let i = 0; i< res.length; i++){
 			validInsertMultipleChoices[i].id = res[i].id;
 		}
-		return getMultipleChoices(2);
+		return getMultipleChoices(1);
 	}).then(res => {
-		expect(res).toMatchObject(validInsertMultipleChoices);
+		expect(res).toMatchObject(
+			[{
+				"answer": "Yes", 
+				"id": 1, 
+				"task": 1
+			}, {
+				"answer": "No", 
+				"id": 2, 
+				"task": 1
+			}
+		]
+		);
 	});
 });
 
@@ -544,5 +548,45 @@ test('if the id of the tas is 3, should return the list of the multiple choices 
 				"answer": "No"
 			}
 		]);
+	});
+});
+
+
+//tests for getTaskById
+
+test('if arguments length of getTaskById is !== of 1, should return null', () => {
+	return getTaskById()
+	.then(res => {
+		expect(res).toBeNull();
+	});
+});
+
+test('if id is null in getTaskById, should return null', () => {
+	return getTaskById(null)
+	.then(res => {
+		expect(res).toBeNull();
+	});
+});
+
+test('if task does not exists in db, should return null', () => {
+	return getTaskById(10000)
+	.then(res => {
+		expect(res).toBeNull();
+	});
+});
+
+test('if task has id 2, should return the task', () => {
+
+	return getTaskById(2)
+	.then(res => {
+		expect(res).toMatchObject({
+			"id": 2,
+			"creator": 1,
+			"task_type": 0,
+			"question": "blablabla2",
+			"example": "blablabla2",
+			"mark": 30,
+			"multiple_choices": null
+		});
 	});
 });
