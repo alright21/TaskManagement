@@ -23,7 +23,8 @@ const PORT = process.env.PORT || 3000
 
 app.get('/', (req, res) => res.status(200).send('Hello World!'));
 
+let server = app.listen(PORT, () => console.log('Example app listening on port '+ PORT));
 
-var server = app.listen(PORT, () => console.log('Example app listening on port '+ PORT));
-
-module.exports = server;
+module.exports = async () => {
+    global.SERVER__ = server;
+};
