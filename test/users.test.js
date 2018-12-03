@@ -112,6 +112,23 @@ const updateUser = function(id, toModify){
 //POST USER
 //#########################
 
+
+test('delete valid user',()=>{
+    return deleteUser(2)
+    .then(res=>{
+      expect(res.status).toBe(204);
+  })
+});
+
+
+test('delete invalid user',()=>{
+    return deleteUser(invalidid)
+    .then(res=>{
+      expect(res.status).toBe(404);
+  })
+});
+
+
 describe('POST USER TESTS', () => {
 	beforeAll(() => {
 		deleteAll();
@@ -353,20 +370,4 @@ return getTasks(16)
 	.then(jres =>{
 		expect(jres).toEqual({});
 	})
-});
-
-
-test('delete valid user',()=>{
-    return deleteUser(2)
-    .then(res=>{
-      expect(res.status).toBe(204);
-  })
-});
-
-
-test('delete invalid user',()=>{
-    return deleteUser(invalidid)
-    .then(res=>{
-      expect(res.status).toBe(404);
-  })
 });
