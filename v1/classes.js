@@ -15,8 +15,16 @@ classes.post('/', async(req, res) => {
     //console.log('sono nella post');
     //console.log('req.body' + req.body);
 	var result = await insertClassIntoDatabase(req.body);
+    var resultS = await insertStudentIntoDatabase(req.body);
+
+    /*if (resultS)
+    {
+        res.status(404).send(resultJson);
+    }*/
+
+    //var resultA = await insertAssistantIntoDatabase(req.body);
     //console.log(result);
-	if (result) 
+	if (result )//&& resultS ) 
 	{
         //console.log('class post if result: '+ result)
 		var resultJson = JSON.parse(JSON.stringify(result));
@@ -31,12 +39,15 @@ classes.post('/', async(req, res) => {
 classes.get('/:id', async (req, res) =>{
     //console.log('sono in classes.get e id: ' + req.params.id);
     
+    const id = req.params.id;
+    console.log("id in get classe: " + id)
     let results = await getClassById(req.params.id);
     
     //console.log('classes.get results: ' +results);
 
     if(results)
     {
+        
         var resultJson = JSON.parse(JSON.stringify(results));
         res.status(200).send(resultJson);
     }
@@ -83,7 +94,7 @@ async function insertClassIntoDatabase (classe){
 
     // insert class into database
     let queryText = 'INSERT INTO "classe" ("name", "prof", "description") VALUES ($1, $2, $3) RETURNING *';
-    let queryParam = [classe.name, classe.prof, classe.description, classe.students, classe.assistants];
+    let queryParam = [classe.name, classe.prof, classe.description];
 
     let insertClass;
     let res = await pool.query(queryText, queryParam);
@@ -92,18 +103,69 @@ async function insertClassIntoDatabase (classe){
     {
         insertClass = JSON.parse(JSON.stringify(res.rows[0]));
     }
-    else{
+    else
+    {
         return null;
     }
 
-
-    // insert every assistant into database table "permissions"
-    // put a new param into the json called assistantList
-    // insert every students into database table "permissions"
-    // put a new param into the json called studentsList
-
-    // return the class with the id
     return insertClass;
+} 
+
+async function insertStudentIntoDatabase (classe){
+    
+    //check prof exists into database
+    let isStudent = await getUserById(classe.students);
+    if(!isStudent)
+    {
+        return null;
+    }
+
+    // insert class into database
+    let queryText = 'INSERT INTO "ruoli" ("user", "classe", "permesso") VALUES ($1, $3, "2") RETURNING *';
+    let queryParam = [classe.students, classe.id];
+
+    let insertRole;
+    let res = await pool.query(queryText, queryParam);
+
+    if(res)
+    {
+        insertRole = JSON.parse(JSON.stringify(res.rows[0]));
+    }
+    else
+    {
+        res.status(400).send(resultJson);
+        return null;
+    }
+    
+    return insertRole;
+} 
+
+async function insertAssistantIntoDatabase (classe){
+    
+    //check prof exists into database
+    let isStudent = await getUserById(classe.students);
+    if(!isStudent)
+    {
+        return null;
+    }
+
+    // insert class into database
+    let queryText = 'INSERT INTO "ruoli" ("user", "classe", "permesso") VALUES ($1, $3, "1") RETURNING *';
+    let queryParam = [classe.assistants, classe.id];
+
+    let insertRole;
+    let res = await pool.query(queryText, queryParam);
+
+    if(res)
+    {
+        insertRole = JSON.parse(JSON.stringify(res.rows[0]));
+    }
+    else
+    {
+        return null;
+    }
+    
+    return insertRole;
 } 
 
 //funzione di appoggio
@@ -149,7 +211,11 @@ async function getClassById(id){
 		var classe; //Variabile chiamata "classe" perchè la parola "class" è riservata
 		if(result.rowCount != 0)
         {
+
             classe = JSON.parse(JSON.stringify(result.rows[0]));
+            //classe.put("students", getStudents(id));
+            //classe.addProperty("assistants", getAssistants(id));
+            console.log('classe in getClassById: '+ classe)
         }
         else
         {
@@ -157,14 +223,15 @@ async function getClassById(id){
         }
 
         var students = getStudents(id);
-        console.log('students: '+ JSON.stringify(students));
+        console.log('students in getClass: '+ JSON.stringify(students));
         for (var student in students )
         {
             classe.students[student] = students[student];
+            console.log('classe.students in getClass' + classe.students[student])
         }
 
         var assistants = getAssistants(id);
-        console.log('assistants: '+ assistants);
+        console.log('assistants in getClass: '+ assistants);
         for (var assistant in assistants)
         {
             classe.assistants[assistant] = assistants[assistant];
@@ -177,25 +244,29 @@ async function getClassById(id){
 
 async function getStudents(id){
 
+    console.log('sono in getStudents e id = ' +id)
     if (!id)
     {
         return null;
     }
     else
     {
+        console.log('sono nell if di getStudents')
         // select students for that class from table "permissions"
-        queryText = 'SELECT "user" FROM "ruoli" WHERE classe=$1 AND permesso=2';
+        queryText = 'SELECT ruoli.user FROM "ruoli" WHERE ruoli.classe=$1 AND ruoli.permesso=2';
         let studentsList = []; // this variable is used to store tasks which are in exam
         queryParams = [id]
         result = await pool.query(queryText, queryParams);
+        console.log('result in getStudents : ' +result.rowCount)
         if(result.rowCount != 0)
         {
             for (var i = 0; i < result.rowCount; i++)
             {
-                studentsList.push(result.rows[i]);
+                console.log('getStudents nel for: ' + result.rows[i].id);
+                studentsList.push(result.rows[i].id);
             }
         }
-
+        console.log('studenti lista in getStudents: ' + studentsList);
         return studentsList;
     }
     
@@ -204,25 +275,30 @@ async function getStudents(id){
 
 async function getAssistants(id){
 
+    console.log('id in getAssistants: ' +id);
     if (!id)
     {
         return null;
     }
     else
     {
-        queryText = 'SELECT "user" FROM "ruoli" WHERE classe=$1 AND permesso=1';
+        queryText = 'SELECT ruoli.user FROM "ruoli" WHERE ruoli.classe=$1 AND ruoli.permesso=1';
         let assistantsList = [];
         queryParams = [id] 
         result = await pool.query(queryText, queryParams);
+        console.log('result in getAssistants: ' +result.rowCount)
         if(result.rowCount != 0)
         {
+            console.log('sono nell if di getAssistants')
             for (var i = 0; i < result.rowCount; i++)
             {
+                console.log('getAssistants nel for: ' + result.rows[i]);
                 assistantsList.push(result.rows[i]);
             }
         }
         // add the list of assistants to class variable
         //utenti.assistants = assistantsList;
+        console.log('assistenti in getAssistants: ' + assistantsList)
         return assistantsList;
     }
 
