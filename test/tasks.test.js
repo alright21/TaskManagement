@@ -122,16 +122,7 @@ const invalidMultipleChoices = [
 ];
 
 const validInsertMultipleChoices = [
-	{
-		
-		"task": 2,
-		"answer": "Maybe"
-	},{
-		
-		"task": 2,
-		"answer": "Sure"
 	
-	}
 ];
 
 const nullMultipleChoicesTask = {
@@ -216,6 +207,8 @@ test('Post task response body', () => {
 			expect(typeof postResponseJson).toEqual('object');
 			//Object values
 			expect(postResponseJson).toMatchObject(validTask);
+		}).catch(err => {
+			console.log(err);
 		});
 });
 
@@ -225,6 +218,8 @@ test('if the id for the update is null, should return 400', () =>{
 	return updateTask(null, validUpdateOpen)
 	.then(res => {
 		expect(res.status).toBe(400);
+	}).catch(err => {
+		console.log(err);
 	});
 });
 
@@ -233,6 +228,8 @@ test('if the id for the update is 0, should return 400', () => {
 	return updateTask(0, validUpdateOpen)
 	.then(res => {
 		expect(res.status).toBe(400);
+	}).catch(err => {
+		console.log(err);
 	});
 });
 
@@ -241,6 +238,8 @@ test('if the creator of the update is null, should return 409', () => {
 	return updateTask(3, nullCreatorUpdate)
 	.then(res => {
 		expect(res.status).toBe(409);
+	}).catch(err => {
+		console.log(err);
 	});
 });
 
@@ -248,6 +247,8 @@ test('if the creator does not exist, should return 409', () => {
 	return updateTask(3, invalidCreatorUpdate)
 	.then(res => {
 		expect(res.status).toBe(409);
+	}).catch(err => {
+		console.log(err);
 	});
 });
 
@@ -255,6 +256,8 @@ test('if the mark of the update is null, should return 409', () => {
 	return updateTask(3, nullMarkTask)
 	.then(res => {
 		expect(res.status).toBe(409);
+	}).catch(err => {
+		console.log(err);
 	});
 
 });
@@ -263,8 +266,12 @@ test('if the multiple choices have invalid id, should return 409', () => {
 	return updateTask(3, invalidTaskMultipleChoices)
 	.then(res => {
 		expect(res.status).toBe(409);
+	}).catch(err => {
+		console.log(err);
 	});
 });
+
+
 
 
 
@@ -290,6 +297,47 @@ test('if the update id is 3 and the task is an close question, and the modificat
 
 			validUpdateOpen.id = resJson.id;
 			expect(resJson).toMatchObject(validUpdateClose);
+		}).catch(err => {
+			console.log(err);
+		});
+	}).catch(err => {
+		console.log(err);
+	});
+});
+
+//test codes for getTask
+
+test('if the task is not in the db, should return 404', ()=> {
+	return getTask(10000)
+	.then(res => {
+		expect(res.status).toBe(404);
+	});
+});
+
+test('if the id is invalid, should return 400', () => {
+	return getTask(null)
+	.then(res => {
+		expect(res.status).toBe(400);
+	});
+});
+
+test('if the id of the task is valid, should return the task, with 200', () =>{
+	return getTask(2)
+	.then(res => {
+		expect(res.status).toBe(200);
+
+		return res.json();
+	}).then(resJson =>{
+		
+		expect(resJson).toMatchObject({
+
+			"id": 2,
+			"creator": 1,
+			"task_type": 0,
+			"question": "blablabla2",
+			"example": "blablabla2",
+			"mark": 30,
+			"multiple_choices": null
 		});
 	});
 });
@@ -301,6 +349,8 @@ test('if argument length is not 1, should return null', () => {
 	return updateMultipleChoices(validMultipleChoices, 1)
 	.then(res => {
 		expect(res).toBeNull();
+	}).catch(err => {
+		console.log(err);
 	});
 });
 
@@ -308,7 +358,9 @@ test('if the multipleChoices is null, should return null', () => {
 	return updateMultipleChoices(null)
 	.then(res => {
 		 expect(res).toBeNull();
-	}) 
+	}).catch(err => {
+		console.log(err);
+	});
 });
 
 test('if multipleChoices are invalid, should return null', () => {
@@ -316,14 +368,18 @@ test('if multipleChoices are invalid, should return null', () => {
 	return updateMultipleChoices(invalidMultipleChoices)
 	.then(res => {
 		expect(res).toBeNull();
-	})
+	}).catch(err => {
+		console.log(err);
+	});
 });
 
 test('if the mutiple Choices array is valid, should return the array updated', () =>{
 	return updateMultipleChoices(validMultipleChoices)
 	.then(res => {
 		expect(res).toMatchObject(validMultipleChoices);
-	})
+	}).catch(err => {
+		console.log(err);
+	});
 });
 
 
@@ -334,6 +390,8 @@ test('if the argument length is != 2 should return null', () => {
 	return updateTaskInDatabase(validTask.id)
 	.then(res => {
 		expect(res).toBeNull();
+	}).catch(err => {
+		console.log(err);
 	});
 });
 
@@ -341,6 +399,8 @@ test('if the id is null, should return null', () => {
 	return updateTaskInDatabase(null, validUpdateClose)
 	.then(res => {
 		expect(res).toBeNull();
+	}).catch(err => {
+		console.log(err);
 	});
 });
 
@@ -348,6 +408,8 @@ test('if the modified Task is null, should return null', () => {
 	return updateTaskInDatabase(3, null)
 	.then(res => {
 		expect(res).toBeNull();
+	}).catch(err => {
+		console.log(err);
 	});
 });
 
@@ -356,6 +418,8 @@ test('if the modified task has mark null, should return null', () => {
 	return updateTaskInDatabase(3, nullMarkTask)
 	.then(res => {
 		expect(res).toBeNull();
+	}).catch(err => {
+		console.log(err);
 	});
 });
 
@@ -363,6 +427,8 @@ test('if the modified task does not exists in the database, should return null',
 	return updateTaskInDatabase(10000, validTask)
 	.then(res => {
 		expect(res).toBeNull();
+	}).catch(err => {
+		console.log(err);
 	});
 });
 
@@ -371,6 +437,8 @@ test('if the creator does not exists, should return null', () => {
 	return updateTaskInDatabase(3, invalidCreatorUpdate)
 	.then(res => {
 		expect(res).toBeNull();
+	}).catch(err => {
+		console.log(err);
 	});
 });
 
@@ -380,6 +448,8 @@ test('if the update is valid, should return the task updated', () => {
 	return updateTaskInDatabase(3, validUpdateClose)
 	.then(res => {
 		expect(res).toMatchObject(validUpdateClose);
+	}).catch(err => {
+		console.log(err);
 	});
 });
 
@@ -390,6 +460,8 @@ test('if argument length  of insertMultipleChoicesis !== 2 should return null', 
 	return insertMultipleChoices(validMultipleChoices,validTask.id, validTask)
 	.then(res => {
 		expect(res).toBeNull();
+	}).catch(err => {
+		console.log(err);
 	});
 });
 
@@ -398,20 +470,35 @@ test('if multiple choices of insertMultipleChoices are null, should return null'
 	return insertMultipleChoices(null, validTask.id)
 	.then(res => {
 		expect(res).toBeNull();
+	}).catch(err => {
+		console.log(err);
 	});
 });
 
 test('if multiple choices of insertMultipleChoices are valid, should return the array of the multiple choices created', () => {
 
-	return insertMultipleChoices(validInsertMultipleChoices, 2)
+	return insertMultipleChoices(validInsertMultipleChoices, 1)
 	.then(res => {
 		
 		for(let i = 0; i< res.length; i++){
 			validInsertMultipleChoices[i].id = res[i].id;
 		}
-		return getMultipleChoices(2);
+		return getMultipleChoices(1);
 	}).then(res => {
-		expect(res).toMatchObject(validInsertMultipleChoices);
+		expect(res).toMatchObject(
+			[{
+				"answer": "Yes", 
+				"id": 1, 
+				"task": 1
+			}, {
+				"answer": "No", 
+				"id": 2, 
+				"task": 1
+			}
+		]
+		);
+	}).catch(err => {
+		console.log(err);
 	});
 });
 
@@ -423,6 +510,8 @@ test('if argument length of insertTaskInDatabase is !== 1, should return null', 
 	return insertTaskInDatabase()
 	.then(res => {
 		expect(res).toBeNull();
+	}).catch(err => {
+		console.log(err);
 	});
 });
 
@@ -430,6 +519,8 @@ test('if new task of insertTaskInDatabase is null, should return null', () => {
 	return insertTaskInDatabase(null)
 	.then(res => {
 		expect(res).toBeNull();
+	}).catch(err => {
+		console.log(err);
 	});
 });
 
@@ -437,6 +528,8 @@ test('if the mark of the task is null of insertTaskInDatabase, should return nul
 	return insertTaskInDatabase(nullMarkTask)
 	.then(res => {
 		expect(res).toBeNull();
+	}).catch(err => {
+		console.log(err);
 	});
 });
 
@@ -444,6 +537,8 @@ test('if the creator of the task in insertTaskInDatabase is null, should return 
 	return insertTaskInDatabase(nullCreatorUpdate)
 	.then(res => {
 		expect(res).toBeNull();
+	}).catch(err => {
+		console.log(err);
 	});
 });
 
@@ -451,6 +546,8 @@ test('if the task is Closed question in insertTaskInDatabase and has no multiple
 	return insertTaskInDatabase(nullMultipleChoicesTask)
 	.then(res => {
 		expect(res).toBeNull();
+	}).catch(err => {
+		console.log(err);
 	});
 });
 
@@ -468,9 +565,147 @@ test('if a task is correct, should return the task created', () => {
 
 	}).then(getRes => {
 		expect(getRes).toMatchObject(validTask);
+	}).catch(err => {
+		console.log(err);
 	});
 });
 
 
 
 
+//tests for getMultipleChoice
+
+test('if arguments length of getMultipleChoice if !== 1 should return null', ()=> {
+	return getMultipleChoice()
+	.then(res => {
+		expect(res).toBeNull();
+	}).catch(err => {
+		console.log(err);
+	});
+});
+
+test('if the id of getMultipleChoice is null, should return null', () => {
+	return getMultipleChoice(null)
+	.then(res => {
+		expect(res).toBeNull();
+	}).catch(err => {
+		console.log(err);
+	});
+});
+
+test('if the multiple choice does not exists in the database, should return null', () => {
+	return getMultipleChoice(10000)
+	.then(res => {
+		expect(res).toBeNull();
+	}).catch(err => {
+		console.log(err);
+	});
+});
+
+test('if the multiple choice id is 3, should return the multiple choice', () => {
+	return getMultipleChoice(3)
+	.then(res => {
+		expect(res).toHaveProperty('id');
+		expect(res).toHaveProperty('task');
+		expect(res).toHaveProperty('answer');
+	}).catch(err => {
+		console.log(err);
+	});
+});
+
+
+//tests for getMultipleChoices
+
+test('if arguments length of getMultipleChoices is !== 1, should return null', () => {
+	return getMultipleChoices()
+	.then(res => {
+		expect(res).toBeNull();
+	}).catch(err => {
+		console.log(err);
+	});
+});
+
+test('if the task of the multiple choices is null in getMultipleChoice, should return null', () => {
+	return getMultipleChoices(null)
+	.then(res => {
+		expect(res).toBeNull();
+	}).catch(err => {
+		console.log(err);
+	});
+});
+
+test('if the task does not exists in getMultipleChoices, should return null', () => {
+	return getMultipleChoices(10000)
+	.then(res => {
+		expect(res).toBeNull();
+	}).catch(err => {
+		console.log(err);
+	});
+});
+
+test('if the id of the tas is 3, should return the list of the multiple choices associated with it', () => {
+	return getMultipleChoices(3)
+	.then(res => {
+		expect(res).toMatchObject([
+			{
+				"id": 3,
+				"task": 3,
+				"answer": "Yes"
+			},{
+				"id": 4,
+				"task": 3,
+				"answer": "No"
+			}
+		]);
+	}).catch(err => {
+		console.log(err);
+	});
+});
+
+
+//tests for getTaskById
+
+test('if arguments length of getTaskById is !== of 1, should return null', () => {
+	return getTaskById()
+	.then(res => {
+		expect(res).toBeNull();
+	}).catch(err => {
+		console.log(err);
+	});
+});
+
+test('if id is null in getTaskById, should return null', () => {
+	return getTaskById(null)
+	.then(res => {
+		expect(res).toBeNull();
+	}).catch(err => {
+		console.log(err);
+	});
+});
+
+test('if task does not exists in db, should return null', () => {
+	return getTaskById(10000)
+	.then(res => {
+		expect(res).toBeNull();
+	}).catch(err => {
+		console.log(err);
+	});
+});
+
+test('if task has id 2, should return the task', () => {
+
+	return getTaskById(2)
+	.then(res => {
+		expect(res).toMatchObject({
+			"id": 2,
+			"creator": 1,
+			"task_type": 0,
+			"question": "blablabla2",
+			"example": "blablabla2",
+			"mark": 30,
+			"multiple_choices": null
+		});
+	}).catch(err => {
+		console.log(err);
+	});
+});
