@@ -30,6 +30,18 @@ users.post('/', async (req, res) => {
 	}
 });
 
+users.get('/', async (req, res) => {
+	let result = await getUsersList();
+
+	if(result){
+		let resultJSON = JSON.parse(JSON.stringify(result));
+		res.status(200).send(resultJSON);
+	}else{
+		let resultnegJSON = JSON.parse(JSON.stringify({}));
+		res.status(400).send(resultnegJSON);
+	}
+});
+
 users.get('/:userID',async (req, res) => {
 	const userID = req.params.userID;
 	let result = await getUserById(userID);
@@ -100,26 +112,6 @@ users.delete('/:id',async (req, res) => {
 		res.status(404).end(); // RICHIESTA NON ESEGUITA
 	}
 });
-
-//DELETE only for testing
-users.delete('/', async (req, res) => {
-	let result = await deleteAllUsers();
-
-	if(result)
-		res.status(204).send();
-	else
-		res.status(404).end();
-});
-
-async function deleteAllUsers(){
-	let queryText = 'DELETE FROM "user" WHERE id > 1 RETURNING *';
-	let result = await pool.query(queryText);
-
-	if(result)
-		return result;
-	else
-		return null;
-}
 
 //FUNCTIONS INTERFACING WITH THE DB
 async function getUserById(id){
@@ -196,6 +188,17 @@ async function updateUserInDatabase(id, toModify){
 	}
 }
 
+async function getUsersList(){
+	let queryText = 'SELECT * FROM "user"';
+	let result = await pool.query(queryText);
+
+	if(result.rowCount != 0){
+		return result.rows;
+	}else{
+		return null;
+	}
+}
+
 //GET TASKS FROM DB WHERE CREATOR==ID
 async function getTasks(id){
 	if(!id){
@@ -214,18 +217,18 @@ async function getTasks(id){
 }
  //GET EXAMS FROM DB WHERE CREATOR==ID
 async function getExams(id){
-if(!id){
-return null;
+	if(!id){
+		return null;
 	}
 	else{
 		let queryText = 'SELECT * FROM "exam" WHERE creator=$1';
 		let queryParams = [id];
 		let result = await pool.query(queryText, queryParams);
 			if(result.rowCount != 0){
-		return result.rows;
-		}else {
-		return null;
-		}
+				return result.rows;
+			}else {
+				return null;
+			}
 	}
 }
 
@@ -249,10 +252,10 @@ module.exports = {
 	users: users,
 	getUserById: getUserById,
 	getUserByEmail: getUserByEmail,
-  getTasks : getTasks,
+  	getTasks : getTasks,
 	getExams: getExams,
-	deleteAllUsers: deleteAllUsers,
 	postUser: postUser,
 	updateUserInDatabase: updateUserInDatabase,
-	deleteUserById: deleteUserById
+	deleteUserById: deleteUserById,
+	getUsersList: getUsersList
 };
