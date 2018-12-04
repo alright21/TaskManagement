@@ -125,21 +125,6 @@ async function deleteAllUsers(){
 		return null;
 }
 
-async function postUserWithID(newUser){
-	if(!newUser.id || !newUser.name || !newUser.surname || !newUser.email || !newUser.password)
-		return null;
-	else{
-		let queryText = 'INSERT INTO "user" ("id","name","surname","email","password") VALUES ($1,$2,$3,$4,$5) RETURNING *';
-		let queryParams = [newUser.id, newUser.name, newUser.surname, newUser.email, newUser.password];
-		let result = await pool.query(queryText, queryParams);
-		if(result){
-			return result.rows[0];
-	  	}else{
-			return null;
-		}
-	}
-}
-
 //FUNCTIONS INTERFACING WITH THE DB
 async function getUserById(id){
 	if(!id){
@@ -283,7 +268,6 @@ module.exports = {
 	getExams: getExams,
 	deleteAllUsers: deleteAllUsers,
 	postUser: postUser,
-	postUserWithID: postUserWithID,
 	updateUserInDatabase: updateUserInDatabase,
 	deleteUserById: deleteUserById,
 	getUsersList: getUsersList
