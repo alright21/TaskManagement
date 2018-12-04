@@ -2,10 +2,8 @@ const fetch = require ('node-fetch');
 const PORT = process.env.PORT || 3000;
 const SERVER_URL = process.env.SERVER_URL || 'http://localhost:' + PORT;
 const root = SERVER_URL;
-var server;
 
 const getUserByID = require('../v1/users').getUserById;
-const deleteAll = require('../v1/users').deleteAllUsers;
 const updateUserDB = require('../v1/users').updateUserInDatabase;
 
 const exampleUser = {'name': 'Mario','surname': 'Rossi','email': 'mario.rossi@gmail.com','password': 'password'};
@@ -300,12 +298,6 @@ describe('GET USERS', () => {
 //#########################
 
 describe('PUT USER TESTS', () => {
-	// beforeEach(() => {
-	// 	deleteAll();
-	// });
-	// afterEach(() => {
-	// 	deleteAll();
-	// });
 
 	test('PUT user with less than two parameters', () => {
 		return updateUserDB(exampleUserID)

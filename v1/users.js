@@ -113,18 +113,6 @@ users.delete('/:id',async (req, res) => {
 	}
 });
 
-//DELETE only for testing
-
-async function deleteAllUsers(){
-	let queryText = 'DELETE FROM "user" WHERE id > 1';
-	let result = await pool.query(queryText);
-
-	if(result)
-		return result;
-	else
-		return null;
-}
-
 //FUNCTIONS INTERFACING WITH THE DB
 async function getUserById(id){
 	if(!id){
@@ -266,7 +254,6 @@ module.exports = {
 	getUserByEmail: getUserByEmail,
   	getTasks : getTasks,
 	getExams: getExams,
-	deleteAllUsers: deleteAllUsers,
 	postUser: postUser,
 	updateUserInDatabase: updateUserInDatabase,
 	deleteUserById: deleteUserById,
