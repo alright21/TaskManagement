@@ -17,13 +17,7 @@ classes.post('/', async(req, res) => {
 	var result = await insertClassIntoDatabase(req.body);
     var resultS = await insertStudentIntoDatabase(req.body);
 
-    /*if (resultS)
-    {
-        res.status(404).send(resultJson);
-    }*/
-
     //var resultA = await insertAssistantIntoDatabase(req.body);
-    //console.log(result);
 	if (result )//&& resultS ) 
 	{
         //console.log('class post if result: '+ result)
@@ -37,13 +31,9 @@ classes.post('/', async(req, res) => {
 }); 
 
 classes.get('/:id', async (req, res) =>{
-    //console.log('sono in classes.get e id: ' + req.params.id);
-    
+
     const id = req.params.id;
-    console.log("id in get classe: " + id)
     let results = await getClassById(req.params.id);
-    
-    //console.log('classes.get results: ' +results);
 
     if(results)
     {
@@ -59,11 +49,8 @@ classes.get('/:id', async (req, res) =>{
 
 classes.put('/:id', async (req, res) => {
 
-    //console.log('sono nella put!');
     const id = req.params.id;
-    //console.log('id: '+id);
     const toModify = req.body;
-    //console.log('toModify: ' + toModify)
     if(!id)
     {
         res.status(400).end();
@@ -72,7 +59,6 @@ classes.put('/:id', async (req, res) => {
     if(result)
     {
         var resultJson = JSON.parse(JSON.stringify(result));
-        await console.log(resultJson + '\n\n\n\n');
         res.status(201).send(resultJson);
     }
     else
@@ -213,9 +199,6 @@ async function getClassById(id){
         {
 
             classe = JSON.parse(JSON.stringify(result.rows[0]));
-            //classe.put("students", getStudents(id));
-            //classe.addProperty("assistants", getAssistants(id));
-            console.log('classe in getClassById: '+ classe)
         }
         else
         {
@@ -223,50 +206,40 @@ async function getClassById(id){
         }
 
         var students = getStudents(id);
-        console.log('students in getClass: '+ JSON.stringify(students));
         for (var student in students )
         {
             classe.students[student] = students[student];
-            console.log('classe.students in getClass' + classe.students[student])
         }
 
         var assistants = getAssistants(id);
-        console.log('assistants in getClass: '+ assistants);
         for (var assistant in assistants)
         {
             classe.assistants[assistant] = assistants[assistant];
         }
-
-        console.log('classe: ' + JSON.stringify(classe));
         return classe;
     }
 }
 
 async function getStudents(id){
 
-    console.log('sono in getStudents e id = ' +id)
     if (!id)
     {
         return null;
     }
     else
     {
-        console.log('sono nell if di getStudents')
         // select students for that class from table "permissions"
         queryText = 'SELECT ruoli.user FROM "ruoli" WHERE ruoli.classe=$1 AND ruoli.permesso=2';
         let studentsList = []; // this variable is used to store tasks which are in exam
         queryParams = [id]
         result = await pool.query(queryText, queryParams);
-        console.log('result in getStudents : ' +result.rowCount)
         if(result.rowCount != 0)
         {
             for (var i = 0; i < result.rowCount; i++)
             {
-                console.log('getStudents nel for: ' + result.rows[i].id);
                 studentsList.push(result.rows[i].id);
             }
         }
-        console.log('studenti lista in getStudents: ' + studentsList);
         return studentsList;
     }
     
@@ -275,7 +248,6 @@ async function getStudents(id){
 
 async function getAssistants(id){
 
-    console.log('id in getAssistants: ' +id);
     if (!id)
     {
         return null;
@@ -286,19 +258,13 @@ async function getAssistants(id){
         let assistantsList = [];
         queryParams = [id] 
         result = await pool.query(queryText, queryParams);
-        console.log('result in getAssistants: ' +result.rowCount)
         if(result.rowCount != 0)
         {
-            console.log('sono nell if di getAssistants')
             for (var i = 0; i < result.rowCount; i++)
             {
-                console.log('getAssistants nel for: ' + result.rows[i]);
                 assistantsList.push(result.rows[i]);
             }
         }
-        // add the list of assistants to class variable
-        //utenti.assistants = assistantsList;
-        console.log('assistenti in getAssistants: ' + assistantsList)
         return assistantsList;
     }
 
@@ -307,17 +273,12 @@ async function updateClassInDatabase(id, toModify){
 
     id = Number.parseInt(id);
 
-    //console.log('sono in updateClass: toModify: ' + toModify);
-    //console.log('sono in updateClass: id: ' + id);
-
     if(!id && !toModify)
     {
-        //console.log('sono in not id e not toModify')
         return null;
     }
     else
     {
-        //console.log('sono in else')
         var isClass = await getClassById(id);
 
         if(!isClass)
@@ -327,8 +288,6 @@ async function updateClassInDatabase(id, toModify){
         }
         else
         {
-            //console.log('sono in else 2')
-
         	if(isClass.prof != toModify.prof)
         	{
                 //console.log('sono in prof')
