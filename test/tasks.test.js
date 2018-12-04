@@ -230,6 +230,7 @@ test('Post task response body', () => {
 
 test('if the id for the update is null, should return 400', () =>{
 
+	expect.assertions(1);
 	return updateTask(null, validUpdateOpen)
 	.then(res => {
 		expect(res.status).toBe(400);
@@ -240,6 +241,7 @@ test('if the id for the update is null, should return 400', () =>{
 
 test('if the id for the update is 0, should return 400', () => {
 
+	expect.assertions(1);
 	return updateTask(0, validUpdateOpen)
 	.then(res => {
 		expect(res.status).toBe(400);
@@ -250,6 +252,7 @@ test('if the id for the update is 0, should return 400', () => {
 
 test('if the creator of the update is null, should return 409', () => {
 
+	expect.assertions(1);
 	return updateTask(3, nullCreatorUpdate)
 	.then(res => {
 		expect(res.status).toBe(409);
@@ -259,6 +262,8 @@ test('if the creator of the update is null, should return 409', () => {
 });
 
 test('if the creator does not exist, should return 409', () => {
+	
+	expect.assertions(1);
 	return updateTask(3, invalidCreatorUpdate)
 	.then(res => {
 		expect(res.status).toBe(409);
@@ -268,6 +273,8 @@ test('if the creator does not exist, should return 409', () => {
 });
 
 test('if the mark of the update is null, should return 409', () => {
+	
+	expect.assertions(1);
 	return updateTask(3, nullMarkTask)
 	.then(res => {
 		expect(res.status).toBe(409);
@@ -278,6 +285,8 @@ test('if the mark of the update is null, should return 409', () => {
 });
 
 test('if the multiple choices have invalid id, should return 409', () => {
+	
+	expect.assertions(1);
 	return updateTask(3, invalidTaskMultipleChoices)
 	.then(res => {
 		expect(res.status).toBe(409);
@@ -294,6 +303,7 @@ test('if the multiple choices have invalid id, should return 409', () => {
 
 test('if the update id is 3 and the task is an close question, and the modification is correct, should return 201', () => {
 
+	expect.assertions(9);
 	return updateTask(3, validUpdateClose)
 	.then(res => {
 		expect(res.status).toBe(201);
@@ -323,6 +333,8 @@ test('if the update id is 3 and the task is an close question, and the modificat
 //test codes for getTask
 
 test('if the task is not in the db, should return 404', ()=> {
+	
+	expect.assertions(1);
 	return getTask(10000)
 	.then(res => {
 		expect(res.status).toBe(404);
@@ -330,6 +342,8 @@ test('if the task is not in the db, should return 404', ()=> {
 });
 
 test('if the id is invalid, should return 400', () => {
+	
+	expect.assertions(1);
 	return getTask(null)
 	.then(res => {
 		expect(res.status).toBe(400);
@@ -337,6 +351,8 @@ test('if the id is invalid, should return 400', () => {
 });
 
 test('if the id of the task is valid, should return the task, with 200', () =>{
+	
+	expect.assertions(2);
 	return getTask(2)
 	.then(res => {
 		expect(res.status).toBe(200);
@@ -405,6 +421,8 @@ describe('tests for fetch DELETE method', () => {
 //tests for updateMultipleChoices
 
 test('if argument length is not 1, should return null', () => {
+	
+	expect.assertions(1);
 	return updateMultipleChoices(validMultipleChoices, 1)
 	.then(res => {
 		expect(res).toBeNull();
@@ -414,6 +432,8 @@ test('if argument length is not 1, should return null', () => {
 });
 
 test('if the multipleChoices is null, should return null', () => {
+	
+	expect.assertions(1);
 	return updateMultipleChoices(null)
 	.then(res => {
 		 expect(res).toBeNull();
@@ -424,6 +444,7 @@ test('if the multipleChoices is null, should return null', () => {
 
 test('if multipleChoices are invalid, should return null', () => {
 
+	expect.assertions(1);
 	return updateMultipleChoices(invalidMultipleChoices)
 	.then(res => {
 		expect(res).toBeNull();
@@ -433,6 +454,8 @@ test('if multipleChoices are invalid, should return null', () => {
 });
 
 test('if the mutiple Choices array is valid, should return the array updated', () =>{
+	
+	expect.assertions(1);
 	return updateMultipleChoices(validMultipleChoices)
 	.then(res => {
 		expect(res).toMatchObject(validMultipleChoices);
@@ -446,6 +469,8 @@ test('if the mutiple Choices array is valid, should return the array updated', (
 
 
 test('if the argument length is != 2 should return null', () => {
+	
+	expect.assertions(1);
 	return updateTaskInDatabase(validTask.id)
 	.then(res => {
 		expect(res).toBeNull();
@@ -455,6 +480,8 @@ test('if the argument length is != 2 should return null', () => {
 });
 
 test('if the id is null, should return null', () => {
+	
+	expect.assertions(1);
 	return updateTaskInDatabase(null, validUpdateClose)
 	.then(res => {
 		expect(res).toBeNull();
@@ -464,6 +491,8 @@ test('if the id is null, should return null', () => {
 });
 
 test('if the modified Task is null, should return null', () => {
+	
+	expect.assertions(1);
 	return updateTaskInDatabase(3, null)
 	.then(res => {
 		expect(res).toBeNull();
@@ -474,6 +503,7 @@ test('if the modified Task is null, should return null', () => {
 
 test('if the modified task has mark null, should return null', () => {
 
+	expect.assertions(1);
 	return updateTaskInDatabase(3, nullMarkTask)
 	.then(res => {
 		expect(res).toBeNull();
@@ -483,6 +513,8 @@ test('if the modified task has mark null, should return null', () => {
 });
 
 test('if the modified task does not exists in the database, should return null', () => {
+	
+	expect.assertions(1);
 	return updateTaskInDatabase(10000, validTask)
 	.then(res => {
 		expect(res).toBeNull();
@@ -493,6 +525,7 @@ test('if the modified task does not exists in the database, should return null',
 
 test('if the creator does not exists, should return null', () => {
 
+	expect.assertions(1);
 	return updateTaskInDatabase(3, invalidCreatorUpdate)
 	.then(res => {
 		expect(res).toBeNull();
@@ -504,6 +537,7 @@ test('if the creator does not exists, should return null', () => {
 
 test('if the update is valid, should return the task updated', () => {
 
+	expect.assertions(1);
 	return updateTaskInDatabase(3, validUpdateClose)
 	.then(res => {
 		expect(res).toMatchObject(validUpdateClose);
@@ -516,6 +550,7 @@ test('if the update is valid, should return the task updated', () => {
 
 test('if argument length  of insertMultipleChoicesis !== 2 should return null', () => {
 	 
+	expect.assertions(1);
 	return insertMultipleChoices(validMultipleChoices,validTask.id, validTask)
 	.then(res => {
 		expect(res).toBeNull();
@@ -526,6 +561,7 @@ test('if argument length  of insertMultipleChoicesis !== 2 should return null', 
 
 test('if multiple choices of insertMultipleChoices are null, should return null', () => {
 
+	expect.assertions(1);
 	return insertMultipleChoices(null, validTask.id)
 	.then(res => {
 		expect(res).toBeNull();
@@ -535,7 +571,8 @@ test('if multiple choices of insertMultipleChoices are null, should return null'
 });
 
 test('if multiple choices of insertMultipleChoices are valid, should return the array of the multiple choices created', () => {
-
+	
+	expect.assertions(1);
 	return insertMultipleChoices(validInsertMultipleChoices, 1)
 	.then(res => {
 		
@@ -566,6 +603,7 @@ test('if multiple choices of insertMultipleChoices are valid, should return the 
 
 test('if argument length of insertTaskInDatabase is !== 1, should return null', () => {
 
+	expect.assertions(1);
 	return insertTaskInDatabase()
 	.then(res => {
 		expect(res).toBeNull();
@@ -575,6 +613,8 @@ test('if argument length of insertTaskInDatabase is !== 1, should return null', 
 });
 
 test('if new task of insertTaskInDatabase is null, should return null', () => {
+	
+	expect.assertions(1);
 	return insertTaskInDatabase(null)
 	.then(res => {
 		expect(res).toBeNull();
@@ -584,6 +624,8 @@ test('if new task of insertTaskInDatabase is null, should return null', () => {
 });
 
 test('if the mark of the task is null of insertTaskInDatabase, should return null', () => {
+	
+	expect.assertions(1);
 	return insertTaskInDatabase(nullMarkTask)
 	.then(res => {
 		expect(res).toBeNull();
@@ -593,6 +635,8 @@ test('if the mark of the task is null of insertTaskInDatabase, should return nul
 });
 
 test('if the creator of the task in insertTaskInDatabase is null, should return null', () => {
+	
+	expect.assertions(1);
 	return insertTaskInDatabase(nullCreatorUpdate)
 	.then(res => {
 		expect(res).toBeNull();
@@ -602,6 +646,8 @@ test('if the creator of the task in insertTaskInDatabase is null, should return 
 });
 
 test('if the task is Closed question in insertTaskInDatabase and has no multiple choices, should return null', () => {
+	
+	expect.assertions(1);
 	return insertTaskInDatabase(nullMultipleChoicesTask)
 	.then(res => {
 		expect(res).toBeNull();
@@ -611,6 +657,8 @@ test('if the task is Closed question in insertTaskInDatabase and has no multiple
 });
 
 test('if a task is correct, should return the task created', () => {
+	
+	expect.assertions(1);
 	return insertTaskInDatabase(validTask)
 	.then(res => {
 		validTask.id = res.id;
@@ -635,6 +683,8 @@ test('if a task is correct, should return the task created', () => {
 //tests for getMultipleChoice
 
 test('if arguments length of getMultipleChoice if !== 1 should return null', ()=> {
+	
+	expect.assertions(1);
 	return getMultipleChoice()
 	.then(res => {
 		expect(res).toBeNull();
@@ -644,6 +694,8 @@ test('if arguments length of getMultipleChoice if !== 1 should return null', ()=
 });
 
 test('if the id of getMultipleChoice is null, should return null', () => {
+	
+	expect.assertions(1);
 	return getMultipleChoice(null)
 	.then(res => {
 		expect(res).toBeNull();
@@ -653,6 +705,8 @@ test('if the id of getMultipleChoice is null, should return null', () => {
 });
 
 test('if the multiple choice does not exists in the database, should return null', () => {
+	
+	expect.assertions(1);
 	return getMultipleChoice(10000)
 	.then(res => {
 		expect(res).toBeNull();
@@ -662,6 +716,8 @@ test('if the multiple choice does not exists in the database, should return null
 });
 
 test('if the multiple choice id is 3, should return the multiple choice', () => {
+	
+	expect.assertions(3);
 	return getMultipleChoice(3)
 	.then(res => {
 		expect(res).toHaveProperty('id');
@@ -676,6 +732,8 @@ test('if the multiple choice id is 3, should return the multiple choice', () => 
 //tests for getMultipleChoices
 
 test('if arguments length of getMultipleChoices is !== 1, should return null', () => {
+	
+	expect.assertions(1);
 	return getMultipleChoices()
 	.then(res => {
 		expect(res).toBeNull();
@@ -685,6 +743,8 @@ test('if arguments length of getMultipleChoices is !== 1, should return null', (
 });
 
 test('if the task of the multiple choices is null in getMultipleChoice, should return null', () => {
+	
+	expect.assertions(1);
 	return getMultipleChoices(null)
 	.then(res => {
 		expect(res).toBeNull();
@@ -694,6 +754,8 @@ test('if the task of the multiple choices is null in getMultipleChoice, should r
 });
 
 test('if the task does not exists in getMultipleChoices, should return null', () => {
+	
+	expect.assertions(1);
 	return getMultipleChoices(10000)
 	.then(res => {
 		expect(res).toBeNull();
@@ -703,6 +765,8 @@ test('if the task does not exists in getMultipleChoices, should return null', ()
 });
 
 test('if the id of the tas is 3, should return the list of the multiple choices associated with it', () => {
+	
+	expect.assertions(1);
 	return getMultipleChoices(3)
 	.then(res => {
 		expect(res).toMatchObject([
@@ -725,6 +789,8 @@ test('if the id of the tas is 3, should return the list of the multiple choices 
 //tests for getTaskById
 
 test('if arguments length of getTaskById is !== of 1, should return null', () => {
+	
+	expect.assertions(1);
 	return getTaskById()
 	.then(res => {
 		expect(res).toBeNull();
@@ -734,6 +800,8 @@ test('if arguments length of getTaskById is !== of 1, should return null', () =>
 });
 
 test('if id is null in getTaskById, should return null', () => {
+	
+	expect.assertions(1);
 	return getTaskById(null)
 	.then(res => {
 		expect(res).toBeNull();
@@ -743,6 +811,8 @@ test('if id is null in getTaskById, should return null', () => {
 });
 
 test('if task does not exists in db, should return null', () => {
+	
+	expect.assertions(1);
 	return getTaskById(10000)
 	.then(res => {
 		expect(res).toBeNull();
@@ -753,6 +823,7 @@ test('if task does not exists in db, should return null', () => {
 
 test('if task has id 2, should return the task', () => {
 
+	expect.assertions(1);
 	return getTaskById(2)
 	.then(res => {
 		expect(res).toMatchObject({
