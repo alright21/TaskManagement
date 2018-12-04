@@ -12,12 +12,15 @@ const exampleUser = {'name': 'Mario','surname': 'Rossi','email': 'mario.rossi@gm
 const exampleUser2 = {'name': 'Marione','surname': 'Razzi','email': 'marione.razzi@gmail.com','password': 'a'};
 const exampleUser3 = {'name': 'Darione','surname': 'Rassi','email': 'darione.rassi@gmail.com','password': 'b'};
 const exampleUser4 = {'name': 'One','surname': 'Time','email': 'one.time@gmail.com','password': 'c'};
+const exampleUser5 = {'name': 'Two','surname': 'Time','email': 'two.time@gmail.com','password': 'd'};
+const exampleUser6 = {'name': 'Three','surname': 'Time','email': 'three.time@gmail.com','password': 'e'};
+const exampleUser7 = {'name': 'Four','surname': 'Time','email': 'four.time@gmail.com','password': 'f'};
 const wrongUser = {'name': null,'surname': 'Time','email': 'one.time@gmail.com','password': 'c'};
 const wrongUser2 = {'name': 'One','surname': null,'email': 'one.time@gmail.com','password': 'c'};
 const wrongUser3 = {'name': 'One','surname': 'Time','email': null,'password': 'c'};
 const wrongUser4 = {'name': 'One','surname': 'Time','email': 'one.time@gmail.com','password': null};
 const wrongUser5 = {'name': 'One','surname': 'Time','email': 'one.time@gmail.com','password': 'azz'};
-const putUser = {'name': 'Mario','surname': 'Rossi','email': 'mario.rossi@gmail.com','password': 'abba'};
+const putUser = {'name': 'Four','surname': 'Time','email': 'four.time@gmail.com','password': 'abba'};
 const exampleUserID = 1;
 
 const validtask={
@@ -132,12 +135,6 @@ test('delete invalid user',()=>{
 
 
 describe('POST USER TESTS', () => {
-	beforeAll(() => {
-		deleteAll();
-	});
-	afterAll(() => {
-		deleteAll();
-	});
 
 	test('POST user response', () => {
 		return postUser(exampleUser4)
@@ -187,15 +184,9 @@ describe('POST USER TESTS', () => {
 //#########################
 
 describe('GET USER TESTS', () => {
-	beforeEach(() => {
-		deleteAll();
-	});
-	afterEach(() => {
-		deleteAll();
-	});
 
 	test('GET user response', () => {
-		return postUser(exampleUser)
+		return postUser(exampleUser2)
 			.then(postResponse => {return postResponse.json()})
 			.then(json => {return getUser(json.id)})
 			.then(getResponse => {expect(getResponse.status).toBe(200)});
@@ -208,7 +199,7 @@ describe('GET USER TESTS', () => {
 
 	test('GET user response body if found', () => {
 		let returnedID = -1;
-		return postUser(exampleUser)
+		return postUser(exampleUser3)
 			.then(postResponse => {return postResponse.json()})
 			.then(json => {
 				returnedID = json.id;
@@ -231,10 +222,10 @@ describe('GET USER TESTS', () => {
 				//Object values
 				expect(getResponseJson).toMatchObject({
 						'id': returnedID,
-						'name': 'Mario',
-						'surname': 'Rossi',
-						'email': 'mario.rossi@gmail.com',
-						'password': 'password'
+						'name': 'Darione',
+						'surname': 'Rassi',
+						'email': 'darione.rassi@gmail.com',
+						'password': 'b'
 				});
 		});
 	});
@@ -251,11 +242,11 @@ describe('GET USERS', () => {
 	});
 
 	test('GET users response body if correct', () => { //TEST MOLTO PESANTE CON LISTA LUNGA
-		return postUser(exampleUser2)
-			.then(postResponse2 => {
-				return postUser(exampleUser3);
+		return postUser(exampleUser5)
+			.then(postResponse5 => {
+				return postUser(exampleUser6);
 			})
-			.then(postResponse3 => {
+			.then(postResponse6 => {
 				return getUsersList();
 			})
 			.then(getResponse => {return getResponse.json()})
@@ -276,31 +267,26 @@ describe('GET USERS', () => {
 					expect(typeof user.email).toEqual('string');
 					expect(typeof user.password).toEqual('string');
 					//For testing
-					if(user.id !== 1)
+					if(user.id > 6)
 						addedIDs.push(user.id);
 				});
 				//PROBLEMA CON ID
-				exampleUser2.id = addedIDs[0];
-				expect(getResponseJson).toContainEqual(exampleUser2);
-				exampleUser3.id = addedIDs[1];
-				expect(getResponseJson).toContainEqual(exampleUser3);
+				exampleUser5.id = addedIDs[0];
+				expect(getResponseJson).toContainEqual(exampleUser5);
+				exampleUser6.id = addedIDs[1];
+				expect(getResponseJson).toContainEqual(exampleUser6);
 			});
 	});
 
 	describe('--> To test the empty list', () => {
-		beforeEach(() => {
-			deleteAll();
-		});
-		afterEach(() => {
-			deleteAll();
-		});
 		test('GET users response body if there are no users inside the table', () => {
 			return getUsersList()
 				.then(getResponse => {return getResponse.json()})
 				.then(getResponseJson => {
-					for(let i = 0; i < getResponseJson.length; i++){
-						if(getResponseJson[i].id === 1){
-							getResponseJson.pop();
+					let tmpLength = getResponseJson.length;
+					for(let i = 0; i < tmpLength; i++){
+						if(getResponseJson[0].id < 9){
+							getResponseJson.splice(0,1);
 						}
 					}
 					expect(getResponseJson).toEqual([]);
@@ -314,12 +300,12 @@ describe('GET USERS', () => {
 //#########################
 
 describe('PUT USER TESTS', () => {
-	beforeEach(() => {
-		deleteAll();
-	});
-	afterEach(() => {
-		deleteAll();
-	});
+	// beforeEach(() => {
+	// 	deleteAll();
+	// });
+	// afterEach(() => {
+	// 	deleteAll();
+	// });
 
 	test('PUT user with less than two parameters', () => {
 		return updateUserDB(exampleUserID)
@@ -368,7 +354,7 @@ describe('PUT USER TESTS', () => {
 
 	test('PUT user response status and body correct', () => {
 		let returnedID;
-		return postUser(exampleUser)
+		return postUser(exampleUser7)
 			.then(postResponse => {return postResponse.json()})
 			.then(json => {return getUser(json.id)})
 			.then(getResponse => {return getResponse.json()})
@@ -397,9 +383,9 @@ describe('PUT USER TESTS', () => {
 				//Object values
 				expect(putResponseJSON).toEqual({
 					'id': returnedID,
-					'name': 'Mario',
-					'surname': 'Rossi',
-					'email': 'mario.rossi@gmail.com',
+					'name': 'Four',
+					'surname': 'Time',
+					'email': 'four.time@gmail.com',
 					'password': 'abba'
 				});
 			});
