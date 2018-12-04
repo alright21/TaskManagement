@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const pg = require('pg');
 const exams = express.Router();
+const getTaskById = require('./tasks').getTaskById;
 
 const config = require('../db_config');
 const pool = new pg.Pool(config);
@@ -28,6 +29,17 @@ exams.get('/:id', async (req, res) =>{
     if(results){
         var resultJson = JSON.parse(JSON.stringify(results));
         res.status(200).send(resultJson);
+    }
+    else{
+        res.status(404).end();
+    }
+})
+
+exams.put('/:id', async (req, res) =>{
+    let results = await updateExam(req.params.id, req.body);
+
+    if(results){
+        res.status(204).end();
     }
     else{
         res.status(404).end();
@@ -104,7 +116,7 @@ async function getUserById(id){
     }
 }
 
-async function getTaskById(id){
+/*async function getTaskById(id){
     if(!id){
         return null;
     }else{
@@ -119,7 +131,7 @@ async function getTaskById(id){
         }
 
     }
-}
+}*/
 
 async function getExamById(id){
 
@@ -154,6 +166,48 @@ async function getExamById(id){
         exam.task_list = tasklist;
         return exam;
     }
+}
+
+async function updateExam(id, updatedExam){
+    if(!id){
+        return null;
+    }
+    if(id == 0){
+        return null;
+    }
+    else{
+        // check if exam exist
+        let queryText = 'SELECT * FROM "exam" WHERE id=$1';
+        let queryParams = [id];
+        let result = await pool.query(queryText, queryParams);
+
+        if(result.rowCount == 0){
+            return null;
+        }
+
+        queryText = 'UPDATE "exam" SET deadline=$1, mark=$2 WHERE id=$3';
+        queryParams = [updatedExam.deadline, updatedExam.mark, id];
+        
+        result = await pool.query(queryText, queryParams);
+        queryText = 'SELECT * FROM "task_in_exams" WHERE exam=$1 and task=$2';
+        
+        for (var i = 0; i < updatedExam.task_list.length; i++){
+            result = await getTaskById(updatedExam.task_list[i]);
+            if(result){
+                queryParams = [updatedExam.task_list[i], id];
+                result = await pool.query(queryText, queryParams);
+                if(result.rowCount == 0){
+                    result = await pool.query('INSERT INTO "task_in_exams" VALUES ($1, $2)', [id, updatedExam.task_list[i]]);
+                }
+            }
+            else{
+                return null;
+            }
+        }
+    }
+
+    // this return id just for being different from return null
+    return id;
 }
 
 module.exports = {
