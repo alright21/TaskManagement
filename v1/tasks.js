@@ -79,6 +79,27 @@ tasks.get('/:id', async (req,res) => {
     }
 });
 
+tasks.delete('/:id', async (req, res) => {
+
+	const id = Number.parseInt(req.params.id);
+
+	if(!id){
+		res.status(400).end();
+	}
+	let result;
+	try{
+		result = await deleteTaskById(id);
+	}catch(e){
+		console.log(e);
+	}
+
+	if(result){
+		res.status(204).end();
+	}else{
+		res.status(404).end();
+	}
+});
+
 
 async function insertTaskInDatabase(task){
 
@@ -411,6 +432,34 @@ async function insertMultipleChoices(multipleChoices, task){
 	}
 }
 
+async function deleteTaskById(id){
+
+	if(arguments.length !== 1){
+		return null;
+	}
+	if(!id){
+		return null;
+	}else{
+
+		const queryText = 'DELETE FROM "task" WHERE "id"=$1 RETURNING *';
+		const queryParams = [id];
+		let result;
+
+		try{
+			result = await pool.query(queryText,queryParams);
+		}catch(e){
+			console.log(e);
+		}
+
+		if(result){
+			return result.rows[0];
+		}else{
+			return null;
+		}
+	}
+
+}
+
 module.exports = {
 	tasks: tasks,
 	insertTaskInDatabase: insertTaskInDatabase,
@@ -419,5 +468,6 @@ module.exports = {
 	getMultipleChoices: getMultipleChoices,
 	getMultipleChoice: getMultipleChoice,
 	updateTaskInDatabase: updateTaskInDatabase,
-	updateMultipleChoices: updateMultipleChoices
+	updateMultipleChoices: updateMultipleChoices,
+	deleteTaskById: deleteTaskById
 };
