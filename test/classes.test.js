@@ -10,65 +10,61 @@ const updateClassInDatabase = require('../v1/classes').updateClassInDatabase;
 var server;
 const validId = 1;
 const invalidId = 0;
-
+var students = [1,2];
+var assistants = [2];
+var invalidStud = ['abcd'];
 //Example of what a Class should contain
 const exampleValidClass = {
 	'id': 1,
 	'name': 'classee1',
 	'prof': 1,
-	'description': 'Course of SE'
-	//'assistants': ['assistant1', 'assistant2'], //NB: array's element are type "user"
-	//'students': ['student1', 'student2', 'student3'] //same type of assistants
+	'description': 'Course of SE',
+	//'assistants': ["2"], //NB: array's element are type "user"
+	//'students': [3,4] //same type of assistants
 };
 
 const exampleInvalidName =  {
   'id': 1,
 	'name': '0',
 	'prof': 1,
-	'description': 'Course of SE'
-	//'assistants': ['assistant1', 'assistant2'], //NB: array's element are type "user"
-	//'students': ['student1', 'student2', 'student3'] //same type of assistants
+	'description': 'Course of SE',
+  //'assistants': [2], //NB: array's element are type "user"
+  //'students': [3,4] //same type of assistants
 };
 
 const exampleInvalidProf =  {
   'id': 1,
 	'name': 'classee1',
 	'prof': '0',
-	'description': 'Course of SE'
-	//'assistants': ['assistant1', 'assistant2'], //NB: array's element are type "user"
-	//'students': ['student1', 'student2', 'student3'] //same type of assistants
+	'description': 'Course of SE',
+  //'assistants': [2], //NB: array's element are type "user"
+  //'students': [3,4] //same type of assistants
 };
 
 const exampleModifiedName =  {
   'id': 1,
 	'name': 'SEclass',
 	'prof': 1,
-	'description': 'Course of SE'
-	//'assistants': ['assistant1', 'assistant2'], //NB: array's element are type "user"
-	//'students': ['student1', 'student2', 'student3'] //same type of assistants
+	'description': 'Course of SE',
+	//'assistants': [2], //NB: array's element are type "user"
+  //'students': [3,4] //same type of assistants
 };
 
 const exampleModifiedDescription =  {
   'id': 1,
 	'name': 'classee1',
 	'prof': 1,
-	'description': 'This is the class of SE'
-	//'assistants': ['assistant1', 'assistant2'], //NB: array's element are type "user"
-	//'students': ['student1', 'student2', 'student3'] //same type of assistants
+	'description': 'This is the class of SE',
+  //'assistants': [2], //NB: array's element are type "user"
+  //'students': [3,4] //same type of assistants
 };
 
-/*const exampleInvalidAssist =  {
-	'name': 'class1',
-	'prof': 'prof1',
-	'assistants': ['assistant1', 'assistant2', 'assistant3'], //NB: array's element are type "user"
-	'students': ['student1', 'student2', 'student3'] //same type of assistants
-};
 
-const exampleInvalidStud =  {
+/*const exampleInvalidStud =  {
 	'name': 'class1',
-	'prof': 'prof1',
-	'assistants': ['assistant1', 'assistant2'], //NB: array's element are type "user"
-	'students': ['student1', 'student2'] //same type of assistants
+	'prof': 1,
+  'assistants': [2], //NB: array's element are type "user"
+  'students': ['abcd'] //same type of assistants
 };*/
 
 //Little function useful as an helper function, with a Promise:
@@ -134,13 +130,17 @@ test('Creation of a valid new Class', () => {
       expect(postResponseJson).toHaveProperty('name');
       expect(postResponseJson).toHaveProperty('prof');
       expect(postResponseJson).toHaveProperty('description');
+      //expect(postResponseJson).toHaveProperty('students');
+      //expect(postResponseJson).toHaveProperty('assistants');
 
       expect(postResponseJson.id).toEqual(exampleValidClass.id);
       expect(postResponseJson.name).toEqual(exampleValidClass.name);
       expect(postResponseJson.prof).toEqual(exampleValidClass.prof);
       expect(postResponseJson.description).toEqual(exampleValidClass.description);
+      //expect(postResponseJson.students).toEqual(exampleValidClass.students);
+      //expect(postResponseJson.assistants).toEqual(exampleValidClass.assistants);
     });
-})});
+})}); 
 
 
 test('if class\'s prof does not exist, the API should return 404', () => {
@@ -150,23 +150,52 @@ test('if class\'s prof does not exist, the API should return 404', () => {
   })
 });
 
-/*test('if the assistants\'s list is incorrect, then the API should return 400', () => {
-  return postClass(exampleInvalidAssist)
+
+
+test('if the students\'s list is incorrect, then the API should return 400', () => {
+  return postClass(invalidStud)
   .then(response =>{
-    expect(response.status).toBe(400);
+    expect(response.status).toBe(404);
   })
 });
 
-test('if the students\'s list is incorrect, then the API should return 400', () => {
-  return postClass(exampleInvalidStud)
+test('if the students\'s list is empty, then the API should return 404', () => {
+  return postClass(students, null)
   .then(response =>{
-    expect(response.status).toBe(400);
+    expect(response.status).toBe(404);
   })
-});*/
+});
 
+
+//Test fot InsertClassIntoDatabase
+test('Verify that a valid class is added to the database correctly', ()=>{
+  return insertClassIntoDatabase(exampleValidClass)
+  .then(created => {
+    return getClassById(created.id)
+    .then(res =>{
+      exampleValidClass.id = res.id;
+      expect(res.prof).toBe(exampleValidClass.prof);
+    })
+  })
+});
+
+test('if the prof is invalid, should return null', ()=>{
+
+  return insertClassIntoDatabase(exampleInvalidProf)
+  .then(res =>{
+    expect(res).toBeNull();
+  })
+});
 
 
 //2) TESTING GET/classes/{id}
+
+test('if the arguments length is 0, should return null', () =>{
+  return getClassById()
+  .then(res =>{
+    expect(res).toBeNull();
+  })
+})
 
 test('test if valid class id returns the selected class', () => {
   //console.log(validId);
@@ -180,7 +209,7 @@ test('test if valid class id returns the selected class', () => {
     })
 });
 
-test('test if invalid class id returns 404 not found', () => {
+test('if the id does not exists, it should return 404', () => {
   return getClass(invalidId)
     .then(response => {
       expect(response.status).toBe(404);
