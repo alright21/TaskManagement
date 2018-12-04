@@ -123,6 +123,7 @@ const invalidMultipleChoices = [
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 const validInsertMultipleChoices = [
 	{
 		
@@ -157,6 +158,8 @@ afterAll(function() {
 >>>>>>> Remove server start inside test files. Now server start before executing npm test.
 =======
 >>>>>>> Remove server start inside test files. Now server start before executing npm test.
+=======
+>>>>>>> b5554418e2949a80b93d3e581f3f3393c2db5165
 //Little function useful as an helper function, with a Promise:
 
 const postTask = function(newTask){
