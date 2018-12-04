@@ -85,6 +85,14 @@ const getTasks = function(userID){
     }
   });
 };
+const getReviews = function(userID){
+  return fetch(root + '/v1/users/' + userID +'/reviews', {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json'
+    }
+  });
+};
 
 const updateUser = function(id, toModify){
 	return fetch(SERVER_URL + '/v1/users/' + id,{

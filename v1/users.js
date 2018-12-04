@@ -69,6 +69,20 @@ users.get('/:id/tasks', async(req,res)=> {
 	}
 });
 
+users.get('/:id/reviews', async(req,res)=> {
+	var id=req.params.id;
+		let result = await getReviews(id);
+	if(result){
+		var resultJson = JSON.parse(JSON.stringify(result));
+		res.status(200).send(resultJson);
+	}
+	else{
+		let resultnegJSON = JSON.parse(JSON.stringify({}));
+		res.status(404).send(resultnegJSON);
+	}
+});
+
+
 users.put('/:userID', async (req, res) => {
 	const userID = Number.parseInt(req.params.userID);
 	const toModify = req.body;
