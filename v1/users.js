@@ -14,16 +14,16 @@ users.post('/', async (req, res) => {
 	const toInsert = req.body;
 	//Check if user already in
 	let check = await getUserByEmail(toInsert.email);
-	if(check){
+	if (check) {
 		let resultnegJSON = JSON.parse(JSON.stringify({}));
 		res.status(400).send(resultnegJSON);
-	}else{ //User not in db
+	} else { //User not in db
 		let result = await postUser(toInsert);
-		if(result){
+		if (result) {
 			let resultJson = JSON.parse(JSON.stringify(result));
 			res.status(201).send(resultJson);
 		}
-		else{
+		else {
 			let resultnegJSON = JSON.parse(JSON.stringify({}));
 			res.status(400).send(resultnegJSON);
 		}
@@ -33,16 +33,16 @@ users.post('/', async (req, res) => {
 users.post('/login', async (req, res) => {
 	let userEmail = req.body.email;
 	let userPassword = req.body.password;
-	
-	if(!userEmail || !userPassword)
+
+	if (!userEmail || !userPassword)
 		res.status(400).end();
-	else{
+	else {
 		let loggedUser = await getUserByEmailAndPassword(userEmail, userPassword);
-		
-		if(loggedUser){
+
+		if (loggedUser) {
 			let resultJSON = JSON.parse(JSON.stringify(loggedUser));
 			res.status(200).send(resultJSON);
-		}else
+		} else
 			res.status(400).end();
 	}
 });
@@ -50,49 +50,75 @@ users.post('/login', async (req, res) => {
 users.get('/', async (req, res) => {
 	let result = await getUsersList();
 
-	if(result){
+	if (result) {
 		let resultJSON = JSON.parse(JSON.stringify(result));
 		res.status(200).send(resultJSON);
-	}else{
+	} else {
 		let resultnegJSON = JSON.parse(JSON.stringify({}));
 		res.status(400).send(resultnegJSON);
 	}
 });
 
-users.get('/:userID',async (req, res) => {
+users.get('/:userID', async (req, res) => {
 	const userID = req.params.userID;
 	let result = await getUserById(userID);
 
-	if(result){
+	if (result) {
 		let resultJSON = JSON.parse(JSON.stringify(result));
 		res.status(200).send(resultJSON);
-	}else{
+	} else {
 		let resultnegJSON = JSON.parse(JSON.stringify({}));
 		res.status(400).send(resultnegJSON);
 	}
 });
 
-users.get('/:id/exams', async(req,res)=> {
-	var id=req.params.id;
-		let result = await getExams(id);
-	if(result){
-			var resultJson = JSON.parse(JSON.stringify(result));
-			res.status(200).send(resultJson);
-		}
-		else{
-		let resultnegJSON = JSON.parse(JSON.stringify({}));
-			res.status(404).send(resultnegJSON);
-		}
-});
-
-users.get('/:id/tasks', async(req,res)=> {
-	var id=req.params.id;
-		let result = await getTasks(id);
-	if(result){
+users.get('/:id/exams', async (req, res) => {
+	var id = req.params.id;
+	let result = await getExams(id);
+	if (result) {
 		var resultJson = JSON.parse(JSON.stringify(result));
 		res.status(200).send(resultJson);
 	}
-	else{
+	else {
+		let resultnegJSON = JSON.parse(JSON.stringify({}));
+		res.status(404).send(resultnegJSON);
+	}
+});
+
+users.get('/:id/tasks', async (req, res) => {
+	var id = req.params.id;
+	let result = await getTasks(id);
+	if (result) {
+		var resultJson = JSON.parse(JSON.stringify(result));
+		res.status(200).send(resultJson);
+	}
+	else {
+		let resultnegJSON = JSON.parse(JSON.stringify({}));
+		res.status(404).send(resultnegJSON);
+	}
+});
+
+users.get('/:id/reviews', async (req, res) => {
+	var id = req.params.id;
+	let result = await getReviews(id);
+	if (result) {
+		var resultJson = JSON.parse(JSON.stringify(result));
+		res.status(200).send(resultJson);
+	}
+	else {
+		let resultnegJSON = JSON.parse(JSON.stringify({}));
+		res.status(404).send(resultnegJSON);
+	}
+});
+
+users.get('/:id/submissions', async (req, res) => {
+	var id = req.params.id;
+	let result = await getSubmissions(id);
+	if (result) {
+		var resultJson = JSON.parse(JSON.stringify(result));
+		res.status(200).send(resultJson);
+	}
+	else {
 		let resultnegJSON = JSON.parse(JSON.stringify({}));
 		res.status(404).send(resultnegJSON);
 	}
@@ -102,101 +128,101 @@ users.put('/:userID', async (req, res) => {
 	const userID = Number.parseInt(req.params.userID);
 	const toModify = req.body;
 
-	if(!userID){
+	if (!userID) {
 		res.status(400).end();
-	}else{
+	} else {
 		let result = await updateUserInDatabase(userID, toModify);
-		if(result){
+		if (result) {
 			let resultJSON = JSON.parse(JSON.stringify(result));
 			res.status(200).send(resultJSON);
-		}else{
+		} else {
 			res.status(409).end();
 		}
 	}
 });
 
-users.delete('/:id',async (req, res) => {
+users.delete('/:id', async (req, res) => {
 	const id = req.params.id;
 	let result = await deleteUserById(id);
-	if(result){
+	if (result) {
 		let check = await getUserById(id);
- 		if(check==null){
+		if (check == null) {
 			res.status(204).end(); // RICHIESTA ANDATA A BUON FINE
-		}else{
+		} else {
 			res.status(404).end(); // RICHIESTA NON ESEGUITA
 		}
-	}else{
+	} else {
 		res.status(404).end(); // RICHIESTA NON ESEGUITA
 	}
 });
 
 //FUNCTIONS INTERFACING WITH THE DB
-async function getUserById(id){
-	if(!id){
+async function getUserById(id) {
+	if (!id) {
 		return null;
-	}else{
+	} else {
 		var queryText = 'SELECT * FROM "user" WHERE id=$1';
 		var queryParams = [id];
 		var result = await pool.query(queryText, queryParams);
-		if(result.rowCount != 0){
+		if (result.rowCount != 0) {
 			return result.rows[0];
-		}else{
+		} else {
 			return null;
 		}
 	}
 }
 
-async function postUser(newUser){
-	if(!newUser.name || !newUser.surname || !newUser.email || !newUser.password)
+async function postUser(newUser) {
+	if (!newUser.name || !newUser.surname || !newUser.email || !newUser.password)
 		return null;
-	else{
+	else {
 		let queryText = 'INSERT INTO "user" ("name","surname","email","password") VALUES ($1,$2,$3,$4) RETURNING *';
 		let queryParams = [newUser.name, newUser.surname, newUser.email, newUser.password];
 		let result = await pool.query(queryText, queryParams);
-		if(result){
+		if (result) {
 			return result.rows[0];
-	  	}else{
+		} else {
 			return null;
 		}
 	}
 }
 
-async function getUserByEmail(email){
-	if(!email){
+async function getUserByEmail(email) {
+	if (!email) {
 		return null;
-	}else{
+	} else {
 		var queryText = 'SELECT * FROM "user" WHERE email=$1';
 		var queryParams = [email];
 		var result = await pool.query(queryText, queryParams);
-		if(result.rowCount != 0){
+		if (result.rowCount != 0) {
 			return result.rows[0];
-		}else{
+		} else {
 			return null;
 		}
 	}
 }
 
-async function updateUserInDatabase(id, toModify){
-	if(arguments.length !== 2){
+async function updateUserInDatabase(id, toModify) {
+	if (arguments.length !== 2) {
 		return null;
 	}
-	if(!id || !toModify){
+	if (!id || !toModify) {
 		return null;
 	}
-	else{
+	else {
 		let isUser = await getUserById(id);
-		if(!isUser){
+		if (!isUser) {
 			return null;
 		}
-		else{
-			if(!toModify.name || !toModify.surname || !toModify.email || !toModify.password || isUser.id !== id){
+		else {
+			if (!toModify.name || !toModify.surname || !toModify.email || !toModify.password || isUser.id !== id) {
 				return null;
-			}else{
+			} else {
 				let queryText = 'UPDATE "user" SET name=$1, surname=$2, email=$3, password=$4 WHERE  id=$5 RETURNING *';
 				let queryParams = [toModify.name, toModify.surname, toModify.email, toModify.password, id];
 				let result = await pool.query(queryText, queryParams);
 
-				if(result.rowCount != 0)
+				if (result.rowCount != 0)
 					return result.rows[0];
 				else
 					return null;
@@ -205,83 +231,112 @@ async function updateUserInDatabase(id, toModify){
 	}
 }
 
-async function getUsersList(){
+async function getUsersList() {
 	let queryText = 'SELECT * FROM "user"';
 	let result = await pool.query(queryText);
 
-	if(result.rowCount != 0){
+	if (result.rowCount != 0) {
 		return result.rows;
-	}else{
+	} else {
 		return null;
 	}
 }
 
 //GET TASKS FROM DB WHERE CREATOR==ID
-async function getTasks(id){
-	if(!id){
-	  return null;
-	}else{
-	  let queryText = 'SELECT * FROM "task" WHERE creator=$1';
-	  let queryParams = [id];
-	  let result = await pool.query(queryText, queryParams);
-	  let tasks;
-	  if(result.rowCount != 0){
-		  return result.rows;
-	  }else {
-		  return null;
-	  }
+async function getTasks(id) {
+	if (!id) {
+		return null;
+	} else {
+		let queryText = 'SELECT * FROM "task" WHERE creator=$1';
+		let queryParams = [id];
+		let result = await pool.query(queryText, queryParams);
+		if (result.rowCount != 0) {
+			return result.rows;
+		} else {
+			return null;
+		}
 	}
 }
- //GET EXAMS FROM DB WHERE CREATOR==ID
-async function getExams(id){
-	if(!id){
+//GET EXAMS FROM DB WHERE CREATOR==ID
+async function getExams(id) {
+	if (!id) {
 		return null;
 	}
-	else{
+	else {
 		let queryText = 'SELECT * FROM "exam" WHERE creator=$1';
 		let queryParams = [id];
 		let result = await pool.query(queryText, queryParams);
-			if(result.rowCount != 0){
-				return result.rows;
-			}else {
-				return null;
-			}
+		if (result.rowCount != 0) {
+			return result.rows;
+		} else {
+			return null;
+		}
 	}
 }
 
 //DELETE USERS WITH ID==ID FROM DB
- async function deleteUserById(id){
- 	if(!id){
- 		return null;
- 	}else{
- 		var queryText = 'DELETE FROM "user" WHERE id=$1';
- 		var queryParams = [id];
+async function deleteUserById(id) {
+	if (!id) {
+		return null;
+	} else {
+		var queryText = 'DELETE FROM "user" WHERE id=$1';
+		var queryParams = [id];
 		let result = await pool.query(queryText, queryParams);
-		if(result.rowCount!=0){
+		if (result.rowCount != 0) {
 			return JSON.parse(JSON.stringify(result)); //ho eliminato qualcosa
-		}else{
+		} else {
 			return null; //non ho eliminato nulla
- 	}
- }
+		}
+	}
 }
 
-async function getUserByEmailAndPassword(email, pwd){
-	
-	if(arguments.length !== 2)
+async function getUserByEmailAndPassword(email, pwd) {
+
+	if (arguments.length !== 2)
 		return null;
-	
-	if(!email || !pwd)
+
+	if (!email || !pwd)
 		return null;
-	else{
+	else {
 		let queryText = 'SELECT * FROM "user" WHERE email=$1 AND password=$2';
 		let queryParams = [email, pwd];
-		
+
 		let result = await pool.query(queryText, queryParams);
-		
-		if(result.rowCount > 0)
+
+		if (result.rowCount > 0)
 			return result.rows[0];
 		else
 			return null;
+	}
+}
+
+async function getReviews(id) {
+	if (!id) {
+		return null;
+	} else {
+		var queryText = 'SELECT * FROM "review" WHERE reviewer=$1';
+		var queryParams = [id];
+		let result = await pool.query(queryText, queryParams);
+		if (result.rowCount != 0) {
+			return result.rows;
+		} else {
+			return null;
+		}
+	}
+}
+
+async function getSubmissions(id) {
+	if (!id) {
+		return null;
+	} else {
+		var queryText = 'SELECT * FROM "submission" WHERE "user"=$1';
+		var queryParams = [id];
+		let result = await pool.query(queryText, queryParams);
+		if (result.rowCount != 0) {
+			return result.rows;
+		} else {
+			return null;
+		}
 	}
 }
 
@@ -289,11 +344,14 @@ module.exports = {
 	users: users,
 	getUserById: getUserById,
 	getUserByEmail: getUserByEmail,
-  	getTasks : getTasks,
+	getTasks: getTasks,
 	getExams: getExams,
 	postUser: postUser,
 	updateUserInDatabase: updateUserInDatabase,
 	deleteUserById: deleteUserById,
 	getUsersList: getUsersList,
-	getUserByEmailAndPassword: getUserByEmailAndPassword
+	getUserByEmailAndPassword: getUserByEmailAndPassword,
+	getReviews: getReviews,
+	getSubmissions: getSubmissions,
+	deleteUserById: deleteUserById
 };
