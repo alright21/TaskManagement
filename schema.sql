@@ -93,7 +93,7 @@ INSERT INTO "user" ("name", "surname", "email", "password") VALUES ('stefano', '
 INSERT INTO "user" ("name", "surname", "email", "password") VALUES ('Utente', 'Utente', 'blllll', 'password');
 
 INSERT INTO "task" ("creator", "task_type", "question", "example", "mark") VALUES (1, 1, 'blablabla', 'blablabla', 30);
-INSERT INTO "task" ("creator", "task_type", "question", "example", "mark") VALUES (1, 1, 'blablabla2', 'blablabla2', 30);
+INSERT INTO "task" ("creator", "task_type", "question", "example", "mark") VALUES (1, 0, 'blablabla2', 'blablabla2', 30);
 INSERT INTO "exam" ("creator", "deadline", "mark") VALUES (1, 500, 30);
 INSERT INTO "exam" ("creator", "deadline", "mark") VALUES (1, 200, 30);
 
@@ -101,13 +101,14 @@ INSERT INTO "task_in_exams" VALUES(1,1);
 INSERT INTO "task_in_exams" VALUES(2,1);
 INSERT INTO "multiple_choices" ("task", "answer") VALUES (1,'Yes');
 INSERT INTO "multiple_choices" ("task", "answer") VALUES (1, 'No');
-INSERT INTO "class" ("name","prof","description") VALUES ('class1', 1, 'Course of SE');
 
 INSERT INTO "classe" ("name","prof","description") VALUES ('class1', 1, 'Course of SE');
 INSERT INTO "ruoli" ("user", "classe", "permesso") VALUES (1,1,1); --1 = assistente
 INSERT INTO "ruoli" ("user", "classe", "permesso") VALUES (2,1,0); --0 = prof
 INSERT INTO "ruoli" ("user", "classe", "permesso") VALUES (3,1,2); --2 = studente
 INSERT INTO "ruoli" ("user", "classe", "permesso") VALUES (4,1,2);
+INSERT INTO "submission" ("user","task","exam","answer","final_mark") VALUES (1,1,1,'CIAO',30);
+INSERT INTO "review" ("reviewer","submission","review_answer","deadline") VALUES (1,1,'BELLO',200);
 
 SELECT * FROM "user";
 SELECT * FROM "task";
@@ -117,6 +118,8 @@ SELECT * FROM "task_in_exams";
 SELECT * FROM "multiple_choices";
 SELECT * FROM "review";
 SELECT * FROM "submission";
-
-
 SELECT "user" FROM "ruoli" WHERE classe=1 AND permesso=2;
+SELECT * FROM "submission";
+SELECT * FROM "submission" WHERE "user"=1;
+SELECT * FROM "review" WHERE reviewer=1;
+SELECT * FROM "user"

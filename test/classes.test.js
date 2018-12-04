@@ -67,19 +67,7 @@ const exampleModifiedDescription =  {
   'students': ['abcd'] //same type of assistants
 };*/
 
-
-
-//Functions executed before (and after) doing test cases, to open and close
-//the server:
-beforeAll(function() {
-	server = require('../index');
-});
-afterAll(function() {
-	server.close();
-});
-
 //Little function useful as an helper function, with a Promise:
-
 
 function postClass(newClass){
 	return fetch(SERVER_URL, {

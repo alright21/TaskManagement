@@ -81,18 +81,6 @@ function getSubmission(id){
   });
 }
 
-
-//TEST cases
-
-var server;
-beforeAll(function () {
-  server = require('../index');
-});
-afterAll(function () {
-  server.close();
-});
-
-
 test('test the creation of a valid new Submission using node-fetch',() =>{
 
   return createSubmission(validSubmission)
