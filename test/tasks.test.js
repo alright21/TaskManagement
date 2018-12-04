@@ -305,6 +305,43 @@ test('if the update id is 3 and the task is an close question, and the modificat
 	});
 });
 
+//test codes for getTask
+
+test('if the task is not in the db, should return 404', ()=> {
+	return getTask(10000)
+	.then(res => {
+		expect(res.status).toBe(404);
+	});
+});
+
+test('if the id is invalid, should return 400', () => {
+	return getTask(null)
+	.then(res => {
+		expect(res.status).toBe(400);
+	});
+});
+
+test('if the id of the task is valid, should return the task, with 200', () =>{
+	return getTask(2)
+	.then(res => {
+		expect(res.status).toBe(200);
+
+		return res.json();
+	}).then(resJson =>{
+		
+		expect(resJson).toMatchObject({
+
+			"id": 2,
+			"creator": 1,
+			"task_type": 0,
+			"question": "blablabla2",
+			"example": "blablabla2",
+			"mark": 30,
+			"multiple_choices": null
+		});
+	});
+});
+
 
 //tests for updateMultipleChoices
 

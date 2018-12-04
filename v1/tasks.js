@@ -163,7 +163,7 @@ async function updateTaskInDatabase(id, toModify){
 		}
 
 
-        if(!isTask || !isCreator){
+        if(!isTask || !isCreator || toModify.task_type > 1 || toModify.task_type < 0){
             return null;
         }else{
             
