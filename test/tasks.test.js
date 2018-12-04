@@ -8,6 +8,7 @@ const getMultipleChoices = require('../v1/tasks').getMultipleChoices;
 const getMultipleChoice = require('../v1/tasks').getMultipleChoice;
 const updateTaskInDatabase = require('../v1/tasks').updateTaskInDatabase;
 const updateMultipleChoices = require('../v1/tasks').updateMultipleChoices;
+const deleteTaskById = require('../v1/tasks').deleteTaskById;
 
 var server; //if "const", it does not work!!
 
@@ -752,4 +753,49 @@ test('if task has id 2, should return the task', () => {
 	}).catch(err => {
 		console.log(err);
 	});
+});
+
+describe('tests for deleteTaskById', () => {
+
+	test('if the argument length is !== 1, should retrun null', () => {
+		return deleteTaskById()
+		.then(res => {
+			expect(res).toBeNull();
+		}).catch(e => {
+			console.log(e);
+		});
+	})
+
+	test('if the task is null, should return null', () => {
+		return deleteTaskById(null)
+		.then(res =>{
+			expect(res).toBeNull();
+		}).catch(e => {
+			console.log(e);
+		});
+	});
+
+	test('if the task id is 10000, does not exists in the database, should return null', () => {
+		return deleteTaskById(10000)
+		.then(res => {
+			expect(res).toBeNull();
+		}).catch(e => {
+			console.log(e);
+		});
+	});
+
+	test('if the task id is 5, should return the row deleted, but it is not returned to the client', () =>{
+
+		return deleteTaskById(5)
+		.then(res => {
+			expect(res).not.toBeNull();
+			return getTaskById(5)
+		}).then(res =>{
+			expect(res).toBeNull();
+		}).catch(e => {
+			console.log(e);
+		});
+	});
+
+
 });
