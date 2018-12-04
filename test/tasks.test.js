@@ -196,6 +196,7 @@ function deleteTask(id){
 //Check then wheter types of properties are correct or not.
 //At last test if the JSON can match properties
 test('Post task response body', () => {
+	expect.assertions(17);
 	return postTask(validTask)
 		.then(postResponse => {
 			expect(postResponse.status).toBe(201);
@@ -360,27 +361,40 @@ test('if the id of the task is valid, should return the task, with 200', () =>{
 describe('tests for fetch DELETE method', () => {
 
 	test('if the id is null , should return 400',() => {
-
+		expect.assertions(1);
 		return deleteTask(null)
 		.then(res => {
 			expect(res.status).toBe(400);
+		}).catch(e => {
+			console.log(e);
 		});
 	});
 
 	test('if the task does no exists in the db, should return 404', () => {
+		
+		expect.assertions(1);
 		return deleteTask(100000)
 		.then(res => {
 			expect(res.status).toBe(404);
+		}).catch(e => {
+			console.log(e);
 		});
 	});
 
 	test('if the task exists, should return 204, and if you do a get, should return 404', () => {
-		return deleteTask(3)
+		expect.assertions(2);
+		return insertTaskInDatabase(validUpdateOpen)
+		.then(res => {
+			validUpdateOpen.id = res.id;
+			return deleteTask(res.id)
+		})
 		.then(res => {
 			expect(res.status).toBe(204);
-			return getTask(3);
+			return getTask(validUpdateOpen.id);
 		}).then(res => {
 			expect(res.status).toBe(404);
+		}).catch(e => {
+			console.log(e);
 		});
 
 	});
@@ -758,6 +772,7 @@ test('if task has id 2, should return the task', () => {
 describe('tests for deleteTaskById', () => {
 
 	test('if the argument length is !== 1, should retrun null', () => {
+		expect.assertions(1);
 		return deleteTaskById()
 		.then(res => {
 			expect(res).toBeNull();
@@ -767,6 +782,7 @@ describe('tests for deleteTaskById', () => {
 	})
 
 	test('if the task is null, should return null', () => {
+		expect.assertions(1);
 		return deleteTaskById(null)
 		.then(res =>{
 			expect(res).toBeNull();
@@ -776,6 +792,7 @@ describe('tests for deleteTaskById', () => {
 	});
 
 	test('if the task id is 10000, does not exists in the database, should return null', () => {
+		expect.assertions(1);
 		return deleteTaskById(10000)
 		.then(res => {
 			expect(res).toBeNull();
@@ -784,12 +801,16 @@ describe('tests for deleteTaskById', () => {
 		});
 	});
 
-	test('if the task id is 5, should return the row deleted, but it is not returned to the client', () =>{
+	test('if the task exists, should return the row deleted, but it is not returned to the client', () =>{
 
-		return deleteTaskById(5)
+		expect.assertions(2);
+		return insertTaskInDatabase(validUpdateOpen)
 		.then(res => {
+			validUpdateOpen.id = res.id;
+			return deleteTaskById(res.id);
+		}).then(res => {
 			expect(res).not.toBeNull();
-			return getTaskById(5)
+			return getTaskById(validUpdateOpen.id)
 		}).then(res =>{
 			expect(res).toBeNull();
 		}).catch(e => {

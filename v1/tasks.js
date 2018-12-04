@@ -450,8 +450,8 @@ async function deleteTaskById(id){
 		}catch(e){
 			console.log(e);
 		}
-
-		if(result){
+		console.log();
+		if(result.rowCount != 0){
 			return result.rows[0];
 		}else{
 			return null;
