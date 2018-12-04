@@ -95,9 +95,12 @@ INSERT INTO "multiple_choices" ("task", "answer") VALUES (1,'Yes');
 INSERT INTO "multiple_choices" ("task", "answer") VALUES (1, 'No');
 
 INSERT INTO "class" ("name","prof","description") VALUES ('class1', 1, 'Course of SE');
-
+INSERT INTO "submission" ("user","task","exam","answer","final_mark") VALUES (1,1,1,'CIAO',30);
+INSERT INTO "review" ("reviewer","submission","review_answer","deadline") VALUES (1,1,'BELLO',200);
 
 SELECT * FROM class;
 
-
+SELECT * FROM "submission";
+SELECT * FROM "submission" WHERE "user"=1;
+SELECT * FROM "review" WHERE reviewer=1;
 SELECT * FROM "user"

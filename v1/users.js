@@ -82,6 +82,18 @@ users.get('/:id/reviews', async(req,res)=> {
 	}
 });
 
+users.get('/:id/submissions', async(req,res)=> {
+	var id=req.params.id;
+		let result = await getSubmissions(id);
+	if(result){
+		var resultJson = JSON.parse(JSON.stringify(result));
+		res.status(200).send(resultJson);
+	}
+	else{
+		let resultnegJSON = JSON.parse(JSON.stringify({}));
+		res.status(404).send(resultnegJSON);
+	}
+});
 
 users.put('/:userID', async (req, res) => {
 	const userID = Number.parseInt(req.params.userID);
@@ -218,7 +230,6 @@ async function getTasks(id){
 	  let queryText = 'SELECT * FROM "task" WHERE creator=$1';
 	  let queryParams = [id];
 	  let result = await pool.query(queryText, queryParams);
-	  let tasks;
 	  if(result.rowCount != 0){
 		  return result.rows;
 	  }else {
@@ -259,6 +270,36 @@ return null;
  }
 }
 
+async function getReviews(id){
+	if(!id){
+		return null;
+	}else{
+		var queryText = 'SELECT * FROM "review" WHERE reviewer=$1';
+		var queryParams = [id];
+		let result = await pool.query(queryText, queryParams);
+		if(result.rowCount!=0){
+			return result.rows;
+		}else {
+			return null;
+		}
+ 	}
+}
+
+async function getSubmissions(id){
+	if(!id){
+		return null;
+	}else{
+		var queryText = 'SELECT * FROM "submission" WHERE "user"=$1';
+		var queryParams = [id];
+		let result = await pool.query(queryText, queryParams);
+		if(result.rowCount!=0){
+			return result.rows;
+		}else {
+			return null;
+		}
+ 	}
+}
+
 module.exports = {
 	users: users,
 	getUserById: getUserById,
@@ -268,5 +309,7 @@ module.exports = {
 	deleteAllUsers: deleteAllUsers,
 	postUser: postUser,
 	updateUserInDatabase: updateUserInDatabase,
+	getReviews: getReviews,
+	getSubmissions: getSubmissions,
 	deleteUserById: deleteUserById
 };

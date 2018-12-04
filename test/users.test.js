@@ -94,6 +94,16 @@ const getReviews = function(userID){
   });
 };
 
+const getSubmissions = function(userID){
+  return fetch(root + '/v1/users/' + userID +'/submissions', {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json'
+    }
+  });
+};
+
+
 const updateUser = function(id, toModify){
 	return fetch(SERVER_URL + '/v1/users/' + id,{
 		method: 'PUT',
@@ -374,6 +384,67 @@ test('GET list of exams of a not valid user id',()=>{
 
 test('GET list of tasks of a not valid user id',()=>{
 return getTasks(16)
+.then(res =>{return res.json()})
+	.then(jres =>{
+		expect(jres).toEqual({});
+	})
+});
+
+
+test('GET list of reviews of a valid user id',()=>{
+	return getReviews(1)
+	.then(res=>{return res.json();})
+	.then(jres=>{
+		var dim = Object.keys(jres).length;
+		for(var i=0;i<dim;i++) {
+			expect(jres[i]).toHaveProperty('id');
+			expect(jres[i]).toHaveProperty('reviewer');
+			expect(jres[i]).toHaveProperty('submission');
+			expect(jres[i]).toHaveProperty('review_answer');
+			expect(jres[i]).toHaveProperty('deadline');
+
+			expect(typeof jres[i].id).toEqual('number')
+			expect(typeof jres[i].reviewer).toEqual('number')
+			expect(typeof jres[i].submission).toEqual('number')
+			expect(typeof jres[i].review_answer).toEqual('string')
+			expect(typeof jres[i].deadline).toEqual('number')
+		}
+	})
+});
+
+test('GET list of reviews of a not valid user id',()=>{
+return getReviews(16)
+.then(res =>{return res.json()})
+	.then(jres =>{
+		expect(jres).toEqual({});
+	})
+});
+
+test('GET list of submissions of a valid user id',()=>{
+	return getSubmissions(1)
+	.then(res=>{return res.json();})
+	.then(jres=>{
+		var dim = Object.keys(jres).length;
+		for(var i=0;i<dim;i++) {
+			expect(jres[i]).toHaveProperty('id');
+			expect(jres[i]).toHaveProperty('user');
+      expect(jres[i]).toHaveProperty('task');
+			expect(jres[i]).toHaveProperty('exam');
+			expect(jres[i]).toHaveProperty('answer');
+			expect(jres[i]).toHaveProperty('final_mark');
+
+			expect(typeof jres[i].id).toEqual('number')
+			expect(typeof jres[i].user).toEqual('number')
+			expect(typeof jres[i].exam).toEqual('number')
+      expect(typeof jres[i].task).toEqual('number')
+			expect(typeof jres[i].answer).toEqual('string')
+			expect(typeof jres[i].final_mark).toEqual('number')
+		}
+	})
+});
+
+test('GET list of submissions of a not valid user id',()=>{
+return getSubmissions(16)
 .then(res =>{return res.json()})
 	.then(jres =>{
 		expect(jres).toEqual({});
