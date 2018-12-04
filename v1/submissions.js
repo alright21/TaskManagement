@@ -55,9 +55,7 @@ submissions.put('/:id', async (req, res)=>{
 submissions.get('/:id', async (req,res)=> {
 
     const id = Number.parseInt(req.params.id);
-    console.log('id: ' + id);
     if(!id){
-        console.log('entro if');
         res.status(400).end();
     }
 
@@ -178,7 +176,6 @@ async function updateSubmissionInDatabase(id, toModify){
             else if(isSubmission.exam != toModify.exam){
                 return null;
             }else{
-                console.log(id);
                 var queryText = 'UPDATE "submission" SET "answer"=$1,"final_mark"=$2 WHERE "id"=$3 RETURNING *';
                 var queryParams = [toModify.answer,toModify.final_mark, id];
 
