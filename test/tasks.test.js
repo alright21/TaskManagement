@@ -121,9 +121,6 @@ const invalidMultipleChoices = [
 	}
 ];
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 const validInsertMultipleChoices = [
 	{
 		
@@ -145,21 +142,7 @@ const nullMultipleChoicesTask = {
 	"mark": 30,
 	"multiple_choices": null
 };
-//Functions executed before (and after) doing test cases, to open and close
-//the server:
-beforeAll(function() {
-	server = require('../index');
-});
-afterAll(function() {
-	server.close();
-});
 
-=======
->>>>>>> Remove server start inside test files. Now server start before executing npm test.
-=======
->>>>>>> Remove server start inside test files. Now server start before executing npm test.
-=======
->>>>>>> b5554418e2949a80b93d3e581f3f3393c2db5165
 //Little function useful as an helper function, with a Promise:
 
 const postTask = function(newTask){
