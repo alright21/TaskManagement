@@ -5,6 +5,7 @@ const root = SERVER_URL;
 
 const getUserByID = require('../v1/users').getUserById;
 const updateUserDB = require('../v1/users').updateUserInDatabase;
+const logUserFun = require('../v1/users').getUserByEmailAndPassword;
 
 const exampleUser = {'name': 'Mario','surname': 'Rossi','email': 'mario.rossi@gmail.com','password': 'password'};
 const exampleUser2 = {'name': 'Marione','surname': 'Razzi','email': 'marione.razzi@gmail.com','password': 'a'};
@@ -20,6 +21,8 @@ const wrongUser4 = {'name': 'One','surname': 'Time','email': 'one.time@gmail.com
 const wrongUser5 = {'name': 'One','surname': 'Time','email': 'one.time@gmail.com','password': 'azz'};
 const putUser = {'name': 'Four','surname': 'Time','email': 'four.time@gmail.com','password': 'abba'};
 const exampleUserID = 1;
+const invalidEmail = 'blasfv0';
+const invalidPwd = 'vajf';
 
 const validtask={
   id: 1,
@@ -100,14 +103,26 @@ const getUsersList = function(){
 	})
 };
 
- const deleteUser = function(userID){
-   return fetch(root + '/v1/users/' + userID, {
-     method: 'DELETE',
-     headers: {
-       'Accept': 'application/json'
-     }
-   });
- };
+const deleteUser = function(userID){
+return fetch(root + '/v1/users/' + userID, {
+	method: 'DELETE',
+	headers: {
+		'Accept': 'application/json'
+	}
+});
+};
+
+const logUser = function(uemail, upassword){
+	return fetch(SERVER_URL + '/v1/users/login', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			'Accept': 'application/json'
+		},
+		body: JSON.stringify({email: uemail, password: upassword})
+	});
+};
+
 //--------------------------------------------
 //							TESTS
 //--------------------------------------------
@@ -441,4 +456,77 @@ test('GET list of tasks of a not valid user id',()=>{
 	.then(jres =>{
 	  expect(jres).toEqual({});
   })
+});
+
+//LOGIN USER
+//#########################
+
+describe('LOGIN USER', () => {
+
+	test('LOGIN user with less than 2 parameters', () => {
+		return logUserFun(exampleUser.email)
+			.then(logResponse => {expect(logResponse).toBeNull()});
+	});
+	
+	test('LOGIN user with more than 2 parameters', () => {
+		return logUserFun(exampleUser.email, exampleUser.password, exampleUser.password)
+			.then(logResponse => {expect(logResponse).toBeNull()});
+	});
+	
+	test('LOGIN user with first parameter null', () => {
+		return logUserFun(null, exampleUser.password)
+			.then(logResponse => {expect(logResponse).toBeNull()});
+	});
+	
+	test('LOGIN user with second parameter null', () => {
+		return logUserFun(exampleUser.email, null)
+			.then(logResponse => {expect(logResponse).toBeNull()});
+	});
+	
+	test('LOGIN user with invalid email', () => {
+		return logUser(invalidEmail, exampleUser.password)
+			.then(logResponse => {expect(logResponse.status).toBe(400)});
+	});
+	
+	test('LOGIN user with invalid password', () => {
+		return logUser(exampleUser.email, invalidPwd)
+			.then(logResponse => {expect(logResponse.status).toBe(400)});
+	});
+	
+	test('LOGIN user correct', () => {
+		let returnedID;
+		return logUser(exampleUser.email, exampleUser.password)
+			.then(logResponse => {
+				expect(logResponse.status).toBe(200);
+				return logResponse.json();
+			})
+			.then(logJson => {
+				returnedID = logJson.id;
+				return getUserByID(logJson.id);
+			})
+			.then(getJson => {
+				//Object schema
+				expect(typeof getJson).toEqual('object');
+				expect(getJson).toHaveProperty('id');
+				expect(getJson).toHaveProperty('name');
+				expect(getJson).toHaveProperty('surname');
+				expect(getJson).toHaveProperty('email');
+				expect(getJson).toHaveProperty('password');
+				//Keys types
+				expect(typeof getJson.id).toEqual('number')
+				expect(typeof getJson.name).toEqual('string');
+				expect(typeof getJson.surname).toEqual('string');
+				expect(typeof getJson.email).toEqual('string');
+				expect(typeof getJson.password).toEqual('string');
+				//Object values
+				expect(getJson).toEqual({
+					'id': returnedID,
+					'name': exampleUser.name,
+					'surname': exampleUser.surname,
+					'email': exampleUser.email,
+					'password': exampleUser.password
+				});
+			});
+	});
+
 });

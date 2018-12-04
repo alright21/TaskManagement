@@ -30,6 +30,23 @@ users.post('/', async (req, res) => {
 	}
 });
 
+users.post('/login', async (req, res) => {
+	let userEmail = req.body.email;
+	let userPassword = req.body.password;
+	
+	if(!userEmail || !userPassword)
+		res.status(400).end();
+	else{
+		let loggedUser = await getUserByEmailAndPassword(userEmail, userPassword);
+		
+		if(loggedUser){
+			let resultJSON = JSON.parse(JSON.stringify(loggedUser));
+			res.status(200).send(resultJSON);
+		}else
+			res.status(400).end();
+	}
+});
+
 users.get('/', async (req, res) => {
 	let result = await getUsersList();
 
@@ -248,6 +265,26 @@ async function getExams(id){
  }
 }
 
+async function getUserByEmailAndPassword(email, pwd){
+	
+	if(arguments.length !== 2)
+		return null;
+	
+	if(!email || !pwd)
+		return null;
+	else{
+		let queryText = 'SELECT * FROM "user" WHERE email=$1 AND password=$2';
+		let queryParams = [email, pwd];
+		
+		let result = await pool.query(queryText, queryParams);
+		
+		if(result.rowCount > 0)
+			return result.rows[0];
+		else
+			return null;
+	}
+}
+
 module.exports = {
 	users: users,
 	getUserById: getUserById,
@@ -257,5 +294,6 @@ module.exports = {
 	postUser: postUser,
 	updateUserInDatabase: updateUserInDatabase,
 	deleteUserById: deleteUserById,
-	getUsersList: getUsersList
+	getUsersList: getUsersList,
+	getUserByEmailAndPassword: getUserByEmailAndPassword
 };
