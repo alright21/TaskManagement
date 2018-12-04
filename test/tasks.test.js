@@ -164,12 +164,25 @@ function updateTask(id, toModify){
 function getTask(id){
 	return fetch(root + '/v1/tasks/' + id, {
 
-		mthod: 'GET',
+		method: 'GET',
 		headers: {
 			'Content-Type': 'application/json',
 			'Accept': 'application/json'
 		}
 	});
+}
+
+function deleteTask(id){
+
+	return fetch(root + '/v1/tasks/' + id, {
+
+		method: 'DELETE',
+		headers: {
+			'Content-Type': 'application/json',
+			'Accept': 'application/json'
+		}
+	});
+
 }
 
 //Test cases:
@@ -341,6 +354,37 @@ test('if the id of the task is valid, should return the task, with 200', () =>{
 		});
 	});
 });
+
+
+describe('tests for fetch DELETE method', () => {
+
+	test('if the id is null , should return 400',() => {
+
+		return deleteTask(null)
+		.then(res => {
+			expect(res.status).toBe(400);
+		});
+	});
+
+	test('if the task does no exists in the db, should return 404', () => {
+		return deleteTask(100000)
+		.then(res => {
+			expect(res.status).toBe(404);
+		});
+	});
+
+	test('if the task exists, should return 204, and if you do a get, should return 404', () => {
+		return deleteTask(3)
+		.then(res => {
+			expect(res.status).toBe(204);
+			return getTask(3);
+		}).then(res => {
+			expect(res.status).toBe(404);
+		});
+
+	});
+});
+
 
 
 //tests for updateMultipleChoices
