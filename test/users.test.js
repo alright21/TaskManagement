@@ -298,7 +298,7 @@ describe('GET USERS', () => {
 					expect(typeof user.email).toEqual('string');
 					expect(typeof user.password).toEqual('string');
 					//For testing
-					if(user.id > 6)
+					if(user.id > 9)
 						addedIDs.push(user.id);
 				});
 				//PROBLEMA CON ID
@@ -309,20 +309,18 @@ describe('GET USERS', () => {
 			});
 	});
 
-	describe('--> To test the empty list', () => {
-		test('GET users response body if there are no users inside the table', () => {
-			return getUsersList()
-				.then(getResponse => {return getResponse.json()})
-				.then(getResponseJson => {
-					let tmpLength = getResponseJson.length;
-					for(let i = 0; i < tmpLength; i++){
-						if(getResponseJson[0].id < 9){
-							getResponseJson.splice(0,1);
-						}
+	test('GET users response body if there are no users inside the table', () => {
+		return getUsersList()
+			.then(getResponse => {return getResponse.json()})
+			.then(getResponseJson => {
+				let tmpLength = getResponseJson.length;
+				for(let i = 0; i < tmpLength; i++){
+					if(getResponseJson[0].id < 12){
+						getResponseJson.splice(0,1);
 					}
-					expect(getResponseJson).toEqual([]);
-				});
-		});
+				}
+				expect(getResponseJson).toEqual([]);
+			});
 	});
 
 });
@@ -582,8 +580,8 @@ test('GET list of submissions of a valid user id',()=>{
 	return getSubmissions(1)
 	.then(res=>{return res.json();})
 	.then(jres=>{
-		var dim = Object.keys(jres).length;
-		for(var i=0;i<dim;i++) {
+		var dim = jres.length;
+		for(let i=0;i<dim;i++) {
       console.log(jres)
 			expect(jres[i]).toHaveProperty('id');
 			expect(jres[i]).toHaveProperty('user');
