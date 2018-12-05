@@ -82,7 +82,7 @@ function updateExam(id, updatedExam){
 // Test for API POST/exams
 
 test('If the exam is succesful created, the API shoul return 201 with the json. The returned json should be the same of sent one, plus exam\'s id', ()=>{
-
+  expect.assertions(5);
   return createExam(validExam)
     .then(response => {
       expect(response.status).toBe(201);
@@ -100,6 +100,7 @@ test('If the exam is succesful created, the API shoul return 201 with the json. 
 });
 
 test('If exam\'s creator does not exist, the API should return 400', ()=> {
+  expect.assertions(1);
   return createExam(invalidExamCreator)
   .then(response => {
     expect(response.status).toBe(400);
@@ -107,6 +108,7 @@ test('If exam\'s creator does not exist, the API should return 400', ()=> {
 });
 
 test('If one task does not exist, the API should return 400', ()=> {
+  expect.assertions(1);
   return createExam(invalidTaskList)
   .then(response =>{
     expect(response.status).toBe(400);
@@ -116,6 +118,7 @@ test('If one task does not exist, the API should return 400', ()=> {
 // Test for logic funcion inside API POST/exams calls
 
 test('Valid exam is successful created and inserted into db', ()=>{
+  expect.assertions(1);
   return insertExamIntoDatabase(validExam)
   .then(exam =>{
     return getExamById(exam.id)
@@ -134,6 +137,7 @@ test('Invalid exam can\'t shouldn\'t be atted to database. Case: invalid creator
 });
 
 test('Invalid exam can\'t shouldn\'t be added to database. Case: invalid task list', ()=>{
+  expect.assertions(1);
   return insertExamIntoDatabase(invalidTaskList)
   .then(exam =>{
     expect(exam).toBeNull();
@@ -151,6 +155,7 @@ test('Invalid exam can\'t shouldn\'t be added to database. Case: invalid task li
   Mi aspetto che l'esame numero 1 sia uguale all'esame validExam, di default uguale a quello creato durante il popolamento del database
 */
 test('Test if valid exam id return the selected exam', ()=>{
+  expect.assertions(8);
   return getExam(validId)
     .then(response => {
       expect(response.status).toBe(200);
@@ -169,6 +174,7 @@ test('Test if valid exam id return the selected exam', ()=>{
 });
 
 test('test if invalid exam id return 404 not found', ()=>{
+  expect.assertions(1);
   return getExam(invalidId)
     .then(response =>{
       expect(response.status).toBe(404);
@@ -178,6 +184,7 @@ test('test if invalid exam id return 404 not found', ()=>{
 // Test for API PUT/exams/{id}
 
 test('Update valid exam should return 201 and the json with updated exam', () =>{
+  expect.assertions(9 + validUpdatedExam.task_list.length);
   return updateExam(validId, validUpdatedExam)
     .then(response =>{
       expect(response.status).toBe(204);
@@ -211,6 +218,7 @@ test('Update valid exam should return 201 and the json with updated exam', () =>
 })
 
 test('Update exam with id 0 should return 404', ()=>{
+  expect.assertions(1);
   return updateExam(zeroId, validUpdatedExam)
     .then(response =>{
       expect(response.status).toBe(404);
@@ -218,6 +226,7 @@ test('Update exam with id 0 should return 404', ()=>{
 })
 
 test('Update exam with invalid id should return 404', ()=>{
+  expect.assertions(1);
   return updateExam(invalidId, validUpdatedExam)
     .then(response =>{
       expect(response.status).toBe(404);
@@ -225,6 +234,7 @@ test('Update exam with invalid id should return 404', ()=>{
 })
 
 test('Update exam with invalid task id should return 404', ()=>{
+  expect.assertions(1);
   return updateExam(validId, invalidUpdatedExam)
     .then(response =>{
       expect(response.status).toBe(404);
