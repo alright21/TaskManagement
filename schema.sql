@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS "permissions";
+DROP TABLE IF EXISTS "class";
 DROP TABLE IF EXISTS "ruoli";
 DROP TABLE IF EXISTS "task_in_exams";
 DROP TABLE IF EXISTS "multiple_choices";
@@ -10,11 +12,11 @@ DROP TABLE IF EXISTS "user";
 
 CREATE TABLE "user"
 (
-"id" serial PRIMARY KEY,
-"name" VARCHAR(50),
-"surname" VARCHAR(50),
-"email" VARCHAR(50) UNIQUE NOT NULL,
-"password" VARCHAR(50) NOT NULL
+	"id" serial PRIMARY KEY,
+	"name" VARCHAR(50),
+	"surname" VARCHAR(50),
+	"email" VARCHAR(50) UNIQUE NOT NULL,
+	"password" VARCHAR(50) NOT NULL
 );
 
 CREATE TABLE "task"
@@ -25,7 +27,7 @@ CREATE TABLE "task"
 	"question" varchar(2000) NOT NULL,
 	"example" varchar(2000),
 	"mark" integer NOT NULL
-	);
+);
 
 CREATE TABLE "exam"
 (
@@ -109,17 +111,3 @@ INSERT INTO "ruoli" ("user", "classe", "permesso") VALUES (3,1,2); --2 = student
 INSERT INTO "ruoli" ("user", "classe", "permesso") VALUES (4,1,2);
 INSERT INTO "submission" ("user","task","exam","answer","final_mark") VALUES (1,1,1,'CIAO',30);
 INSERT INTO "review" ("reviewer","submission","review_answer","deadline") VALUES (1,1,'BELLO',200);
-
-SELECT * FROM "user";
-SELECT * FROM "task";
-SELECT * FROM "classe";
-SELECT * FROM "ruoli";
-SELECT * FROM "task_in_exams";
-SELECT * FROM "multiple_choices";
-SELECT * FROM "review";
-SELECT * FROM "submission";
-SELECT "user" FROM "ruoli" WHERE classe=1 AND permesso=2;
-SELECT * FROM "submission";
-SELECT * FROM "submission" WHERE "user"=1;
-SELECT * FROM "review" WHERE reviewer=1;
-SELECT * FROM "user"

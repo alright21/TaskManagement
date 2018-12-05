@@ -173,7 +173,7 @@ test('Test if valid exam id return the selected exam', ()=>{
     })
 });
 
-test('test if invalid exam id return 404 not found', ()=>{
+test('test if get with invalid exam id return 404 not found', ()=>{
   expect.assertions(1);
   return getExam(invalidId)
     .then(response =>{

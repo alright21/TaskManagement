@@ -3,12 +3,12 @@ const bodyParser = require('body-parser');
 const pg = require('pg');
 const exams = express.Router();
 const getTaskById = require('./tasks').getTaskById;
+const getUserById = require('./users').getUserById;
 
 const config = require('../db_config');
 const pool = new pg.Pool(config);
 
 exams.use(bodyParser.json());
-
 
 exams.post('/', async (req, res) =>{
     let results = await insertExamIntoDatabase(req.body);
@@ -23,9 +23,8 @@ exams.post('/', async (req, res) =>{
 });
 
 exams.get('/:id', async (req, res) =>{
-    //console.log(req.params.id);
     let results = await getExamById(req.params.id);
-    //console.log(results);
+
     if(results){
         var resultJson = JSON.parse(JSON.stringify(results));
         res.status(200).send(resultJson);
@@ -50,20 +49,16 @@ async function insertExamIntoDatabase(exam){
     // check creatorId exists into database
     let isUser = await getUserById(exam.creator);
     if(!isUser){
-        //console.log("DEBUG: L'utente che inserisci come creatore dell'esame non esiste");
         return null;
     }
-        
 
     // check every tasks exist into database
     let tasklist = exam.task_list;
     for(i in tasklist){
         let isTask = await getTaskById(tasklist[i]);
         if(!isTask){
-            //console.log("DEBUG: Qualcuna delle task che provi a inserire non esiste");
             return null;
         }
-            
     }
 
     // insert exam into database
@@ -75,11 +70,8 @@ async function insertExamIntoDatabase(exam){
     if(res)
         insertExam = JSON.parse(JSON.stringify(res.rows[0]));
     else{
-        //console.log("DEBUG: L'inserimento dell'esame nel db non va a buon termine");
         return null;
     }
-        
-
 
     // insert every task into database table "task in exams", creating a relation task-exam
     var tasklist2 = []; //this variable is used to store the tasks' ids added into db (we have yet these ids, but we add the ids returned by the queries)
@@ -94,44 +86,9 @@ async function insertExamIntoDatabase(exam){
 
     // put a new param into the json called task_list
     insertExam.task_list = tasklist2;
-    //console.log("DEBUG: Return exam");
     // return the exam with the id and the tasks list
     return insertExam;
 }
-
-async function getUserById(id){
-    if(!id){
-        return null;
-    }else{
-        const queryText = 'SELECT * FROM "user" WHERE id=$1';
-
-        let queryParams = [id];
-        let result = await pool.query(queryText, queryParams);
-        
-        if(result.rowCount != 0){
-            return result.rows[0];
-        }else{
-            return null;
-        }
-    }
-}
-
-/*async function getTaskById(id){
-    if(!id){
-        return null;
-    }else{
-        const queryText = 'SELECT * FROM "task" WHERE id=$1';
-        let queryParams = [id];
-        let result = await pool.query(queryText, queryParams);
-
-        if(result.rowCount != 0){
-            return result.rows[0];
-        }else{
-            return null;
-        }
-
-    }
-}*/
 
 async function getExamById(id){
 
@@ -213,5 +170,6 @@ async function updateExam(id, updatedExam){
 module.exports = {
     exams: exams,
     insertExamIntoDatabase: insertExamIntoDatabase,
-    getExamById: getExamById
+    getExamById: getExamById,
+    updateExam: updateExam
 }
