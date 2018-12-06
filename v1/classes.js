@@ -5,7 +5,8 @@ const classes = express.Router();
 const pg = require('pg');
 const config = require('../db_config');
 const pool = new pg.Pool(config);
-
+const studenti = require('./ruoli').getStudents;
+const assistenti = require('./ruoli').getAssistants;
 classes.use(bodyParser.json());
 
 classes.get('/', (req, res) => res.status(200).send('Hello World!'));
@@ -109,7 +110,7 @@ async function getClassById(id){
             return null;
         }
 
-        /*var students = getStudents(id);
+        var students = getStudents(id);
         for (var student in students )
         {
             classe.students[student] = students[student];
@@ -119,7 +120,7 @@ async function getClassById(id){
         for (var assistant in assistants)
         {
             classe.assistants[assistant] = assistants[assistant];
-        }*/
+        }
         return classe;
     }
 }
