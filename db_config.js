@@ -14,7 +14,8 @@ if(process.env.TEST){
         password: process.env.PASSWORD,
         database: process.env.DATABASE,
         port: process.env.PORT_DB,
-        host: process.env.HOST
+        host: process.env.HOST,
+        ssl: true
 
     }
 }
