@@ -1,18 +1,18 @@
 const fetch = require ('node-fetch');
 const PORT = process.env.SERVER_URL || 3000;
-const SERVER_URL = 'http://localhost:' + PORT + '/v1/reviews';
-const review = require('../v1/reviews').review;
-const getReviewById = require('../v1/reviews').getReviewById;
-const updateReviewInDatabase = require('../v1/reviews').updateReviewInDatabase;
+const SERVER_URL = 'http://localhost:' + PORT + '/v1/review';
+const review = require('../v1/review').review;
+const getReviewById = require('../v1/review').getReviewById;
+const updateReviewInDatabase = require('../v1/review').updateReviewInDatabase;
 
-var server;
+//Objects used for testing:
 
 const validReview = {
 	'id': 1,
 	'reviewer': 1,
 	'submission': 1,
 	'review_answer': 'This is a review answer.',
-	'deadline': 30
+	'deadline': 200
 };
 
 const modifiedReview = {
@@ -20,7 +20,7 @@ const modifiedReview = {
 	'reviewer': 1,
 	'submission': 1,
 	'review_answer': 'This is a review answer modified!',
-	'deadline': 30
+	'deadline': 200
 };
 
 const invalidRewiever = {
@@ -28,7 +28,7 @@ const invalidRewiever = {
 	'reviewer': 180,
 	'submission': 1,
 	'review_answer': 5,
-	'deadline': 30	
+	'deadline': 200	
 };
 
 const invalidSubmission = {
@@ -36,7 +36,7 @@ const invalidSubmission = {
 	'reviewer': 1,
 	'submission': 15,
 	'review_answer': 5,
-	'deadline': 30	
+	'deadline': 200	
 };
 
 const invalidDeadline = {
@@ -46,6 +46,18 @@ const invalidDeadline = {
 	'review_answer': 5,
 	'deadline': 0	
 };
+
+// Helper functions: API calls
+
+function getReview(id){
+  return fetch(SERVER_URL + '/' + id,{
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    }
+  });
+}
 
 function updateReview(id,toModify){
   return fetch(SERVER_URL + '/' + id,{
@@ -57,6 +69,8 @@ function updateReview(id,toModify){
       body: JSON.stringify(toModify)
   });
 }
+
+//Test case for PUT api
 
 test('testing a valid update', () => {
   return updateReview(validReview.id, validReview)
@@ -99,8 +113,8 @@ test('if someone tries to modify the deadline, should return 409', () => {
 test('if you modify the review_answer of the review, should get the same review updated', ()=>{
 
   return updateReviewInDatabase(validReview.id, modifiedReview)
-  .then(updatedClass =>{
-    return getReviewById(updatedClass.id)
+  .then(updated =>{
+    return getReviewById(updated.id)
     .then(res =>{
       expect(res.id).toEqual(validReview.id);
       expect(res.reviewer).toEqual(validReview.reviewer);

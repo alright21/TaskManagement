@@ -8,7 +8,7 @@ const exams = require('./v1/exams').exams;
 const tasks = require('./v1/tasks').tasks;
 const submissions = require('./v1/submissions').submissions;
 const classes = require('./v1/classes').classes;
-const reviews = require('./v1/reviews').review;
+const review = require('./v1/review').review;
 
 app.use(bodyParser.json());
 
@@ -17,7 +17,7 @@ app.use('/v1/exams', exams);
 app.use('/v1/tasks', tasks);
 app.use('/v1/submissions', submissions);
 app.use('/v1/classes', classes);
-app.use('/v1/reviews', reviews);
+app.use('/v1/review', review);
 
 const PORT = process.env.PORT || 3000
 

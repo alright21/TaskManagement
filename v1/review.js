@@ -1,14 +1,29 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const review = express.Router();
-const pg = require('pg');
 
+const pg = require('pg');
 const config = require('../db_config');
 const pool = new pg.Pool(config);
 
 review.use(bodyParser.json());
 
 review.get('/', (req, res) => res.status(200).send('Hello World!'));
+
+review.get('/:id', async (req, res) =>{
+
+    const id = req.params.id;
+    let results = await getReviewById(req.params.id);
+    if(results)
+    {
+        var resultJson = JSON.parse(JSON.stringify(results));
+        res.status(200).send(resultJson);
+    }
+    else
+    {
+        res.status(404).end();
+    }
+});
 
 review.put('/:id', async (req, res) => {
 
@@ -30,10 +45,9 @@ review.put('/:id', async (req, res) => {
     }
 });
 
-async function updateReviewInDatabase(id){
+async function updateReviewInDatabase(id, toModify){
 
     id = Number.parseInt(id);
-    console.log('id in updateReviewInDatabase: '+id);
     if(!id && !toModify)
     {
         return null;
@@ -41,7 +55,6 @@ async function updateReviewInDatabase(id){
     else
     {
         var isReview = await getReviewById(id);
-
         if(!isReview)
         {
             return null;
@@ -51,21 +64,24 @@ async function updateReviewInDatabase(id){
         	//Not modificable fields:
         	if(isReview.reviewer != toModify.reviewer)
         	{
+        		console.log('sono nel primo if');
                 return null;
 			}
-			if (toModify.submission != reviews.submission )
+			if (toModify.submission != isReview.submission )
 			{
+				console.log('sono nel secondo if');
 				return null;
 			}
-			if (toModify.deadline != submission.deadline)
+			
+			if (toModify.deadline != isReview.deadline)
 			{
+				console.log('sono nel terzo if');
 				return null;
 			}
             else 
             {
-	            var queryText = 'UPDATE "reviews" SET "reviewer_answer"=$1 WHERE "id"=$2 RETURNING *';
-	            var queryParams = [toModify.reviewer_answer, id];
-	            //Cerco la submission corrispondente a quella review tramite submission 
+	            var queryText = 'UPDATE "review" SET "review_answer"=$1 WHERE "id"=$2 RETURNING *';
+	            var queryParams = [toModify.review_answer, id]; 
 	            var result = await pool.query(queryText,queryParams);
 	            if(result.rowCount != 0)
 	            {
@@ -88,14 +104,12 @@ async function getReviewById(id){
     }
     else
     {
-        // select review from table "class"
-        let queryText = 'SELECT * FROM "reviews" WHERE id=$1';
+        let queryText = 'SELECT * FROM "review" WHERE id=$1';
         let queryParams = [id];
         let result = await pool.query(queryText, queryParams);
 		var review; 
 		if(result.rowCount != 0)
         {
-
             review = JSON.parse(JSON.stringify(result.rows[0]));
         }
         else
