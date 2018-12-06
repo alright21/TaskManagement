@@ -6,21 +6,19 @@ const insertClassIntoDatabase = require('../v1/classes').insertClassIntoDatabase
 const getClassById = require('../v1/classes').getClassById;
 const updateClassInDatabase = require('../v1/classes').updateClassInDatabase;
 
-
-var server;
+//Some variables used during test cases:
 const validId = 1;
 const invalidId = 0;
 var students = [1,2];
 var assistants = [2];
 var invalidStud = ['abcd'];
+
 //Example of what a Class should contain
 const exampleValidClass = {
 	'id': 1,
 	'name': 'classee1',
 	'prof': 1,
 	'description': 'Course of SE',
-	//'assistants': ["2"], //NB: array's element are type "user"
-	//'students': [3,4] //same type of assistants
 };
 
 const exampleInvalidName =  {
@@ -28,8 +26,6 @@ const exampleInvalidName =  {
 	'name': '0',
 	'prof': 1,
 	'description': 'Course of SE',
-  //'assistants': [2], //NB: array's element are type "user"
-  //'students': [3,4] //same type of assistants
 };
 
 const exampleInvalidProf =  {
@@ -37,8 +33,6 @@ const exampleInvalidProf =  {
 	'name': 'classee1',
 	'prof': '0',
 	'description': 'Course of SE',
-  //'assistants': [2], //NB: array's element are type "user"
-  //'students': [3,4] //same type of assistants
 };
 
 const exampleModifiedName =  {
@@ -46,8 +40,6 @@ const exampleModifiedName =  {
 	'name': 'SEclass',
 	'prof': 1,
 	'description': 'Course of SE',
-	//'assistants': [2], //NB: array's element are type "user"
-  //'students': [3,4] //same type of assistants
 };
 
 const exampleModifiedDescription =  {
@@ -55,17 +47,7 @@ const exampleModifiedDescription =  {
 	'name': 'classee1',
 	'prof': 1,
 	'description': 'This is the class of SE',
-  //'assistants': [2], //NB: array's element are type "user"
-  //'students': [3,4] //same type of assistants
 };
-
-
-/*const exampleInvalidStud =  {
-	'name': 'class1',
-	'prof': 1,
-  'assistants': [2], //NB: array's element are type "user"
-  'students': ['abcd'] //same type of assistants
-};*/
 
 //Little function useful as an helper function, with a Promise:
 
@@ -130,15 +112,11 @@ test('Creation of a valid new Class', () => {
       expect(postResponseJson).toHaveProperty('name');
       expect(postResponseJson).toHaveProperty('prof');
       expect(postResponseJson).toHaveProperty('description');
-      //expect(postResponseJson).toHaveProperty('students');
-      //expect(postResponseJson).toHaveProperty('assistants');
 
       expect(postResponseJson.id).toEqual(exampleValidClass.id);
       expect(postResponseJson.name).toEqual(exampleValidClass.name);
       expect(postResponseJson.prof).toEqual(exampleValidClass.prof);
       expect(postResponseJson.description).toEqual(exampleValidClass.description);
-      //expect(postResponseJson.students).toEqual(exampleValidClass.students);
-      //expect(postResponseJson.assistants).toEqual(exampleValidClass.assistants);
     });
 })}); 
 
@@ -198,7 +176,6 @@ test('if the arguments length is 0, should return null', () =>{
 })
 
 test('test if valid class id returns the selected class', () => {
-  //console.log(validId);
   return getClass(validId)
     .then(response => {
       expect(response.status).toBe(200);
