@@ -1,5 +1,5 @@
 
-const config = {};
+let config = {};
 if(process.env.TEST){
     config = {
         user: 'postgres',
