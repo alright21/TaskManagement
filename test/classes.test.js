@@ -1,7 +1,7 @@
 const fetch = require ('node-fetch');
 const PORT = process.env.SERVER_URL || 3000;
 const SERVER_URL = 'http://localhost:' + PORT + '/v1/classes';
-const exams = require('../v1/classes').classes;
+const classes = require('../v1/classes').classes;
 const insertClassIntoDatabase = require('../v1/classes').insertClassIntoDatabase;
 const getClassById = require('../v1/classes').getClassById;
 const updateClassInDatabase = require('../v1/classes').updateClassInDatabase;
