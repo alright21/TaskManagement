@@ -77,7 +77,22 @@ async function insertClassIntoDatabase (classe){
     let res = await pool.query(queryText, queryParam);
     if(res)
     {
+        
+
+        try{
+            res.rows[0].assistants = await insertRoles(classe.assistants, 1, res.rows[0].id);
+        }catch(e){
+            console.log(e);
+        }
+        try{
+            res.rows[0].students = await insertRoles(classe.students, 2, res.rows[0].id);
+        }catch(e){
+            console.log(e);
+        }
+
         insertClass = JSON.parse(JSON.stringify(res.rows[0]));
+
+        
     }
     else
     {
@@ -161,6 +176,33 @@ async function updateClassInDatabase(id, toModify){
 	        }
         }
     }
+}
+
+
+async function insertRoles(array, role, classe){
+
+    let result = [];
+    if(!array){
+        return result;
+    }
+    
+    for(let i = 0; i< array.length; i++){
+        const queryText = 'INSERT INTO "ruoli" VALUES($1,$2,$3) RETURNING *';
+        const queryParams = [array[i], classe, role];
+
+        let r;
+        try{
+            r = await pool.query(queryText,queryParams);
+        }catch (e){
+            console.log(e);
+        }
+        if(r){
+            result.push(r.rows[0]);
+        }
+        
+    }
+
+    return result;
 }
 
 module.exports = {
