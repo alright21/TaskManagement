@@ -150,29 +150,36 @@ const logUser = function(uemail, upassword){
 
 
 test('delete valid user',()=>{
-    return deleteUser(2)
-    .then(res=>{
-      expect(res.status).toBe(204);
-  })
+	expect.assertions(1);
+	return deleteUser(2)
+		.then(res=>{
+      	expect(res.status).toBe(204);
+		})
+		.catch(e => console.log(e));
 });
 
 
 test('delete invalid user',()=>{
-    return deleteUser(invalidid)
-    .then(res=>{
-      expect(res.status).toBe(404);
-  })
+	expect.assertions(1);
+	return deleteUser(invalidid)
+		.then(res=>{
+      	expect(res.status).toBe(404);
+		})
+		.catch(e => console.log(e));  
 });
 
 
 describe('POST USER TESTS', () => {
 
 	test('POST user response', () => {
+		expect.assertions(1);
 		return postUser(exampleUser4)
-			.then(postResponse => {expect(postResponse.status).toBe(201)});
+			.then(postResponse => {expect(postResponse.status).toBe(201)})
+			.catch(e => console.log(e));
 	});
 
 	test('POST and get response', () => {
+		expect.assertions(1);
 		return postUser(exampleUser)
 			.then(postResponse => { return postResponse.json(); })
 			.then(postResponseJson => {
@@ -180,34 +187,45 @@ describe('POST USER TESTS', () => {
 				return getUser(exampleUser.id);
 			})
 			.then(getResponse => {return getResponse.json();})
-			.then(jsonResponse => {expect(jsonResponse).toEqual(exampleUser)});
+			.then(jsonResponse => {expect(jsonResponse).toEqual(exampleUser)})
+			.catch(e => console.log(e));
 	});
 
 	test('POST user with wrong name', () => {
+		expect.assertions(1);
 		return postUser(wrongUser)
-			.then(postResponse => {expect(postResponse.status).toBe(400)});
+			.then(postResponse => {expect(postResponse.status).toBe(400)})
+			.catch(e => console.log(e));
 	});
 
 	test('POST user with wrong surname', () => {
+		expect.assertions(1);
 		return postUser(wrongUser2)
-			.then(postResponse => {expect(postResponse.status).toBe(400)});
+			.then(postResponse => {expect(postResponse.status).toBe(400)})
+			.catch(e => console.log(e));
 	});
 
 	test('POST user with wrong email', () => {
+		expect.assertions(1);
 		return postUser(wrongUser3)
-			.then(postResponse => {expect(postResponse.status).toBe(400)});
+			.then(postResponse => {expect(postResponse.status).toBe(400)})
+			.catch(e => console.log(e));
 	});
 
 
 	test('POST user with wrong password', () => {
+		expect.assertions(1);
 		return postUser(wrongUser4)
-			.then(postResponse => {expect(postResponse.status).toBe(400)});
+			.then(postResponse => {expect(postResponse.status).toBe(400)})
+			.catch(e => console.log(e));
 	});
 
 
 	test('POST user with email already in db', () => {
+		expect.assertions(1);
 		return postUser(wrongUser5)
-			.then(postResponse => {expect(postResponse.status).toBe(400)});
+			.then(postResponse => {expect(postResponse.status).toBe(400)})
+			.catch(e => console.log(e));
 	});
 });
 
@@ -217,19 +235,24 @@ describe('POST USER TESTS', () => {
 describe('GET USER TESTS', () => {
 
 	test('GET user response', () => {
+		expect.assertions(1);
 		return postUser(exampleUser2)
 			.then(postResponse => {return postResponse.json()})
 			.then(json => {return getUser(json.id)})
-			.then(getResponse => {expect(getResponse.status).toBe(200)});
+			.then(getResponse => {expect(getResponse.status).toBe(200)})
+			.catch(e => console.log(e));
 	});
 
 	test('GET user response if not found', () => {
+		expect.assertions(1);
 		return getUser(0)
-			.then(getResponse => {expect(getResponse.status).toBe(400)});
+			.then(getResponse => {expect(getResponse.status).toBe(400)})
+			.catch(e => console.log(e));
 	});
 
 	test('GET user response body if found', () => {
 		let returnedID = -1;
+		expect.assertions(12);
 		return postUser(exampleUser3)
 			.then(postResponse => {return postResponse.json()})
 			.then(json => {
@@ -258,7 +281,8 @@ describe('GET USER TESTS', () => {
 						'email': 'darione.rassi@gmail.com',
 						'password': 'b'
 				});
-		});
+			})
+			.catch(e => console.log(e));
 	});
 });
 
@@ -268,11 +292,14 @@ describe('GET USER TESTS', () => {
 describe('GET USERS', () => {
 
 	test('GET users response status if correct', () => {
+		expect.assertions(1);
 		return getUsersList()
-			.then(getResponse => {expect(getResponse.status).toBe(200)});
+			.then(getResponse => {expect(getResponse.status).toBe(200)})
+			.catch(e => console.log(e));
 	});
 
 	test('GET users response body if correct', () => { //TEST MOLTO PESANTE CON LISTA LUNGA
+		expect.assertions(112);
 		return postUser(exampleUser5)
 			.then(postResponse5 => {
 				return postUser(exampleUser6);
@@ -306,10 +333,12 @@ describe('GET USERS', () => {
 				expect(getResponseJson).toContainEqual(exampleUser5);
 				exampleUser6.id = addedIDs[1];
 				expect(getResponseJson).toContainEqual(exampleUser6);
-			});
+			})
+			.catch(e => console.log(e));
 	});
 
 	test('GET users response body if there are no users inside the table', () => {
+		expect.assertions(1);
 		return getUsersList()
 			.then(getResponse => {return getResponse.json()})
 			.then(getResponseJson => {
@@ -320,7 +349,8 @@ describe('GET USERS', () => {
 					}
 				}
 				expect(getResponseJson).toEqual([]);
-			});
+			})
+			.catch(e => console.log(e));
 	});
 
 });
@@ -331,52 +361,71 @@ describe('GET USERS', () => {
 describe('PUT USER TESTS', () => {
 
 	test('PUT user with less than two parameters', () => {
+		expect.assertions(1);
 		return updateUserDB(exampleUserID)
-			.then(putResponse => {expect(putResponse).toBeNull()});
+			.then(putResponse => {expect(putResponse).toBeNull()})
+			.catch(e => console.log(e));
 	});
 
 	test('PUT user with more than two parameters', () => {
+		expect.assertions(1);
 		return updateUserDB(exampleUserID,putUser,putUser)
-			.then(putResponse => {expect(putResponse).toBeNull()});
+			.then(putResponse => {expect(putResponse).toBeNull()})
+			.catch(e => console.log(e));
 	});
 
 	test('PUT user with first parameter null', () => {
+		expect.assertions(1);
 		return updateUserDB(null, putUser)
-			.then(putResponse => {expect(putResponse).toBeNull()});
+			.then(putResponse => {expect(putResponse).toBeNull()})
+			.catch(e => console.log(e));
 	});
 
 	test('PUT user with second parameter null', () => {
+		expect.assertions(1);
 		return updateUserDB(exampleUserID, null)
-			.then(putResponse => {expect(putResponse).toBeNull()});
+			.then(putResponse => {expect(putResponse).toBeNull()})
+			.catch(e => console.log(e));
 	});
 
 	test('PUT user with wrong id', () => {
+		expect.assertions(1);
 		return updateUser(0, putUser)
-			.then(putResponse => {expect(putResponse.status).toBe(400)});
+			.then(putResponse => {expect(putResponse.status).toBe(400)})
+			.catch(e => console.log(e));
 	});
 
 	test('PUT user with null name', () => {
+		expect.assertions(1);
 		return updateUser(exampleUserID, wrongUser)
-			.then(putResponse => {expect(putResponse.status).toBe(409)});
+			.then(putResponse => {expect(putResponse.status).toBe(409)})
+			.catch(e => console.log(e));
 	});
 
 	test('PUT user with null surname', () => {
+		expect.assertions(1);
 		return updateUser(exampleUserID, wrongUser2)
-			.then(putResponse => {expect(putResponse.status).toBe(409)});
+			.then(putResponse => {expect(putResponse.status).toBe(409)})
+			.catch(e => console.log(e));
 	});
 
 	test('PUT user with null email', () => {
+		expect.assertions(1);
 		return updateUser(exampleUserID, wrongUser3)
-			.then(putResponse => {expect(putResponse.status).toBe(409)});
+			.then(putResponse => {expect(putResponse.status).toBe(409)})
+			.catch(e => console.log(e));
 	});
 
 	test('PUT user with null password', () => {
+		expect.assertions(1);
 		return updateUser(exampleUserID, wrongUser4)
-			.then(putResponse => {expect(putResponse.status).toBe(409)});
+			.then(putResponse => {expect(putResponse.status).toBe(409)})
+			.catch(e => console.log(e));
 	});
 
 	test('PUT user response status and body correct', () => {
 		let returnedID;
+		expect.assertions(13);
 		return postUser(exampleUser7)
 			.then(postResponse => {return postResponse.json()})
 			.then(json => {return getUser(json.id)})
@@ -411,67 +460,74 @@ describe('PUT USER TESTS', () => {
 					'email': 'four.time@gmail.com',
 					'password': 'abba'
 				});
-			});
+			})
+			.catch(e => console.log(e));
 	});
 });
 
 test('GET list of exams of a valid user id',()=>{
 	return getExams(validexam.creator)
-	.then(res=>{return res.json();})
-	.then(jres => {
-		var dim = Object.keys(jres).length;
-		for(var i=0;i<dim;i++){
-			expect(typeof jres[i]).toEqual('object');
-			expect(jres[i]).toHaveProperty('id');
-			expect(jres[i]).toHaveProperty('creator');
-			expect(jres[i]).toHaveProperty('deadline');
-			expect(jres[i]).toHaveProperty('mark');
+		.then(res=>{return res.json();})
+		.then(jres => {
+			var dim = Object.keys(jres).length;
+			for(var i=0;i<dim;i++){
+				expect(typeof jres[i]).toEqual('object');
+				expect(jres[i]).toHaveProperty('id');
+				expect(jres[i]).toHaveProperty('creator');
+				expect(jres[i]).toHaveProperty('deadline');
+				expect(jres[i]).toHaveProperty('mark');
 
-			expect(typeof jres[i].id).toEqual('number');
-			expect(typeof jres[i].creator).toEqual('number');
-			expect(typeof jres[i].deadline).toEqual('number');
-			expect(typeof jres[i].mark).toEqual('number');
+				expect(typeof jres[i].id).toEqual('number');
+				expect(typeof jres[i].creator).toEqual('number');
+				expect(typeof jres[i].deadline).toEqual('number');
+				expect(typeof jres[i].mark).toEqual('number');
 
-		}
-	})
+			}
+		})
+		.catch(e => console.log(e));
 });
 
 test('GET list of tasks of a valid user id',()=>{
 	return getTasks(validtask.creator)
-	.then(res=>{return res.json();})
-	.then(jres=>{
-		var dim = Object.keys(jres).length;
-		for(var i=0;i<dim;i++) {
-			expect(jres[i]).toHaveProperty('id');
-			expect(jres[i]).toHaveProperty('creator');
-			expect(jres[i]).toHaveProperty('task_type');
-			expect(jres[i]).toHaveProperty('question');
-			expect(jres[i]).toHaveProperty('mark');
-			expect(jres[i]).toHaveProperty('mark');
+		.then(res=>{return res.json();})
+		.then(jres=>{
+			var dim = Object.keys(jres).length;
+			for(var i=0;i<dim;i++) {
+				expect(jres[i]).toHaveProperty('id');
+				expect(jres[i]).toHaveProperty('creator');
+				expect(jres[i]).toHaveProperty('task_type');
+				expect(jres[i]).toHaveProperty('question');
+				expect(jres[i]).toHaveProperty('mark');
+				expect(jres[i]).toHaveProperty('mark');
 
-			expect(typeof jres[i].id).toEqual('number')
-			expect(typeof jres[i].creator).toEqual('number')
-			expect(typeof jres[i].task_type).toEqual('number')
-			expect(typeof jres[i].question).toEqual('string')
-			expect(typeof jres[i].mark).toEqual('number')
-		}
-	})
+				expect(typeof jres[i].id).toEqual('number')
+				expect(typeof jres[i].creator).toEqual('number')
+				expect(typeof jres[i].task_type).toEqual('number')
+				expect(typeof jres[i].question).toEqual('string')
+				expect(typeof jres[i].mark).toEqual('number')
+			}
+		})
+		.catch(e => console.log(e));
 });
 
 test('GET list of exams of a not valid user id',()=>{
-	return getExams(16)
-	.then(res =>{return res.json()})
-	.then(jres =>{
-		expect(jres).toEqual({});
-	})
+	expect.assertions(1);
+		return getExams(16)
+		.then(res =>{return res.json()})
+		.then(jres =>{
+			expect(jres).toEqual({});
+		})
+		.catch(e => console.log(e));
 });
 
 test('GET list of tasks of a not valid user id',()=>{
+	expect.assertions(1);
 	return getTasks(16)
-	.then(res =>{return res.json()})
-	.then(jres =>{
-	  expect(jres).toEqual({});
-  })
+		.then(res =>{return res.json()})
+		.then(jres =>{
+		expect(jres).toEqual({});
+		})
+		.catch(e => console.log(e));
 });
 
 //LOGIN USER
@@ -480,37 +536,50 @@ test('GET list of tasks of a not valid user id',()=>{
 describe('LOGIN USER', () => {
 
 	test('LOGIN user with less than 2 parameters', () => {
+		expect.assertions(1);
 		return logUserFun(exampleUser.email)
-			.then(logResponse => {expect(logResponse).toBeNull()});
+			.then(logResponse => {expect(logResponse).toBeNull()})
+			.catch(e => console.log(e));
 	});
 
 	test('LOGIN user with more than 2 parameters', () => {
+		expect.assertions(1);
 		return logUserFun(exampleUser.email, exampleUser.password, exampleUser.password)
-			.then(logResponse => {expect(logResponse).toBeNull()});
+			.then(logResponse => {expect(logResponse).toBeNull()})
+			.catch(e => console.log(e));
 	});
 
 	test('LOGIN user with first parameter null', () => {
+		expect.assertions(1);
 		return logUserFun(null, exampleUser.password)
-			.then(logResponse => {expect(logResponse).toBeNull()});
+			.then(logResponse => {expect(logResponse).toBeNull()})
+			.catch(e => console.log(e));
 	});
 
 	test('LOGIN user with second parameter null', () => {
+		expect.assertions(1);
 		return logUserFun(exampleUser.email, null)
-			.then(logResponse => {expect(logResponse).toBeNull()});
+			.then(logResponse => {expect(logResponse).toBeNull()})
+			.catch(e => console.log(e));
 	});
 
 	test('LOGIN user with invalid email', () => {
+		expect.assertions(1);
 		return logUser(invalidEmail, exampleUser.password)
-			.then(logResponse => {expect(logResponse.status).toBe(400)});
+			.then(logResponse => {expect(logResponse.status).toBe(400)})
+			.catch(e => console.log(e));
 	});
 
 	test('LOGIN user with invalid password', () => {
+		expect.assertions(1);
 		return logUser(exampleUser.email, invalidPwd)
-			.then(logResponse => {expect(logResponse.status).toBe(400)});
+			.then(logResponse => {expect(logResponse.status).toBe(400)})
+			.catch(e => console.log(e));
 	});
 
 	test('LOGIN user correct', () => {
 		let returnedID;
+		expect.assertions(13);
 		return logUser(exampleUser.email, exampleUser.password)
 			.then(logResponse => {
 				expect(logResponse.status).toBe(200);
@@ -542,50 +611,53 @@ describe('LOGIN USER', () => {
 					'email': exampleUser.email,
 					'password': exampleUser.password
 				});
-			});
+			})
+			.catch(e => console.log(e));
 	});
 
 });
 
 test('GET list of reviews of a valid user id',()=>{
 	return getReviews(1)
-	.then(res=>{return res.json();})
-	.then(jres=>{
-		var dim = Object.keys(jres).length;
-		for(var i=0;i<dim;i++) {
-			expect(jres[i]).toHaveProperty('id');
-			expect(jres[i]).toHaveProperty('reviewer');
-			expect(jres[i]).toHaveProperty('submission');
-			expect(jres[i]).toHaveProperty('review_answer');
-			expect(jres[i]).toHaveProperty('deadline');
+		.then(res=>{return res.json();})
+		.then(jres=>{
+			var dim = Object.keys(jres).length;
+			for(var i=0;i<dim;i++) {
+				expect(jres[i]).toHaveProperty('id');
+				expect(jres[i]).toHaveProperty('reviewer');
+				expect(jres[i]).toHaveProperty('submission');
+				expect(jres[i]).toHaveProperty('review_answer');
+				expect(jres[i]).toHaveProperty('deadline');
 
-			expect(typeof jres[i].id).toEqual('number')
-			expect(typeof jres[i].reviewer).toEqual('number')
-			expect(typeof jres[i].submission).toEqual('number')
-			expect(typeof jres[i].review_answer).toEqual('string')
-			expect(typeof jres[i].deadline).toEqual('number')
-		}
-	})
+				expect(typeof jres[i].id).toEqual('number')
+				expect(typeof jres[i].reviewer).toEqual('number')
+				expect(typeof jres[i].submission).toEqual('number')
+				expect(typeof jres[i].review_answer).toEqual('string')
+				expect(typeof jres[i].deadline).toEqual('number')
+			}
+		})
+		.catch(e => console.log(e));
 });
 
 test('GET list of reviews of a not valid user id',()=>{
-return getReviews(16)
-.then(res =>{return res.json()})
-	.then(jres =>{
-		expect(jres).toEqual({});
-	})
+	expect.assertions(1);
+	return getReviews(16)
+	.then(res =>{return res.json()})
+		.then(jres =>{
+			expect(jres).toEqual({});
+		})
 });
 
 test('GET list of submissions of a valid user id',()=>{
 	return getSubmissions(1)
 	.then(res=>{return res.json();})
 	.then(jres=>{
-		var dim = jres.length;
+		var dim = Object.keys(jres).length;
 		for(let i=0;i<dim;i++) {
       console.log(jres)
 			expect(jres[i]).toHaveProperty('id');
 			expect(jres[i]).toHaveProperty('user');
-      expect(jres[i]).toHaveProperty('task');
+      	expect(jres[i]).toHaveProperty('task');
 			expect(jres[i]).toHaveProperty('exam');
 			expect(jres[i]).toHaveProperty('answer');
 			expect(jres[i]).toHaveProperty('final_mark');
@@ -593,18 +665,22 @@ test('GET list of submissions of a valid user id',()=>{
 			expect(typeof jres[i].id).toEqual('number')
 			expect(typeof jres[i].user).toEqual('number')
 			expect(typeof jres[i].exam).toEqual('number')
-      expect(typeof jres[i].task).toEqual('number')
+      	expect(typeof jres[i].task).toEqual('number')
 			expect(typeof jres[i].answer).toEqual('string')
-      console.log("FINAL MARK: " + jres[i].final_mark);
-			expect(typeof jres[i].final_mark).toEqual('number')
+			console.log("FINAL MARK: " + jres[i].final_mark);
+			if(jres[i].final_mark)
+				expect(typeof jres[i].final_mark).toEqual('number')
+			else
+				expect(jres[i].final_mark).toBeNull()
 		}
 	})
 });
 
 test('GET list of submissions of a not valid user id',()=>{
-return getSubmissions(16)
-.then(res =>{return res.json()})
-	.then(jres =>{
-		expect(jres).toEqual({});
-	})
+	expect.assertions(1);
+	return getSubmissions(16)
+		.then(res =>{return res.json()})
+		.then(jres =>{
+			expect(jres).toEqual({});
+		})
 });

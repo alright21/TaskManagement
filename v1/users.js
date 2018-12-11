@@ -163,7 +163,14 @@ async function getUserById(id) {
 	} else {
 		var queryText = 'SELECT * FROM "user" WHERE id=$1';
 		var queryParams = [id];
-		var result = await pool.query(queryText, queryParams);
+		let result;
+
+		try {
+			result = await pool.query(queryText, queryParams);
+		}catch(e){
+			console.log(e);
+		}
+
 		if (result.rowCount != 0) {
 			return result.rows[0];
 		} else {
@@ -178,7 +185,14 @@ async function postUser(newUser) {
 	else {
 		let queryText = 'INSERT INTO "user" ("name","surname","email","password") VALUES ($1,$2,$3,$4) RETURNING *';
 		let queryParams = [newUser.name, newUser.surname, newUser.email, newUser.password];
-		let result = await pool.query(queryText, queryParams);
+		let result;
+
+		try{
+			result = await pool.query(queryText, queryParams);
+		}catch(e){
+			console.log(e);
+		}
+
 		if (result) {
 			return result.rows[0];
 		} else {
@@ -193,7 +207,14 @@ async function getUserByEmail(email) {
 	} else {
 		var queryText = 'SELECT * FROM "user" WHERE email=$1';
 		var queryParams = [email];
-		var result = await pool.query(queryText, queryParams);
+		let result;
+
+		try{
+			result = await pool.query(queryText, queryParams);
+		}catch(e){
+			console.log(e);
+		}
+		
 		if (result.rowCount != 0) {
 			return result.rows[0];
 		} else {
@@ -220,7 +241,13 @@ async function updateUserInDatabase(id, toModify) {
 			} else {
 				let queryText = 'UPDATE "user" SET name=$1, surname=$2, email=$3, password=$4 WHERE  id=$5 RETURNING *';
 				let queryParams = [toModify.name, toModify.surname, toModify.email, toModify.password, id];
-				let result = await pool.query(queryText, queryParams);
+				let result;
+
+				try{
+					result = await pool.query(queryText, queryParams);
+				}catch(e){
+					console.log(e);
+				}
 
 				if (result.rowCount != 0)
 					return result.rows[0];
@@ -233,7 +260,13 @@ async function updateUserInDatabase(id, toModify) {
 
 async function getUsersList() {
 	let queryText = 'SELECT * FROM "user"';
-	let result = await pool.query(queryText);
+	let result;
+
+	try{
+		result = await pool.query(queryText);
+	}catch(e){
+		console.log(e);
+	}
 
 	if (result.rowCount != 0) {
 		return result.rows;
@@ -249,7 +282,14 @@ async function getTasks(id) {
 	} else {
 		let queryText = 'SELECT * FROM "task" WHERE creator=$1';
 		let queryParams = [id];
-		let result = await pool.query(queryText, queryParams);
+		let result;
+
+		try{
+			result = await pool.query(queryText, queryParams);
+		}catch(e){
+			console.log(e);
+		}
+
 		if (result.rowCount != 0) {
 			return result.rows;
 		} else {
@@ -265,7 +305,14 @@ async function getExams(id) {
 	else {
 		let queryText = 'SELECT * FROM "exam" WHERE creator=$1';
 		let queryParams = [id];
-		let result = await pool.query(queryText, queryParams);
+		let result;
+
+		try{
+			result = await pool.query(queryText, queryParams);
+		}catch(e){
+			console.log(e);
+		}
+
 		if (result.rowCount != 0) {
 			return result.rows;
 		} else {
@@ -281,7 +328,14 @@ async function deleteUserById(id) {
 	} else {
 		var queryText = 'DELETE FROM "user" WHERE id=$1';
 		var queryParams = [id];
-		let result = await pool.query(queryText, queryParams);
+		let result;
+
+		try{
+			result = await pool.query(queryText, queryParams);
+		}catch(e){
+			console.log(e);
+		}
+
 		if (result.rowCount != 0) {
 			return JSON.parse(JSON.stringify(result)); //ho eliminato qualcosa
 		} else {
@@ -301,7 +355,13 @@ async function getUserByEmailAndPassword(email, pwd) {
 		let queryText = 'SELECT * FROM "user" WHERE email=$1 AND password=$2';
 		let queryParams = [email, pwd];
 
-		let result = await pool.query(queryText, queryParams);
+		let result;
+
+		try{
+			result = await pool.query(queryText, queryParams);
+		}catch(e){
+			console.log(e);
+		}
 
 		if (result.rowCount > 0)
 			return result.rows[0];
@@ -316,7 +376,14 @@ async function getReviews(id) {
 	} else {
 		var queryText = 'SELECT * FROM "review" WHERE reviewer=$1';
 		var queryParams = [id];
-		let result = await pool.query(queryText, queryParams);
+		let result;
+
+		try{
+			result = await pool.query(queryText, queryParams);
+		}catch(e){
+			console.log(e);
+		}
+
 		if (result.rowCount != 0) {
 			return result.rows;
 		} else {
@@ -331,7 +398,14 @@ async function getSubmissions(id) {
 	} else {
 		var queryText = 'SELECT * FROM "submission" WHERE "user"=$1';
 		var queryParams = [id];
-		let result = await pool.query(queryText, queryParams);
+		let result;
+
+		try{
+			result = await pool.query(queryText, queryParams);
+		}catch(e){
+			console.log(e);
+		}
+		
 		if (result.rowCount != 0) {
 			return result.rows;
 		} else {
