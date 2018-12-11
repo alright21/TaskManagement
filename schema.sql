@@ -112,4 +112,7 @@ INSERT INTO "ruoli" ("user", "classe", "permesso") VALUES (4,1,2);
 INSERT INTO "submission" ("user","task","exam","answer","final_mark") VALUES (1,1,1,'CIAO',30);
 INSERT INTO "review" ("reviewer","submission","review_answer","deadline") VALUES (1,1,'BELLO',200);
 
-SELECT * FROM "ruoli"
+SELECT * FROM "ruoli";
+
+SELECT * FROM "user";
+SELECT * FROM "user" WHERE "id"=4;

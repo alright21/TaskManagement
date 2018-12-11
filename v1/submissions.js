@@ -81,6 +81,7 @@ async function insertSubmissionIntoDatabase (submission){
     }
     //Qui ci andrà la logica per controllare che user, task e exam esistano per evitare problemi di database
     var isUser = await getUserById(submission.user);
+    console.log('submission.user: '+submission.user)
     var isTask = await getTaskById(submission.task);
     var isExam = await getExamById(submission.exam);
     

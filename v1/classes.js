@@ -78,6 +78,16 @@ async function insertClassIntoDatabase (classe){
     let res = await pool.query(queryText, queryParam);
     if(res)
     {
+        try{
+            res.rows[0].assistants = await insertRoles(classe.assistants, 1, res.rows[0].id);           
+        }catch(error){
+            console.log(error);
+        }
+        try{
+            res.rows[0].students = await insertRoles(classe.students, 2, res.rows[0].id);
+        }catch(error){
+            console.log(error);
+        }
         insertClass = JSON.parse(JSON.stringify(res.rows[0]));
     }
     else
@@ -102,24 +112,21 @@ async function getClassById(id){
         let result = await pool.query(queryText, queryParams);
 		var classe; //Variabile chiamata "classe" perchè la parola "class" è riservata
 		if(result.rowCount != 0)
-        {
+        {    try{
+                result.rows[0].assistants = await getRoles(id,1);
+            }catch(error){
+                console.log(error);
+            }
+            try{
+                result.rows[0].students = await getRoles(id,2);
+            }catch(error){
+                console.log(error);
+            }
             classe = JSON.parse(JSON.stringify(result.rows[0]));
         }
         else
         {
             return null;
-        }
-
-        var students = getStudents(id);
-        for (var student in students )
-        {
-            classe.students[student] = students[student];
-        }
-
-        var assistants = getAssistants(id);
-        for (var assistant in assistants)
-        {
-            classe.assistants[assistant] = assistants[assistant];
         }
         return classe;
     }
@@ -152,9 +159,9 @@ async function updateClassInDatabase(id, toModify){
 	            var queryParams = [toModify.name, toModify.description, id];
 	            var result = await pool.query(queryText,queryParams);
 	            if(result.rowCount != 0)
-	            {
+                {    
 	                return result.rows[0];
-	            }
+                }
 	            else
 	            {
 	                return null;
@@ -164,9 +171,107 @@ async function updateClassInDatabase(id, toModify){
     }
 }
 
+// Roles logistics
+
+async function insertRoles(user_array, classe, role){
+
+    let result = [];
+    if(!user_array){
+        return result;
+    }
+    
+    for(let i = 0; i< user_array.length; i++){
+        const queryText = 'INSERT INTO "ruoli" VALUES($1,$2,$3) RETURNING *';
+        const queryParams = [user_array[i], classe, role];
+
+        let r; //variabile di appoggio
+        try{
+            r = await pool.query(queryText,queryParams);
+        }catch (error){
+            console.log(error);
+        }
+
+        if(r){
+            result.push(r.rows[0]);
+        }        
+    }
+    return result;
+}
+
+
+async function getRoles(classe, role){
+
+    const queryText = 'SELECT * FROM "ruoli" WHERE "classe"=$1 AND "permesso"=$2';
+    const queryParams = [classe, role];
+
+    let result = [];
+    let r;
+
+    try{
+        r = await pool.query(queryText,queryParams);
+    }catch(error){
+        console.log(error);
+    }
+    if(r)
+    {
+        for(let i = 0; i< r.rowCount; i++)
+        {
+            result.push(r.rows[i]);
+        }
+    }
+    return result;
+}
+
+//Update role: dato lo studente cambio il suo ruolo nella classe: toModify
+//è il nuovo permesso
+/* async function updateRoles(id, classID, newRole){
+
+    id = Number.parseInt(id);
+    classID = Number.parseInt(classID);
+    if (! id && !newRole && !classID)
+    {
+        return null;
+    }
+
+    //controllo che l'utente esista
+    var isUser = await getUserById(id);
+    if (!isUser)
+    {
+        return null;
+    }
+
+    //controllo che la classe esista
+    var isClass = await getClassById(classID);
+    if (! isClass )
+    {
+        return null;
+    }
+
+    const queryText = 'UPDATE "permesso" FROM "ruoli" WHERE "classe"=$1 AND "permesso"=$2';
+    const queryParams = [classID, newRole];
+    
+    try{
+        var result = await pool.query(queryText,queryParams);
+    }catch(error){
+        console.log(error);
+    }
+
+    if(result.rowCount != 0)
+    {
+        return result.rows[0];
+    }
+    else
+    {
+        return null;
+    }
+}
+*/
 module.exports = {
     classes: classes,
     insertClassIntoDatabase: insertClassIntoDatabase,
     getClassById: getClassById,
-    updateClassInDatabase: updateClassInDatabase
+    updateClassInDatabase: updateClassInDatabase,
+    insertRoles: insertRoles,
+    getRoles: getRoles
+    //updateRoles: updateRoles
 }

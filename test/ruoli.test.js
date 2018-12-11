@@ -10,29 +10,30 @@ const getStudents = require('../v1/ruoli').getStudents;
 //Variables used for testing
 
 const invalidIdList = ['cat', 2];
-const validIdStudent = [3,4];
-
+//const validIdStudent = [3,4];
+const validAssistantID = [1];
 //Examples for testing
 
 const validStudent = {
-	'user': [ {
+	/*'user': [ {
 		"id": 3,
 	},
 	{	
 		"id": 4
-	}],
+	}],*/
+	'user': 3,
 	'classe': 1,
 	'permesso': 2
 }
 
 const validAssistant ={
-	'user': [1],
+	'user': 1,
 	'classe': 1,
 	'permesso': 2
 }
 
 const invalidStudent = {
-	'user': [3,4],
+	'user': 'p',
 	'classe': 1,
 	'permesso': 8
 }
@@ -56,7 +57,7 @@ function postRole(newUser){
 }
 
 function getRole(id, flag){
-  return fetch(SERVER_URL + '/' + id,{
+  return fetch(SERVER_URL + '/' + id + flag,{
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -90,6 +91,7 @@ test('Creation of a valid new student', () => {
     });
 })});
 
+/*
 //Valid post of an assistant
 test('Creation of a valid new assistant', () => {
 
@@ -118,52 +120,60 @@ test('Creation of a valid new assistant', () => {
 
 // Invalid post request
 
-test('if the students\'s list is incorrect, then the API should return 400', () => {
+test('if the students\'s list is incorrect, then the API should return 404', () => {
   return postRole(invalidStudent)
   .then(response =>{
     expect(response.status).toBe(404);
   })
 });
 
-test('if the assistant\'s list is incorrect, then the API should return 400', () => {
+test('if the assistant\'s list is incorrect, then the API should return 404', () => {
   return postRole(invalidAssistant)
   .then(response =>{
     expect(response.status).toBe(404);
   })
 });
 
-test('if the students\'s list is empty, then the API should return 404', () => {
+test('if the students\'s list is empty, then the API should return 400', () => {
   return postRole(validStudent.user, null)
   .then(response =>{
-    expect(response.status).toBe(404);
+    expect(response.status).toBe(400);
   })
 });
 
-test('if the assistant\'s list is empty, then the API should return 404', () => {
+test('if the assistant\'s list is empty, then the API should return 400', () => {
   return postRole(validAssistant.user, null)
   .then(response =>{
-    expect(response.status).toBe(404);
+    expect(response.status).toBe(400);
   })
-});
+}); 
 
 test('Verify that a Student is added to the database correctly', ()=>{
 
-	for (var i in validStudent.user)
-	{
-  return insertStudentIntoDatabase(validIdStudent.user, validStudent.classe)
-  	.then(created => {
-  		console.log('created: ' +created)
-    return getRole(created.id)
-    .then(res =>{
-      validStudent.user = res.user;
-      expect(res.classe).toBe(validStudent.classe);
-    })
-  })
-  }
+		//console.log(validStudent.user[0]);
+		//console.log(validStudent.user[1]);
+		//return getRole(validStudent.user)
+		//.then( user => {
+		//	console.log("user: (expected [obj,obj] "+ user);
+			for (var i=0; i< validStudent.user.length; i++)
+			{	
+				console.log('valid student id '+ validStudent.user[i].id)
+	  			insertStudentIntoDatabase(validStudent.user[i].id, validStudent.classe, validStudent.permesso)
+	  			.then(created => {
+	  			console.log('created: ' +created)
+	    		return getRole(created.id)
+	    			.then(res =>{
+	      				validStudent.user = res.user;
+	      				expect(res.classe).toBe(validStudent.classe);
+	    			})
+	  			})
+  			}
+  		//}//)
 });
 
+/*
 test('Verify that an Assistant is added to the database correctly', ()=>{
-  return insertAssistantIntoDatabase(validAssistant.user)
+  return insertAssistantIntoDatabase(validAssistantID,validAssistant.classe,validAssistant.permesso)
   	.then(created => {
     return getAssistant(created.user)
     .then(res =>{
@@ -206,3 +216,4 @@ test('if the id does not exists, it should return 404', () => {
       expect(response.status).toBe(404);
     })
 });
+*/

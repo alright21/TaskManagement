@@ -13,16 +13,37 @@ ruoli.get('/', (req, res) => res.status(200).send('Hello World!'));
 
 ruoli.post('/', async(req, res) => {
 
-	if (req.body.permesso == 1)
-	{
-		var resultA = await insertAssistantIntoDatabase(req.body.id, req.body.classID);
-	}
-	if (req.body.permesso == 2)
-	{
-    	var resultS = await insertStudentIntoDatabase(req.body.id, req.body.classID);
-    }
+	//console.log('req.body.permesso: ' +req.body.permesso)
+	//console.log('req.body.user: ' +req.body.user)
+	//console.log('req.body.classe: ' +req.body.classe)
+	
+	console.log('permesso: '+req.body.permesso)
+		if (req.body.permesso == 1)
+		{
+			for (var i in req.body.user)
+			{
+				console.log('sono nel primo if');
+				var resultA = await insertAssistantIntoDatabase(req.body.user[i], req.body.permesso);
+			}
+		}
+		if (req.body.permesso == 2)
+		{
+			console.log('sono nel primo if di permesso')
+			console.log('body user: ' +req.body.user);
+			//for (var i in req.body.user)
+			//{
+				console.log('sono nel secondo if e i:' +req.body.user);
+	    		var resultS = await insertStudentIntoDatabase(req.body.user, req.body.classe, req.body.permesso);
+	    	//}
+	    }
+	console.log('result S in post: '+resultS)
 
-	if (resultS && resultA)
+	if (resultS)// && resultA)
+	{
+		var resultJson = JSON.parse(JSON.stringify(result));
+		res.status(201).send(resultJson);
+	}
+	else if (resultA)// && resultA)
 	{
 		var resultJson = JSON.parse(JSON.stringify(result));
 		res.status(201).send(resultJson);
@@ -36,13 +57,14 @@ ruoli.post('/', async(req, res) => {
 ruoli.get('/:id&:permesso', async (req, res) =>{
 
     //const id = req.params.id;
-    console.log('id in ruoli.get ' +id);
+    //console.log('id in ruoli.get ' + req.params.id);
     const permesso = req.params.permesso;
-    console.log('permesso: ' + permesso);
-    //var done; //variabile di appoggio che mi serve per capire quando una funzione asincrona finisce
+    //console.log('permesso: ' + permesso);
+    
     for (var id in req.params.id)
     {
-    	var results = await getRoles(permesso,id);
+    	var results = await getRoles(req.params.id[id],req.params.permesso);
+    	console.log('results nel for: ' + results)
     }
 
     console.log('results: ' + results)
@@ -50,32 +72,41 @@ ruoli.get('/:id&:permesso', async (req, res) =>{
 	{   
 	    var resultJson = JSON.parse(JSON.stringify(results));
 	    res.status(200).send(resultJson);
+	    console.log('results: ' + results);
     }
+
+
 	else
 	{
 	    res.status(404).end();
 	}
 });
 
-async function insertStudentIntoDatabase (id, classID) {
+async function insertStudentIntoDatabase (id, classID, flag) {
     
     //Controllo che l'utente esista
     console.log('id in insertStudentIntoDatabase: '+id)
     let isUser = await getUserById(id);
-    if ( ! isUser  )
+    console.log("asd")
+    console.log('dopo aver cercato l\'utente :' +isUser);
+    if ( ! (isUser)  )
     {
     	console.log('l\'utente non esiste!')
         return null;
     }
+    //console.log('sono dopo l if')
 
-    let queryText = 'INSERT INTO "ruoli" ("user", "classe", permesso") VALUES ($1, $2, "2") RETURNING *';
-    let queryParam = [id, classID];
-
+    let queryText = 'INSERT INTO "ruoli" ("user", "classe", "permesso") VALUES ("SELECT * from user WHERE "id"=$1 " , (SELECT "id" from "classe" WHERE "id"=$2),$3)';
+    //let queryText = 'SELECT "user" FROM "ruoli" WHERE "user.id"=$1 AND INSERT INTO "ruoli" ("classe","permesso") VALUES ($2, $3) RETURNING * ';
+    //let queryText = 'INSERT INTO "ruoli" ("user", "classe", "permesso") VALUES ($1, $2, $3) RETURNING *';
+    let queryParam = [id, classID, flag];
+   //console.log('sono appena dopo la query');   
     let insertStud;
     let res = await pool.query(queryText, queryParam);
-
+    console.log('res in insertStudentIntoDatabase: '+res)
     if(res)
     {
+        console.log('sono in if di res')
         insertStud = JSON.parse(JSON.stringify(res.rows[0]));
     }
     else
@@ -94,7 +125,7 @@ async function insertAssistantIntoDatabase (id, classID) {
         return null;
     }
 
-    let queryText = 'INSERT INTO "ruoli" ("user", "classe", permesso") VALUES ($1,$2, "1") RETURNING *';
+    let queryText = 'INSERT INTO "ruoli" ("user", "classe", "permesso") VALUES ($1, $2, "1") ';//RETURNING *';
     let queryParam = [id, classID];
 
     let insertAssistant;
@@ -112,6 +143,8 @@ async function insertAssistantIntoDatabase (id, classID) {
 } 
 
 async function getRoles(id, flag){
+	console.log('id' +id)
+	console.log('flag: ' + flag)
 	if (flag == 1)
 	{
 		return results = await getAssistants(id);
