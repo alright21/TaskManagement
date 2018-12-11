@@ -117,6 +117,18 @@ async function getClassById(id){
 		var classe; //Variabile chiamata "classe" perchè la parola "class" è riservata
 		if(result.rowCount != 0)
         {
+            try{
+                result.rows[0].assistants = await getRoles(id,1);
+            }catch(e){
+                console.log(e);
+            }
+        try{
+            result.rows[0].students = await getRoles(id,2);
+        }catch(e){
+            console.log(e);
+        }
+            
+
             classe = JSON.parse(JSON.stringify(result.rows[0]));
         }
         else
@@ -203,6 +215,32 @@ async function insertRoles(array, role, classe){
     }
 
     return result;
+}
+
+
+async function getRoles(classe, role){
+
+    const queryText = 'SELECT * FROM "ruoli" WHERE "classe"=$1 AND "permesso"=$2';
+    const queryParams = [classe, role];
+
+    let result = [];
+
+    let r;
+    try{
+        r = await pool.query(queryText,queryParams);
+    }catch(e){
+        console.log(e);
+    }
+    if(r){
+        for(let i = 0; i< r.rowCount; i++){
+            result.push(r.rows[i]);
+        }
+    }
+    
+
+    return result;
+
+    
 }
 
 module.exports = {
