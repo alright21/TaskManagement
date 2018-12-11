@@ -122,11 +122,11 @@ async function getClassById(id){
             }catch(e){
                 console.log(e);
             }
-        try{
-            result.rows[0].students = await getRoles(id,2);
-        }catch(e){
-            console.log(e);
-        }
+            try{
+                result.rows[0].students = await getRoles(id,2);
+            }catch(e){
+                console.log(e);
+            }
             
 
             classe = JSON.parse(JSON.stringify(result.rows[0]));
